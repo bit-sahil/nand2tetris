@@ -1,0 +1,84 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/5/CPU.hdl
+/**
+ * The Hack Central Processing unit (CPU).
+ * Parses the binary code in the instruction input and executes it according to the
+ * Hack machine language specification. In the case of a C-instruction, computes the
+ * function specified by the instruction. If the instruction specifies to read a memory
+ * value, the inM input is expected to contain this value. If the instruction specifies
+ * to write a value to the memory, sets the outM output to this value, sets the addressM
+ * output to the target address, and asserts the writeM output (when writeM = 0, any
+ * value may appear in outM).
+ * If the reset input is 0, computes the address of the next instruction and sets the
+ * pc output to that value. If the reset input is 1, sets pc to 0.
+ * Note: The outM and writeM outputs are combinational: they are affected by the
+ * instruction's execution during the current cycle. The addressM and pc outputs are
+ * clocked: although they are affected by the instruction's execution, they commit to
+ * their new values only in the next cycle.
+ */
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    //loading value in ARegister
+    //Mux is selecting input based on a- vs c-instruction bit
+    //ARegister is loading when either it's a-instruction
+    //or loadA bit [5] is enabled for c-instruction
+    Not(in=instruction[15] , out=aInstruction );
+    Mux16(a=aluOut , b=instruction , sel=aInstruction , out=aRegInput );
+	And(a=instruction[15] , b=instruction[5] , out=loadAluOut );
+    Or(a=aInstruction , b=loadAluOut , out=loadA );
+    ARegister(in=aRegInput , load=loadA , out=ARegOut, out[0..14]=addressM );
+    //ARegister output is also directly addressM
+
+    //loading value in DRegister
+    //only when loadC bit [4] is enabled for c-instruction
+    And(a=instruction[15] , b=instruction[4] , out=loadD );
+    DRegister(in=aluOut , load=loadD , out=DRegOut );
+
+    //1st input to ALU is DRegOut
+    //2nd input is M when bit [12] is enabled during c-instruction, o.w. ARegOut
+    //in this case, it looks like c-instruction condition is not required 
+    //cos alu output is anyways garbage during a-instruction
+    Mux16(a=ARegOut , b=inM , sel=instruction[12] , out=aluIn2 );
+
+    //c1,...,c6 should be values passed in zx, nx.., no 
+    //in same order? -- not sure, but that's how it seems to be
+    //c1 becomes instruction[11],.. , c[6] becomes instruction[6]
+    ALU(x=DRegOut , y=aluIn2 , zx=instruction[11] , nx=instruction[10] , zy=instruction[9] , ny=instruction[8] , f=instruction[7] , no=instruction[6] , out=aluOut, out=outM , zr=aluZr , ng=aluNg );
+
+    //writeM is when we want to write to memory
+    //c-instruction's bit[3]
+    And(a=instruction[15] , b=instruction[3] , out=writeM );
+
+    //Input to PC is address stored in ARegister
+    //Jump conditions work on current alu output (c-instruction one is only relevant)
+    //j1, j2, j3 are bit[2], bit[1], and bit[0] respectively
+    //We do And with relevant condition it's trying to check
+    //and if any of those conditions satisfy, load address when it's c-instruction
+    //otherwise increment
+    And(a=instruction[2] , b=aluNg , out=isNeg );
+    And(a=instruction[1] , b=aluZr , out=isZero );
+    Or(a=aluNg , b=aluZr , out=aluNgOrZr );
+    Not(in=aluNgOrZr , out=aluPos );
+    And(a=instruction[0] , b=aluPos , out=isPos );
+
+    Or(a=isNeg , b=isZero , out=isNegOrZero );
+    Or(a=isNegOrZero , b=isPos , out=isJump );
+    And(a=isJump , b=instruction[15] , out=loadPC );
+    Not(in=loadPC , out=incPC );
+    PC(in=ARegOut , load=loadPC , inc=incPC , reset=reset , out[0..14]=pc );
+    //reset signal goes in directly
+}
