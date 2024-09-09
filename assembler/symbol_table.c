@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include "cstring.h"
+#include "symbol_table.h"
 
 
 /* A simple map with key value store. Instead of implementing hash functions, doing it with 
@@ -10,23 +12,6 @@ In small machines, this might've been better implementation, considering resourc
 Using map instead of symbol_table cos map is equally intuitive and less typing, avoids bulky names like new_symbol_table and struct SymbolTable
 Also, I think reserving SymbolTable for map pre-populated with reserved keywords
 */
-
-
-#define True 1
-#define False 0
-
-
-struct Node {
-    char key[256];
-    char value[16];
-};
-
-
-struct Map {
-    int size;
-    int cnt;
-    struct Node *nodes;
-};
 
 
 struct Map* new_map(int size) {
@@ -47,43 +32,6 @@ void delete_map(struct Map* map) {
     //deallocate/free space allocated for given map
     free(map->nodes);
     free(map);
-}
-
-
-void print_line(char* line) {
-    // just prints a line. %s was printing random characters so resorted to a basic function
-    int idx = 0;
-    while(1) {
-        printf("%c", line[idx]);
-        if((line[idx] == '\n') || (line[idx] == '\0')) {
-            break;
-        }
-        idx++;
-    }
-}
-
-
-int compare_str(char* s1, char* s2) {
-    // compare string character by character
-    int i =0;
-    // printf("%s;%s\n", s1, s2);
-    while(s1[i] == s2[i]) {
-        if(s1[i] == '\0') return True;
-        i++;
-    }
-    return False;
-}
-
-
-void copy_str(char* dest, char* src) {
-    // assume destination has required space and copy source string characters
-    // strcpy was possibly copying erronously and hence this function (at least printing is erronous)
-    int i = 0;
-    while(1) {
-        dest[i] = src[i];
-        if(src[i] == '\0') return;
-        i++;
-    }
 }
 
 
@@ -127,6 +75,7 @@ int get_value(struct Map* map, char* key, char* value) {
     return False;
 }
 
+#if 0
 
 int main() {
     struct Map* map = new_map(5);
@@ -143,4 +92,6 @@ int main() {
     printf("v2=%d\n", v2);
     delete_map(map);
 }
+
+#endif
 

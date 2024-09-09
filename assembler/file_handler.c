@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
+#include "cstring.h"
+#include "parser.h"
 
 
 /* 
@@ -18,19 +19,6 @@ so perhaps not too bad
 #define MAX_LINE_SIZE 128
 
 
-void print_line(char* line) {
-    // just prints a line. %s was printing random characters so resorted to a basic function
-    int idx = 0;
-    char c;
-    while((c=line[idx]) != '\0') {
-        printf("%c", line[idx]);
-        idx++;
-    }
-    
-    printf("\n");
-}
-
-
 int print_instruction_with_line_number(char* line, int* current_line_number, int print) {
     // print line with line number, ignoring empty lines if print=1, print=0 for skip printing
     // increments line number for non-empty lines
@@ -41,12 +29,14 @@ int print_instruction_with_line_number(char* line, int* current_line_number, int
         return 0;
     }
 
+    *current_line_number = *current_line_number + 1;
+
     if(print) {
         printf("%d: ", *current_line_number);
-        print_line(line);
+        print_str(line);
+        printf("\n");
     }
 
-    *current_line_number = *current_line_number + 1;
     return 1;
 }
 
@@ -74,15 +64,7 @@ void line_without_space(char* line, char* cleaned_line) {
             break;
 
         } else if((curr_char == ' ') || (curr_char == '\t')) {
-            if(idx==0) { 
-                continue; //ignore all spaces in beginning of line
-            }
-
-            // ignore whitespace and tabs. Convert tab to whitespace in new line, and collapse all, in case there is such a sequence
-            if ((idx>0) && (cleaned_line[idx-1] == ' ')) {
-                continue; // there's already a whitespace, ignore another
-            }
-            cleaned_line[idx] = ' ';
+            // no space is required in assembly language
             idx++;
 
         } else {
@@ -114,7 +96,7 @@ void read_file_and_process_instructions(char* file_name) {
 
     char line[MAX_LINE_SIZE] = {0};
     char cleaned_line[MAX_LINE_SIZE] = {0};
-    int current_line_number = 0;
+    int current_line_number = -1;
     int is_instruction = 0;
 
     while(fgets(line, MAX_LINE_SIZE, asmFile)) {
