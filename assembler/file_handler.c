@@ -21,11 +21,9 @@ so perhaps not too bad
 void print_line(char* line) {
     // just prints a line. %s was printing random characters so resorted to a basic function
     int idx = 0;
-    while(1) {
+    char c;
+    while((c=line[idx]) != '\0') {
         printf("%c", line[idx]);
-        if((line[idx] == '\n') || (line[idx] == '\0')) {
-            break;
-        }
         idx++;
     }
     
@@ -124,6 +122,7 @@ void read_file_and_process_instructions(char* file_name) {
         // printf("ORIGINAL: %s", line);
         is_instruction = print_instruction_with_line_number(cleaned_line, &current_line_number, 1);
     }
+    fclose(asmFile);
 }
 
 
