@@ -1,3 +1,5 @@
 .DS_store
 nand2tetris/
+*.out
+t/
 
