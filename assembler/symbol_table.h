@@ -1,30 +1,16 @@
+#include "map.h"
+
 
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
 
-struct Node {
-    char key[256];
-    char value[16];
-};
+void add_numeric_value(struct Map* symbolTable, char* key, int num);
 
+void resolve_var(struct Map* symbolTable, char* var, char* binary_str);
 
-struct Map {
-    int size;
-    int cnt;
-    struct Node *nodes;
-};
+void add_label(struct Map* symbolTable, char* label, int address);
 
-
-struct Map* new_map(int size);
-
-void delete_map(struct Map* map);
-
-void print_map(struct Map map);
-
-void add_key(struct Map* map, char* key, char* value);
-
-int get_value(struct Map* map, char* key, char* value);
+struct Map* new_symbol_table();
 
 #endif
-

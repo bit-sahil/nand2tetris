@@ -31,3 +31,10 @@ void binary_to_str(int* binary, char* binary_str) {
     binary_str[16] = '\0';
 }
 
+
+void int_to_binary_str(int num, char* binary_str) {
+    int binary[16];
+    int_to_binary(num, binary);
+    binary_to_str(binary, binary_str);
+}
+

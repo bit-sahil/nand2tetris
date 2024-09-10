@@ -1,97 +1,111 @@
-#include<stdio.h>
-#include<stdlib.h>
 #include "cstring.h"
-#include "symbol_table.h"
+#include "map.h"
+#include "binary.h"
 
 
-/* A simple map with key value store. Instead of implementing hash functions, doing it with 
-sequential logic for quicker implementation. Since we're talking about just a few items in map to begin with,
-it's not too bad. And implementation could be improved later, as required.
-In small machines, this might've been better implementation, considering resources.
-
-Using map instead of symbol_table cos map is equally intuitive and less typing, avoids bulky names like new_symbol_table and struct SymbolTable
-Also, I think reserving SymbolTable for map pre-populated with reserved keywords
-*/
+int curr_address = 16;
 
 
-struct Map* new_map(int size) {
-    // Allocate space for a map with given size
-    // return: address of newly created map
-
-    struct Map* map = (struct Map*) malloc(sizeof(struct Map));
-    map->size = size;
-    map->cnt = 0;
-    struct Node* nodes = (struct Node*) malloc(size * sizeof(struct Node));
-    if(nodes == NULL) printf("Error allocating memory for nodes");
-    map->nodes = nodes;
-    return map;
-}
-
-
-void delete_map(struct Map* map) {
-    //deallocate/free space allocated for given map
-    free(map->nodes);
-    free(map);
-}
-
-
-void print_map(struct Map map) {
-    // printf("Map count: %d\n", map.cnt);
+void add_numeric_value(struct Map* symbolTable, char* key, int num) {
+    /* Add numeric value for specified key in map
+    First numeric value is converted to binary
+    Then we convert it to 16-bit binary string + 1 bit for '/0'
+    Addresses are 15-bit instead of 16 bit, but those work just as well in 16-bit char
     
-    //printf("print_map; &map: %p; &nodes: %p; &nodes[0]: %p; \n", &map, &(map.nodes), &(map.nodes[0]));
-    for(int i=0;i<map.cnt;i++) {
-        printf("%s:%s\n", map.nodes[i].key, map.nodes[i].value);
-    }
+    todo: should probably test for key being already present in map 
+    */
+    
+    char binary_str[17];
+    int_to_binary_str(num, binary_str);
+    
+    add_key(symbolTable, key, binary_str);
 }
 
 
-void add_key(struct Map* map, char* key, char* value) {
-    if(map->cnt == map->size) { 
-        printf("Exceeded number of elements in map \n");
+void resolve_var(struct Map* symbolTable, char* var, char* binary_str) {
+    /* resolve variable from symbol table
+    Check for variable in symbol table and return address in binary_str
+    If variable is not present, then allocate memory space in Ram, starting address 16
+    and return address in binary_str
+    */
+    
+    if(get_value(symbolTable, var, binary_str))
         return;
+    
+    extern int curr_address;
+    add_numeric_value(symbolTable, var, curr_address);
+    int_to_binary_str(curr_address, binary_str);
+    curr_address++;
+}
+
+
+void add_label(struct Map* symbolTable, char* label, int address) {
+    /* Add label = (Symbol) to symbol table
+    We need to remove closing brackets from label for the key
+    No changes with address (address refers to ROM address where instruction is stored)
+    */
+
+    char key[128];
+    copy_str(key, &label[1]); // copy string after '('
+    
+    int i = 0;
+    while(key[i] != ')')
+        i++;
+    
+    key[i] = '\0';
+    
+    add_numeric_value(symbolTable, key, address);
+}
+
+
+void ram_key(int num, char* key) {
+    // we already know that num ranges from 0-15 and simply populate key
+
+    key[0] = 'R';
+    if(num<10) {
+        key[1] = '0' + num;
+        key[2] = '\0';
+    } else {
+        key[1] = '1';
+        key[2] = '0' + num%10;
+        key[3] = '\0';
     }
-    
-    //printf("&map: %p; &nodes: %p; &nodes[0]: %p; \n", map, (map->nodes), &(map->nodes[0])); 
-    copy_str(map->nodes[map->cnt].key, key);
-    copy_str(map->nodes[map->cnt].value, value);
-    map->cnt = map->cnt + 1;
 }
 
 
-int get_value(struct Map* map, char* key, char* value) {
-    //map and key are given arguments, result is stored in value
-    //returns True if result is found in dict, else False
-    //O(n) solution to being with, this function can be improved independently
-    
-    struct Node node;
-    for(int i=0;i<map->cnt;i++) {
-        node = map->nodes[i];
-        if(compare_str(key, node.key)) {
-            copy_str(value, node.value);
-            return True;
-        }
+void add_ram(struct Map* symbolTable) {
+    // Add R0-R15 to symbol table
+
+    char key[4];
+
+    for(int i=0;i<16;i++) {
+        ram_key(i, key);
+        add_numeric_value(symbolTable, key, i);
     }
+}
+
+
+struct Map* new_symbol_table() {
+    /* Allocate space for new table to be used as symbol table
+    We pre-populate symbol table with pre-defined symbols
+    Can make it dynamic to use optimum space, but starting with static 1024 elements in map
+    */
+
+    struct Map* symbolTable = new_map(1024);
     
-    return False;
+    // special symbols
+    add_numeric_value(symbolTable, "SP", 0);
+    add_numeric_value(symbolTable, "LCL", 1);
+    add_numeric_value(symbolTable, "ARG", 2);
+    add_numeric_value(symbolTable, "THIS", 3);
+    add_numeric_value(symbolTable, "THAT", 4);
+
+    // R0-R15
+    add_ram(symbolTable);
+
+    // Screen and Keyboard
+    add_numeric_value(symbolTable, "SCREEN", 16384);
+    add_numeric_value(symbolTable, "KBD", 24576);
+
+    return symbolTable;
 }
-
-#if 0
-
-int main() {
-    struct Map* map = new_map(5);
-    char s1[] = "Hellow";
-    char s2[] = "tableau";
-    add_key(map, s1, s2);
-    add_key(map, s2, s1);
-    print_map(*map);
-    char value[16];
-    int v = get_value(map, s2, value);
-    printf("v=%d\n", v);
-    printf("value=%s\n", value);
-    int v2 = get_value(map, "N", value);
-    printf("v2=%d\n", v2);
-    delete_map(map);
-}
-
-#endif
-

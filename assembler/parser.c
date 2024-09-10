@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "cstring.h"
+#include "map.h"
 #include "symbol_table.h"
 #include "binary.h"
 
@@ -173,39 +174,48 @@ void parse_jump_operation(char* inst, int* binary) {
 }
 
 
-void parse_c_instruction(char* inst, int* binary) {
+void parse_c_instruction(char* inst, char* binary_str) {
     /* c-instruction has structure of 1 1 1 a | c1 c2 c3 c4 | c5 c6 d1 d2 | d3 j1 j2 j3
     a ... c6 are bits used in ALU, and defines computation on values stored in A, D and M register
     d1, d2, d3 specify where result of computation has to be stored, if any
     j1, j2, j3 control jump operations
     */
     
+    int binary[16];
     binary[15] = binary[14] = binary[13] = 1;
     
     parse_alu_operation(inst, binary);
     parse_storage_operation(inst, binary);
     parse_jump_operation(inst, binary);
+
+    binary_to_str(binary, binary_str);
 }
 
 
-void parse_a_instruction(char* inst, int* binary) {
-    // parsing a-instruction of type @address
-    // address is a numeric string, so first converting it to int, and then integer to 16-bit binary
-    // 16-bit works as it is because in a-instruction, first binary digit is 0
+void parse_a_instruction(char* inst, char* binary_str, struct Map* symbolTable) {
+    /* parsing a-instruction of type @address
+    if address is a numeric string, so first converting it to int, and then integer to 16-bit binary,
+    and storing it in 16-bit binary string
+    16-bit works here since first binary digit is 0 in a-instruction
 
-    int number = atoi(&inst[1]);
-    int_to_binary(number, binary);
-}
-
-
-void parse_instruction(char* inst, int inst_number, int* binary) {
-    if(inst[0] == '@')
-        parse_a_instruction(inst, binary);
-    else
-        parse_c_instruction(inst, binary);
+    if address is a variable, we resolve it from symbol table instead
+    */
     
-    //printf("%s: ", inst);
-    //print_binary(binary);
+    int p = inst[1] - '0';
+    if(p>=0 && p<=9) {
+        int address = atoi(&inst[1]);
+        int_to_binary_str(address, binary_str);
+
+    } else
+        resolve_var(symbolTable, &inst[1], binary_str);
+}
+
+
+void parse_instruction(char* inst, int inst_number, char* binary_str, struct Map* symbolTable) {
+    if(inst[0] == '@')
+        parse_a_instruction(inst, binary_str, symbolTable);
+    else
+        parse_c_instruction(inst, binary_str);
 }
 
 

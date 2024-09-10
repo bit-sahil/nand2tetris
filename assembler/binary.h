@@ -9,5 +9,7 @@ void print_binary(int* binary);
 
 void binary_to_str(int* binary, char* binary_str);
 
+void int_to_binary_str(int num, char* binary_str);
+
 #endif
 
