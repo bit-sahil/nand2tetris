@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include "cstring.h"
 #include "symbol_table.h"
+#include "binary.h"
 
 
 void populate_alu_op(struct Map* ALU_OP) {
@@ -166,7 +167,7 @@ void parse_jump_operation(char* inst, int* binary) {
         binary[0] = binary[2] = 1;
     } else if(compare_str(addr, "JLE")) {
         binary[1] = binary[2] = 1;
-    } else if(compare_str(addr, "JGT")) {
+    } else if(compare_str(addr, "JMP")) {
         binary[0] = binary[1] = binary[2] = 1;
     }
 }
@@ -187,22 +188,6 @@ void parse_c_instruction(char* inst, int* binary) {
 }
 
 
-void int_to_binary(int num, int* binary) {
-    for(int i=0;i<16;i++) {
-        binary[i] = num%2;
-        num = num/2;
-    }
-}
-
-
-void print_binary(int* binary) {
-    for(int i=15;i>=0;i--) {
-        printf("%d", binary[i]);
-    }
-    printf("\n");
-}
-
-
 void parse_a_instruction(char* inst, int* binary) {
     // parsing a-instruction of type @address
     // address is a numeric string, so first converting it to int, and then integer to 16-bit binary
@@ -213,23 +198,24 @@ void parse_a_instruction(char* inst, int* binary) {
 }
 
 
-void parse_instruction(char* inst, int inst_number) {
-    int binary[16]; // cast it in char later
-
+void parse_instruction(char* inst, int inst_number, int* binary) {
     if(inst[0] == '@')
         parse_a_instruction(inst, binary);
     else
         parse_c_instruction(inst, binary);
     
-    printf("%s: ", inst);
-    print_binary(binary);
+    //printf("%s: ", inst);
+    //print_binary(binary);
 }
 
 
+#if 0
 int main(){
-    parse_instruction("@7", 0);
-    parse_instruction("DA=D+1", 1);
-    parse_instruction("M;JGE", 2);
+    int binary[16]; // cast it in char later
+    
+    parse_instruction("@7", 0, binary);
+    parse_instruction("DA=D+1", 1, binary);
+    parse_instruction("M;JGE", 2, binary);
     return 0;
 }
-
+#endif

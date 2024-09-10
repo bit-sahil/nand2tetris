@@ -15,5 +15,9 @@ void copy_str(char* dest, char* src);
 
 int search_char(char* str, char c);
 
+int find_substr(char* original, char* sub);
+
+void replace_substr_end(char* original, char* replacement, int idx);
+
 #endif
 

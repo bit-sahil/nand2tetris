@@ -3,7 +3,7 @@
 #define PARSER_H
 
 
-void parse_instruction(char* inst, int line_number);
+void parse_instruction(char* inst, int line_number, int* binary);
 
 #endif
 

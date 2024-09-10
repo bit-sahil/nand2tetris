@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include "cstring.h"
 #include "parser.h"
+#include "binary.h"
 
 
 /* 
@@ -81,6 +82,15 @@ void line_without_space(char* line, char* cleaned_line) {
 }
 
 
+void get_hack_file_name(char* file_name, char* hack_file_name) {
+    // replace .asm with .hack and store value in hack_file_name
+    
+    copy_str(hack_file_name, file_name);
+    int idx = find_substr(hack_file_name, ".asm");
+    replace_substr_end(hack_file_name, ".hack", idx);
+}
+
+
 void read_file_and_process_instructions(char* file_name) {
     /* This function opens a file, and process it's line one by one, ignoring comments and whitespaces
     Then we want line numbers (as addresses of given instruction, for jump instruction to be functional, and that's what we do
@@ -93,23 +103,41 @@ void read_file_and_process_instructions(char* file_name) {
     */
     
     FILE *asmFile = fopen(file_name, "r"); //.asm file
+    
+    char hack_file_name[128];
+    get_hack_file_name(file_name, hack_file_name);
+    FILE *hackFile = fopen(hack_file_name, "w"); //.hack file created in same path as .asm file
 
     char line[MAX_LINE_SIZE] = {0};
     char cleaned_line[MAX_LINE_SIZE] = {0};
     int current_line_number = -1;
     int is_instruction = 0;
 
+    int binary[16];
+    char binary_line[17]; //stores binary instruction in string format
+
     while(fgets(line, MAX_LINE_SIZE, asmFile)) {
         line_without_space(line, cleaned_line);
         // printf("ORIGINAL: %s", line);
-        is_instruction = print_instruction_with_line_number(cleaned_line, &current_line_number, 1);
+        is_instruction = print_instruction_with_line_number(cleaned_line, &current_line_number, 0);
+        
+        if(is_instruction) {
+            parse_instruction(cleaned_line, current_line_number, binary);
+            binary_to_str(binary, binary_line);
+            //printf("Instruction: %s ; Binary: %s \n", cleaned_line, binary_line);
+            fputs(binary_line, hackFile);
+            fputs("\n", hackFile);
+        }
     }
     fclose(asmFile);
+    fclose(hackFile);
 }
 
 
 int main(){
-    read_file_and_process_instructions("Add.asm");
+    char file_name[128];
+    scanf("%s", file_name); //read input from prompt in terminal
+    read_file_and_process_instructions(file_name);
     return 0;
 }
 
