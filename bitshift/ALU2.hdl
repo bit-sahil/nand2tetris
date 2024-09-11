@@ -1,0 +1,84 @@
+/**
+ * ALU (Arithmetic Logic Unit):
+ * Computes out = one of the following functions:
+ *                0, 1, -1,
+ *                x, y, !x, !y, -x, -y,
+ *                x + 1, y + 1, x - 1, y - 1,
+ *                x + y, x - y, y - x,
+ *                x & y, x | y
+ * on the 16-bit inputs x, y,
+ * according to the input bits zx, nx, zy, ny, f, no.
+ * In addition, computes the two output bits:
+ * if (out == 0) zr = 1, else zr = 0
+ * if (out < 0)  ng = 1, else ng = 0
+ */
+
+
+// We want to improve this ALU with bit shifting capability
+// Also, do this without hindering existing ALU operations as well as hack assembly language (and assembler)
+// For existing instruction set, this ALU should work as it is, but still be able to do bit-shifts
+// For bit-shifting we use two unused instruction in c-instruction, namely 14th and 15th bit
+// Currently, those instructions are both 1, so we use one of those to specify mode, mode 1 for existing ALU ops
+// and another to specify direction in bit-shifting to be used only when we're in bit-shifting mode, namely mode 0
+// To keep things simple, we just work with x input in this case and ignore all input symbols: zx, nx, zy, ny, f and no
+// x input in our CPU is D register and we could very well make these changes directly in cpu
+// but ideally, it seems to a job of Arithmetic Logic Unit to be able to do shift bit operation so here it goes
+//
+// Implementation uses existing ALU chip as well as Bitshift
+// We let both chips work (as in most combinatorial logic circuits) and let mode bit choose the output using a mux
+// We can very well use ov as a new output from ALU, and let zr and ng be, but for bitshift output also we'd like to know
+// whether output is zero or not
+// And these would again be used by jump instructions irrespective of where output came from, we need to update these wrt 
+// output of bitshift
+// We also cannot use overflow bit as ng, again for jump instructions, and would have to introduce another output
+// We can very well skip ov as a design decision, but better to have it in ALU and let CPU choose to not use this output
+//
+// There is an option though, to constraint jump instructions only to ALU ops in hack language, but slight hidden complication
+// in basic components could make assembly language richer and is worth taking it up
+// It also reduces cpu cycles, cos otherwise we'd have to bitshift in one clock cycle and jump based off it's result in next one
+//
+// Also looks like we could've used y input for number of bit shift we want, with another component which decrement y by 1..
+// but seems too complicated at this point for no good reason
+
+
+CHIP ALU2 {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute (out = x + y) or (out = x & y)?
+        no, // negate the out output?
+        m, // mode = 1 for ALU, mode = 0 for bitshift
+        d; // direction of bitshift, d=0 for left shift, d=1 for right shift
+    OUT 
+        out[16], // 16-bit output
+        zr,      // if (out == 0) equals 1, else 0
+        ng,      // if (out < 0)  equals 1, else 0
+        ov;     // if there's an overflow during left bit-shift operation, otherwise irrelevant
+
+ 
+    PARTS:
+
+    ALU(x=x, y=y, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=aluOut, zr=aluZr, ng=aluNg);
+    Bitshift(in=x, dir=d, out=bitOut, ov=ov, out[15]=out15, out[0..7]=lowBits, out[8..15]=highBits );
+    
+    // whether bitshift output is neg or zero
+    // this duplicates the logic in ALU, and in real chips we'd take output first and then apply that logic
+    // but for simplicity, this is okay to do knowing that we can always optimize our chip
+
+    // bitZr=1 for out=0
+    Or8Way(in=lowBits , out=firstOr );
+    Or8Way(in=highBits , out=secondOr );
+    Or(a=firstOr , b=secondOr , out=zrInv );
+    Not(in=zrInv , out=bitZr );
+
+    // bitNg for out[15] == 1
+    Mux(a=false , b=true , sel=out15 , out=bitNg );
+
+    // Choose between ALU and bitshift
+    Mux16(a=bitOut, b=aluOut, sel=m, out=out);
+    Mux(a=bitZr, b=aluZr, sel=m, out=zr);
+    Mux(a=bitNg, b=aluNg, sel=m, out=ng);
+}
