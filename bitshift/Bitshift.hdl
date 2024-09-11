@@ -1,0 +1,38 @@
+// Chip for efficient Bitshift operations
+// For simplicity, we do a single bitshift at a time
+// Input contains a 16-bit binary word, to be left or right shifted
+// dir=1 is right shift, dir=0 is left shift
+// For right shift we simply ignore falling off bits
+// For left shift, signal falling off bit
+// Might have to take actions based on whether it's unsigned or signed int, but that's for later
+
+
+CHIP Bitshift {
+    IN in[16], dir;
+    OUT out[16], ov;
+
+    PARTS:
+    // if dir=0 (left shift), first bit is always 0 and rest are in[i-1]
+    // if dir=1 (right shift), first bit of input is ignored and we start with i[1] 
+    // in this case, most significant bit becomes 0
+    Mux(a=false, b=in[1], sel=dir, out=out[0]);
+    Mux(a=in[0], b=in[2], sel=dir, out=out[1]);
+    Mux(a=in[1], b=in[3], sel=dir, out=out[2]);
+    Mux(a=in[2], b=in[4], sel=dir, out=out[3]);
+    Mux(a=in[3], b=in[5], sel=dir, out=out[4]);
+    Mux(a=in[4], b=in[6], sel=dir, out=out[5]);
+    Mux(a=in[5], b=in[7], sel=dir, out=out[6]);
+    Mux(a=in[6], b=in[8], sel=dir, out=out[7]);
+    Mux(a=in[7], b=in[9], sel=dir, out=out[8]);
+    Mux(a=in[8], b=in[10], sel=dir, out=out[9]);
+    Mux(a=in[9], b=in[11], sel=dir, out=out[10]);
+    Mux(a=in[10], b=in[12], sel=dir, out=out[11]);
+    Mux(a=in[11], b=in[13], sel=dir, out=out[12]);
+    Mux(a=in[12], b=in[14], sel=dir, out=out[13]);
+    Mux(a=in[13], b=in[15], sel=dir, out=out[14]);
+    Mux(a=in[14], b=false, sel=dir, out=out[15]);
+
+    // ov = !dir (dir=0 for left shift) && in[15] (most significant bit)
+    Not(in=dir, out=invDir);
+    And(a=invDir, b=in[15], out=ov);
+}
