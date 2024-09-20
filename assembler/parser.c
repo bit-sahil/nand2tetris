@@ -211,7 +211,7 @@ void parse_a_instruction(char* inst, char* binary_str, struct Map* symbolTable) 
 }
 
 
-void parse_instruction(char* inst, int inst_number, char* binary_str, struct Map* symbolTable) {
+void parse_instruction(char* inst, char* binary_str, struct Map* symbolTable) {
     if(inst[0] == '@')
         parse_a_instruction(inst, binary_str, symbolTable);
     else

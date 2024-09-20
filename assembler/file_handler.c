@@ -23,6 +23,8 @@ so perhaps not too bad
 #define Empty 0
 #define Label 1
 #define Machine 2
+#define PUSH 3
+#define POP 4
 
 
 int instruction_type_with_line_number(char* line, int* current_line_number, int print) {
@@ -37,6 +39,22 @@ int instruction_type_with_line_number(char* line, int* current_line_number, int 
     
     if(line[0] == '(')
         return Label;
+
+    if(compare_str(line, "PUSH")) {
+        // this is instruction to push value stored in D register to stack
+        // and we take 5 instructions to replace PUSH statement with
+        // after push statement we should first update A and D register, and only then start using them
+        *current_line_number = *current_line_number + 5;
+        return PUSH;
+    }
+
+    if(compare_str(line, "POP")) {
+        // this instruction is used to pop value from stack and store it in D register
+        // we take 4 instructions to do this
+        // after pop, we can start using D register, but A needs updation before we're able to use A
+        *current_line_number = *current_line_number + 4;
+        return POP;
+    }
 
     *current_line_number = *current_line_number + 1;
 
@@ -125,6 +143,17 @@ void populate_labels_from_file(char* file_name, struct Map* symbolTable) {
 }
 
 
+void parse_and_add_to_file(char* inst, struct Map* symbolTable, FILE* hackFile) {
+    char binary_str[17];
+
+    parse_instruction(inst, binary_str, symbolTable);
+    //printf("Instruction: %s ; Binary: %s \n", inst, binary_str);
+    //printf("%s\n", binary_str);
+    fputs(binary_str, hackFile);
+    fputs("\n", hackFile);
+}
+
+
 void read_file_and_generate_machine_code(char* file_name, struct Map* symbolTable) {
     /* This function opens a file, and process it's line one by one, ignoring comments and whitespaces
     Then we want line numbers (as addresses of given instruction, for jump instruction to be functional, and that's what we do
@@ -153,12 +182,23 @@ void read_file_and_generate_machine_code(char* file_name, struct Map* symbolTabl
         
         // printf("MC: %d: %s : %d\n", current_line_number, cleaned_line, iType);
         if(iType == Machine) {
-            parse_instruction(cleaned_line, current_line_number, binary_str, symbolTable);
-            //printf("Instruction: %s ; Binary: %s \n", cleaned_line, binary_str);
-            //printf("%s\n", binary_str);
-            fputs(binary_str, hackFile);
-            fputs("\n", hackFile);
+            parse_and_add_to_file(cleaned_line, symbolTable, hackFile);
+        } else if (iType == PUSH) {
+            // replace with 5 assembly language instructions
+            // that is, assuming we have initialized SPC
+            parse_and_add_to_file("@SPC", symbolTable, hackFile);
+            parse_and_add_to_file("A=M", symbolTable, hackFile);
+            parse_and_add_to_file("M=D", symbolTable, hackFile);
+            parse_and_add_to_file("@SPC", symbolTable, hackFile);
+            parse_and_add_to_file("M=M-1", symbolTable, hackFile);
+        } else if (iType == POP) {
+            // replace with 4 assembly language pop instructions
+            parse_and_add_to_file("@SPC", symbolTable, hackFile);
+            parse_and_add_to_file("M=M+1", symbolTable, hackFile);
+            parse_and_add_to_file("A=M", symbolTable, hackFile);
+            parse_and_add_to_file("D=M", symbolTable, hackFile);
         }
+        
     }
     fclose(asmFile);
     fclose(hackFile);

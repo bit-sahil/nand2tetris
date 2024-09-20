@@ -99,6 +99,7 @@ struct Map* new_symbol_table() {
     add_numeric_value(symbolTable, "ARG", 2);
     add_numeric_value(symbolTable, "THIS", 3);
     add_numeric_value(symbolTable, "THAT", 4);
+    // add_numeric_value(symbolTable, "SPC", 16383); // Initializing Stack Pointer Custom would be ideal, but then cpu emulator is not going to function properly
 
     // R0-R15
     add_ram(symbolTable);
