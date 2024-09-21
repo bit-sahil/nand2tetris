@@ -183,20 +183,6 @@ void read_file_and_generate_machine_code(char* file_name, struct Map* symbolTabl
         // printf("MC: %d: %s : %d\n", current_line_number, cleaned_line, iType);
         if(iType == Machine) {
             parse_and_add_to_file(cleaned_line, symbolTable, hackFile);
-        } else if (iType == PUSH) {
-            // replace with 5 assembly language instructions
-            // that is, assuming we have initialized SPC
-            parse_and_add_to_file("@SPC", symbolTable, hackFile);
-            parse_and_add_to_file("A=M", symbolTable, hackFile);
-            parse_and_add_to_file("M=D", symbolTable, hackFile);
-            parse_and_add_to_file("@SPC", symbolTable, hackFile);
-            parse_and_add_to_file("M=M-1", symbolTable, hackFile);
-        } else if (iType == POP) {
-            // replace with 4 assembly language pop instructions
-            parse_and_add_to_file("@SPC", symbolTable, hackFile);
-            parse_and_add_to_file("M=M+1", symbolTable, hackFile);
-            parse_and_add_to_file("A=M", symbolTable, hackFile);
-            parse_and_add_to_file("D=M", symbolTable, hackFile);
         }
         
     }
@@ -283,6 +269,10 @@ void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
     int idx;
     char line[MAX_LINE_SIZE] = {0};
 
+    char cleaned_line[MAX_LINE_SIZE] = {0};
+    int current_line_number = -1;
+    int iType = 0;
+
     while(fgets(line, MAX_LINE_SIZE, currFile)) {
         // printf("line: %s\n", line);
 
@@ -301,6 +291,31 @@ void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
             compile(inc_file_name, cFile, dir_path, fMap);
 
             continue;  // don't add include line to file
+        }
+
+        line_without_space(line, cleaned_line);
+        // printf("ORIGINAL: %s; Cleaned: %s\n", line, cleaned_line);
+        iType = instruction_type_with_line_number(cleaned_line, &current_line_number, 0);
+
+        if (iType == PUSH) {
+            // replace with 5 assembly language instructions
+            // that is, assuming we have initialized SPC already
+            fputs("@SPC  //PUSH \n", cFile);
+            fputs("A=M  //PUSH \n", cFile);
+            fputs("M=D  //PUSH \n", cFile);
+            fputs("@SPC  //PUSH \n", cFile);
+            fputs("M=M-1  //PUSH \n", cFile);
+
+            continue;
+
+        } else if (iType == POP) {
+            // replace with 4 assembly language pop instructions
+            fputs("@SPC  //POP \n", cFile);
+            fputs("M=M+1  //POP \n", cFile);
+            fputs("A=M  //POP \n", cFile);
+            fputs("D=M  //POP \n", cFile);
+
+            continue;
         }
 
         // it's an instruction line to be copied over as it is
