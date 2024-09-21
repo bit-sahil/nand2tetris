@@ -300,20 +300,20 @@ void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
         if (iType == PUSH) {
             // replace with 5 assembly language instructions
             // that is, assuming we have initialized SPC already
-            fputs("@SPC  //PUSH \n", cFile);
-            fputs("A=M  //PUSH \n", cFile);
-            fputs("M=D  //PUSH \n", cFile);
-            fputs("@SPC  //PUSH \n", cFile);
-            fputs("M=M-1  //PUSH \n", cFile);
+            fputs("\t@SPC  //PUSH \n", cFile);
+            fputs("\tA=M  //PUSH \n", cFile);
+            fputs("\tM=D  //PUSH \n", cFile);
+            fputs("\t@SPC  //PUSH \n", cFile);
+            fputs("\tM=M-1  //PUSH \n", cFile);
 
             continue;
 
         } else if (iType == POP) {
             // replace with 4 assembly language pop instructions
-            fputs("@SPC  //POP \n", cFile);
-            fputs("M=M+1  //POP \n", cFile);
-            fputs("A=M  //POP \n", cFile);
-            fputs("D=M  //POP \n", cFile);
+            fputs("\t@SPC  //POP \n", cFile);
+            fputs("\tM=M+1  //POP \n", cFile);
+            fputs("\tA=M  //POP \n", cFile);
+            fputs("\tD=M  //POP \n", cFile);
 
             continue;
         }

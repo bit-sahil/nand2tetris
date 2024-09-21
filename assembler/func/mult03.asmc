@@ -21,17 +21,17 @@
     // Multiplies MF0 and MF1 and stores the result in MF2
     // caller functions will have to set MF0 and MF1
 
-    // initialize M1 and M0 from stack
-@SPC  //POP 
-M=M+1  //POP 
-A=M  //POP 
-D=M  //POP 
+    // initialize MF1 and MF0 from stack
+	@SPC  //POP 
+	M=M+1  //POP 
+	A=M  //POP 
+	D=M  //POP 
     @MF1
     M=D
-@SPC  //POP 
-M=M+1  //POP 
-A=M  //POP 
-D=M  //POP 
+	@SPC  //POP 
+	M=M+1  //POP 
+	A=M  //POP 
+	D=M  //POP 
     @MF0
     M=D
 
@@ -113,10 +113,10 @@ D=M  //POP
 
     // Jump to where function was called from using stack pointer
     // This is assuming that there is no overflow in SPC
-@SPC  //POP 
-M=M+1  //POP 
-A=M  //POP 
-D=M  //POP 
+	@SPC  //POP 
+	M=M+1  //POP 
+	A=M  //POP 
+	D=M  //POP 
     A=D
     0;JMP  // jump to current address
 
@@ -132,26 +132,26 @@ D=M  //POP
     // 1st caller stores exit address (users are to write code in this way)
     @c1EndAddress
     D=A
-@SPC  //PUSH 
-A=M  //PUSH 
-M=D  //PUSH 
-@SPC  //PUSH 
-M=M-1  //PUSH 
+	@SPC  //PUSH 
+	A=M  //PUSH 
+	M=D  //PUSH 
+	@SPC  //PUSH 
+	M=M-1  //PUSH 
     // set variables required for the job
     @5
     D=A
-@SPC  //PUSH 
-A=M  //PUSH 
-M=D  //PUSH 
-@SPC  //PUSH 
-M=M-1  //PUSH 
+	@SPC  //PUSH 
+	A=M  //PUSH 
+	M=D  //PUSH 
+	@SPC  //PUSH 
+	M=M-1  //PUSH 
     @7
     D=A
-@SPC  //PUSH 
-A=M  //PUSH 
-M=D  //PUSH 
-@SPC  //PUSH 
-M=M-1  //PUSH 
+	@SPC  //PUSH 
+	A=M  //PUSH 
+	M=D  //PUSH 
+	@SPC  //PUSH 
+	M=M-1  //PUSH 
     @MF
     0;JMP
 (c1EndAddress)
@@ -165,26 +165,26 @@ M=M-1  //PUSH
     // 2nd caller stores exit address 
     @c2EndAddress
     D=A
-@SPC  //PUSH 
-A=M  //PUSH 
-M=D  //PUSH 
-@SPC  //PUSH 
-M=M-1  //PUSH 
+	@SPC  //PUSH 
+	A=M  //PUSH 
+	M=D  //PUSH 
+	@SPC  //PUSH 
+	M=M-1  //PUSH 
     // set variables required for the job
     @11
     D=A
-@SPC  //PUSH 
-A=M  //PUSH 
-M=D  //PUSH 
-@SPC  //PUSH 
-M=M-1  //PUSH 
+	@SPC  //PUSH 
+	A=M  //PUSH 
+	M=D  //PUSH 
+	@SPC  //PUSH 
+	M=M-1  //PUSH 
     @32
     D=A
-@SPC  //PUSH 
-A=M  //PUSH 
-M=D  //PUSH 
-@SPC  //PUSH 
-M=M-1  //PUSH 
+	@SPC  //PUSH 
+	A=M  //PUSH 
+	M=D  //PUSH 
+	@SPC  //PUSH 
+	M=M-1  //PUSH 
     @MF
     0;JMP
 (c2EndAddress)

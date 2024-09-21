@@ -12,7 +12,7 @@
     // Multiplies MF0 and MF1 and stores the result in MF2
     // caller functions will have to set MF0 and MF1
 
-    // initialize M1 and M0 from stack
+    // initialize MF1 and MF0 from stack
     POP
     @MF1
     M=D
