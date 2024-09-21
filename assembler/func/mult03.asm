@@ -13,10 +13,10 @@
     // caller functions will have to set MF0 and MF1
 
     // initialize MF1 and MF0 from stack
-    POP
+    %POP
     @MF1
     M=D
-    POP
+    %POP
     @MF0
     M=D
 
@@ -96,11 +96,8 @@
 
 (ENDLoop)
 
-    // Jump to where function was called from using stack pointer
-    // This is assuming that there is no overflow in SPC
-    POP
-    A=D
-    0;JMP  // jump to current address
+    // Return statement 
+    %RET
 
     // this is where control should come to, if function is not called
 (MFEnd) 
@@ -114,14 +111,14 @@
     // 1st caller stores exit address (users are to write code in this way)
     @c1EndAddress
     D=A
-    PUSH
+    %PUSH
     // set variables required for the job
     @5
     D=A
-    PUSH
+    %PUSH
     @7
     D=A
-    PUSH
+    %PUSH
     @MF
     0;JMP
 (c1EndAddress)
@@ -135,14 +132,14 @@
     // 2nd caller stores exit address 
     @c2EndAddress
     D=A
-    PUSH
+    %PUSH
     // set variables required for the job
     @11
     D=A
-    PUSH
+    %PUSH
     @32
     D=A
-    PUSH
+    %PUSH
     @MF
     0;JMP
 (c2EndAddress)

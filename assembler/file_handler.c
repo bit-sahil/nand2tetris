@@ -23,8 +23,7 @@ so perhaps not too bad
 #define Empty 0
 #define Label 1
 #define Machine 2
-#define PUSH 3
-#define POP 4
+#define Macro 3
 
 
 int instruction_type_with_line_number(char* line, int* current_line_number, int print) {
@@ -40,20 +39,10 @@ int instruction_type_with_line_number(char* line, int* current_line_number, int 
     if(line[0] == '(')
         return Label;
 
-    if(compare_str(line, "PUSH")) {
-        // this is instruction to push value stored in D register to stack
-        // and we take 5 instructions to replace PUSH statement with
-        // after push statement we should first update A and D register, and only then start using them
-        *current_line_number = *current_line_number + 5;
-        return PUSH;
-    }
 
-    if(compare_str(line, "POP")) {
-        // this instruction is used to pop value from stack and store it in D register
-        // we take 4 instructions to do this
-        // after pop, we can start using D register, but A needs updation before we're able to use A
-        *current_line_number = *current_line_number + 4;
-        return POP;
+    if(line[0] == '%') {
+        //this is a macro
+        return Macro;
     }
 
     *current_line_number = *current_line_number + 1;
@@ -244,6 +233,44 @@ void get_c_file_name(char* file_name, char* c_file_name) {
 }
 
 
+void replace_with_macro(char* macro, FILE* cFile) {
+    /* look for macro in macros/ directory
+    copy instructions to cFile (after leaving a space maybe? -- not required it seems)
+    if there's a macro present in file, then replace it with code of that macro (recursively call this function)
+    
+    To simplify, again we assume no cycles
+    */
+
+    char macro_file[128] = "macros/";
+    replace_substr_end(macro_file, macro, -1);
+    replace_substr_end(macro_file, ".m", -1);
+
+    FILE* macroFile = fopen(macro_file, "r");
+    
+    char line[MAX_LINE_SIZE] = {0};
+    char cleaned_line[MAX_LINE_SIZE] = {0};
+    int current_line_number = -1;
+    int iType = 0;
+
+    while(fgets(line, MAX_LINE_SIZE, macroFile)) {
+        line_without_space(line, cleaned_line);
+        // printf("ORIGINAL: %s; Cleaned: %s\n", line, cleaned_line);
+        iType = instruction_type_with_line_number(cleaned_line, &current_line_number, 0);
+
+        if (iType == Macro) {
+            // replace recursively with macro instructions
+            replace_with_macro(&cleaned_line[1], cFile);
+            continue;
+        }
+
+        // write instruction in cFile as it is
+        fputs(line, cFile);
+    }
+
+    fclose(macroFile);
+}
+
+
 void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
     /* This function opens file_name and starts reading it's contents to write relevant instructions in cFile
     If there's an include statement, that means we need to add contents of included file first in cFile
@@ -256,6 +283,8 @@ void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
     reached another file while including child files, or whether we're fully done compiling this file
     To begin with, we'd not handle circular dependencies and just work with whether key is present in map
     */
+
+    fputs("\n", cFile);  // leaving a space for readability
 
     char* value = "1";  // just a random value
     if(get_value(fMap, file_name, value)) return;  // file already present in map
@@ -297,24 +326,9 @@ void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
         // printf("ORIGINAL: %s; Cleaned: %s\n", line, cleaned_line);
         iType = instruction_type_with_line_number(cleaned_line, &current_line_number, 0);
 
-        if (iType == PUSH) {
-            // replace with 5 assembly language instructions
-            // that is, assuming we have initialized SPC already
-            fputs("\t@SPC  //PUSH \n", cFile);
-            fputs("\tA=M  //PUSH \n", cFile);
-            fputs("\tM=D  //PUSH \n", cFile);
-            fputs("\t@SPC  //PUSH \n", cFile);
-            fputs("\tM=M-1  //PUSH \n", cFile);
-
-            continue;
-
-        } else if (iType == POP) {
-            // replace with 4 assembly language pop instructions
-            fputs("\t@SPC  //POP \n", cFile);
-            fputs("\tM=M+1  //POP \n", cFile);
-            fputs("\tA=M  //POP \n", cFile);
-            fputs("\tD=M  //POP \n", cFile);
-
+        if (iType == Macro) {
+            // replace with instructions present in macro file
+            replace_with_macro(&cleaned_line[1], cFile);
             continue;
         }
 
@@ -322,10 +336,8 @@ void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
         fputs(line, cFile);
     }
 
+    fputs("\n", cFile);  // leaving a space for readability
     fclose(currFile);
-
-    // file is written, good idea to leave a couple of lines for readability
-    fputs("\n\n", cFile);
 }
  
 
