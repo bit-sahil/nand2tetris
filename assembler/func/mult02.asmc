@@ -1,6 +1,3 @@
-// Let's try using stack instead
-// and see how functions could be called recursively
-
     // initialize stack pointer here
     // we have 16-bit, 16K computer, => 16384 addresses in total
     // start in the end of Ram for stack, @16383
@@ -9,6 +6,12 @@
     @SPC
     M=D
 
+
+
+
+
+// Let's try using stack instead
+// and see how functions could be called recursively
 
     // skip if function is not called (just the declaration here)
     @MFEnd
@@ -157,6 +160,8 @@
 (END)
     @END
     0;JMP
+
+
 
 
 

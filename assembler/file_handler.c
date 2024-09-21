@@ -108,7 +108,7 @@ void line_without_space(char* line, char* cleaned_line) {
 
 
 void get_hack_file_name(char* file_name, char* hack_file_name) {
-    // replace .asm with .hack and store value in hack_file_name
+    // replace .asm or .asmc with .hack and store value in hack_file_name
     
     copy_str(hack_file_name, file_name);
     int idx = find_substr(hack_file_name, ".asm");
@@ -123,7 +123,7 @@ void populate_labels_from_file(char* file_name, struct Map* symbolTable) {
     But we're behind the address where we need to jump by 1, so add 1 in current line number before adding label in symbol table
     */
 
-    FILE *asmFile = fopen(file_name, "r"); //.asm file
+    FILE *asmFile = fopen(file_name, "r"); //.asm or .asmc file
     
     char line[MAX_LINE_SIZE] = {0};
     char cleaned_line[MAX_LINE_SIZE] = {0};
@@ -162,7 +162,7 @@ void read_file_and_generate_machine_code(char* file_name, struct Map* symbolTabl
     Machine code output is written in a newly created .hack file with same path and name as .asm file
     */
 
-    FILE *asmFile = fopen(file_name, "r"); //.asm file
+    FILE *asmFile = fopen(file_name, "r"); //.asm or .asmc file
     
     char hack_file_name[128];
     get_hack_file_name(file_name, hack_file_name);
@@ -227,10 +227,133 @@ void read_file_and_process_instructions(char* file_name) {
 }
 
 
+void get_dir_path(char* file_name, char* dir_path) {
+    // find last '/' in file_name and remove off everything after it
+    
+    copy_str(dir_path, file_name);
+
+    int idx = -1, last_idx = 0;
+    while(1) {
+        idx = search_char(&dir_path[last_idx], '/');
+        // printf("%d, file_name: %s\n", idx, file_name);
+        if(idx == -1) break;
+        last_idx = idx;
+    }
+
+    if(last_idx == 0) {
+        // not found
+        last_idx = -1;  // start from 0th index
+    }
+
+    // string from 0 to last_idx is the substring
+    // terminate string after last '/' index
+    replace_substr_end(dir_path, "\0", last_idx+1);
+}
+    
+
+void get_c_file_name(char* file_name, char* c_file_name) {
+    // asmc file
+    copy_str(c_file_name, file_name);
+    replace_substr_end(c_file_name, "c", -1);
+}
+
+
+void compile(char* file_name, FILE* cFile, char* dir_path, struct Map* fMap) {
+    /* This function opens file_name and starts reading it's contents to write relevant instructions in cFile
+    If there's an include statement, that means we need to add contents of included file first in cFile
+    For that, we recursively call compile with new file that we need to deal with
+
+    To avoid redundancy of code when multiple files has included some file, we keep a sumbol for each file in a map
+    If map contains that symbol as a key, that means system already started reading that file
+    Looks like we could just do well with a list, but value corresponding to key could later help in storing state
+    To catch errors due to circular dependency, we'd like to know if a file just started getting processed and we 
+    reached another file while including child files, or whether we're fully done compiling this file
+    To begin with, we'd not handle circular dependencies and just work with whether key is present in map
+    */
+
+    char* value = "1";  // just a random value
+    if(get_value(fMap, file_name, value)) return;  // file already present in map
+
+    add_key(fMap, file_name, value);  // add to map 
+    // at this point, we've started including this file and assuming no circular dependencies, we should be done including
+    // this file fully before another file try to include it again
+
+    FILE* currFile = fopen(file_name, "r");
+    
+    int idx;
+    char line[MAX_LINE_SIZE] = {0};
+
+    while(fgets(line, MAX_LINE_SIZE, currFile)) {
+        // printf("line: %s\n", line);
+
+        idx = find_substr(line, "#include \"");
+        if(idx==0) {
+            // this is a #include statement
+            // compare it with idx=0 since we're not planning to allow for additional spaces in this line
+            // also, file name should begin at index 10
+            char inc_file_name[MAX_LINE_SIZE];
+            copy_str(inc_file_name, dir_path);  // starting with directory name
+            replace_substr_end(inc_file_name, &line[10], -1); // append file name
+            
+            // printf("inc file: %s, dir path: %s\n", inc_file_name, dir_path);            
+            idx = search_char(inc_file_name, '"');  // index of " where file_name should end
+            replace_substr_end(inc_file_name, "\0", idx);
+            compile(inc_file_name, cFile, dir_path, fMap);
+
+            continue;  // don't add include line to file
+        }
+
+        // it's an instruction line to be copied over as it is
+        fputs(line, cFile);
+    }
+
+    fclose(currFile);
+
+    // file is written, good idea to leave a couple of lines for readability
+    fputs("\n\n", cFile);
+}
+ 
+
+void generate_compiled_file(char* file_name, char* c_file_name) {
+    /* I want to keep it as simple as possible to begin with, and would like to skip recursively listing files in a directory
+    taking files from user seems like a good option, but then #include would not include same relative path
+    so making some simplifying assumptions for now - all these files should be present in same folder
+    we take a dir_path as param and look for files in that directory -- we can easily find directory name as such but let's just pass it for now
+    It turns out, we don't need to list files in directory, we can just add concatenate file name with directory path and we're done    
+
+    This function takes in .asm as main file and generate .asmc file (pretty random, but call c for compilation)
+    Compilation is done from files inside dir_path directory and assume those are present
+    And even for simplest of cases, this function has to include asm code recursively, cos other files could also be using some #include statement
+    Also, we need to skip loading code multiple times to avoid conflicts, code duplication and accuracy, hence #ifndef and #define too
+    We can let go of #endif and skip entire file to begin with
+    Also have #include only at beginning of files
+    */
+
+    char dir_path[128];  // don't get into super long paths
+    get_dir_path(file_name, dir_path);
+
+    FILE *cFile = fopen(c_file_name, "w"); //.asmc file created in same path as .asm file
+    struct Map* fMap = new_map(32);  // not expecting too many files to begin with
+
+    compile(file_name, cFile, dir_path, fMap);
+
+    fclose(cFile);
+}
+
+
+void compile_and_process_file(char* file_name) {
+    char c_file_name[128];
+    get_c_file_name(file_name, c_file_name);
+
+    generate_compiled_file(file_name, c_file_name);
+    read_file_and_process_instructions(c_file_name);
+}
+
+
 int main(){
     char file_name[128];
     scanf("%s", file_name); //read input from prompt in terminal
-    read_file_and_process_instructions(file_name);
+    compile_and_process_file(file_name);
     return 0;
 }
 
