@@ -91,7 +91,7 @@
 
     // Jump to where function was called from using stack pointer
     // This is assuming that there is no overflow in SPC
-    POP
+    $POP
     A=D
     0;JMP  // jump to current address
 
@@ -107,7 +107,7 @@
     // 1st caller stores exit address (users are to write code in this way)
     @c1EndAddress
     D=A
-    PUSH
+    $PUSH
     // set variables required for the job
     @5
     D=A
@@ -129,7 +129,7 @@
     // 2nd caller stores exit address 
     @c2EndAddress
     D=A
-    PUSH
+    $PUSH
     // set variables required for the job
     @11
     D=A

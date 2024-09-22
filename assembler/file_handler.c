@@ -40,7 +40,7 @@ int instruction_type_with_line_number(char* line, int* current_line_number, int 
         return Label;
 
 
-    if(line[0] == '%') {
+    if(line[0] == '$') {
         //this is a macro
         return Macro;
     }
