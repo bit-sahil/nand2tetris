@@ -1,0 +1,4 @@
+    @MF2  // ASSIGN
+    D=M  // ASSIGN
+    @R1  // ASSIGN
+    M=D  // ASSIGN

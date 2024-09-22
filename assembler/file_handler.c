@@ -20,6 +20,7 @@ so perhaps not too bad
 
 
 #define MAX_LINE_SIZE 128
+#define MAX_LINES_HANDLED 64
 #define Empty 0
 #define Label 1
 #define Machine 2
@@ -233,6 +234,113 @@ void get_c_file_name(char* file_name, char* c_file_name) {
 }
 
 
+void handle_assign(char* macro, char* f_contents, char* intermediate_file) {
+    // special handling of ASSIGN macro
+
+    FILE *iFile = fopen(intermediate_file, "w");
+
+    char statement[128] = {0};
+
+    // assignment starts at index 6
+    copy_str(statement, &macro[6]);
+
+    // now we have statement of the form x=a
+    // we parse x and a, where x will always be a variable, 
+    // and b could be a variable or number
+
+    char x[16], a[16];  // not handling long variable names
+
+    int idx = find_substr(statement, "=");
+    copy_str(x, statement);
+    replace_substr_end(x, "", idx);  // x stores what's before '='
+
+    copy_str(a, &statement[idx+1]);  // a stores everything after '='
+
+    // numeric if a begins with a number
+    int isNum = ((a[0]>='0') && (a[0]<='9'));
+
+    if(isNum) {
+        // it's a number we want to assign
+        fprintf(iFile, f_contents, a, "A", x);
+    } else {
+        // read from another variables memory and assign the value
+        fprintf(iFile, f_contents, a, "M", x);
+    }   
+
+    fclose(iFile);
+}
+
+
+void get_macro_file_name(char* macro, char* macro_file) {
+    // return .m file path
+
+    replace_substr_end(macro_file, "macros/", 0);
+    replace_substr_end(macro_file, macro, -1);
+    replace_substr_end(macro_file, ".m", -1);
+}
+
+
+void get_intermediate_file_name(char* macro, char* intermediate_file) {
+    // return .intm file path
+    // todo: make generic, hardcoding to handle ASSIGN
+    replace_substr_end(intermediate_file, "macros/", 0);
+    replace_substr_end(intermediate_file, "ASSIGN.intm", -1);
+}
+
+
+void file_to_str(char* file_name, char* f_contents) {
+    // open file and store it's contents into f_contents string
+    // assume f_contents has sufficient space and there is no overflow
+
+    FILE* fp = fopen(file_name, "r");
+    f_contents[0] = '\0'; // start with an empty string
+
+    char line[MAX_LINE_SIZE] = {0};
+    while(fgets(line, MAX_LINE_SIZE, fp)) {
+        replace_substr_end(f_contents, line, -1);
+    }
+
+    fclose(fp);
+}   
+
+
+void generate_intermediate_file(char* macro, char* intermediate_file) {
+    // generate intermediate file by substituting relevant %s placeholders from macro file and 
+
+    char macro_file[128];
+    char f_contents[MAX_LINE_SIZE*MAX_LINES_HANDLED];
+    get_macro_file_name("ASSIGN", macro_file); // todo: make it generic
+
+    file_to_str(macro_file, f_contents);
+
+    // handle ASSIGN macro and update f_contents, that's the only macro we have to begin with
+    // also adds updated contents after handling macro with substitution
+    handle_assign(macro, f_contents, intermediate_file);
+}
+
+
+FILE* get_macro_file(char* macro) {
+    // return pointer in read mode to macro file based on whether it's a simple macro file 
+    // vs macro file with substitution
+    // in case of macro with substitution, we generate an intermediate file to be read by replace_with_macro routine
+
+    if(macro[0] != '$') {
+        // simple macro
+        char macro_file[128];
+        get_macro_file_name(macro, macro_file);
+        printf("w/o: %s; %s\n", macro, macro_file);
+        return fopen(macro_file, "r");
+    } else {
+        // macro with substitution
+        char intermediate_file[128];
+        get_intermediate_file_name(macro, intermediate_file);
+        printf("w/: %s; %s\n", macro, intermediate_file);
+        generate_intermediate_file(&macro[1], intermediate_file);
+        return fopen(intermediate_file, "r");
+    }
+}
+    
+
 void replace_with_macro(char* macro, FILE* cFile) {
     /* look for macro in macros/ directory
     copy instructions to cFile (after leaving a space maybe? -- not required it seems)
@@ -241,11 +349,7 @@ void replace_with_macro(char* macro, FILE* cFile) {
     To simplify, again we assume no cycles
     */
 
-    char macro_file[128] = "macros/";
-    replace_substr_end(macro_file, macro, -1);
-    replace_substr_end(macro_file, ".m", -1);
-
-    FILE* macroFile = fopen(macro_file, "r");
+    FILE* macroFile = get_macro_file(macro);
     
     char line[MAX_LINE_SIZE] = {0};
     char cleaned_line[MAX_LINE_SIZE] = {0};
