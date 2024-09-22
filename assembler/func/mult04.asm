@@ -82,10 +82,7 @@
     $RET
 
     // this is where control should come to, if function is not called
-(MFEnd) 
-
-    // initialize sum to 0
-    $$ASSIGN, sum=0
+(MFEnd)
 
     // call MF with return address, M0 and M1
     $$CALL, c1EndAddress, 5, 7, MF
@@ -102,7 +99,4 @@
 
 (END)
     $$GOTO, END
-
-
-
 

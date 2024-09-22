@@ -127,13 +127,7 @@
     0;JMP  // jump to current address
 
     // this is where control should come to, if function is not called
-(MFEnd) 
-
-    // initialize sum to 0
-    @0  // ASSIGN
-    D=A  // ASSIGN
-    @sum  // ASSIGN
-    M=D  // ASSIGN
+(MFEnd)
 
     // call MF with return address, M0 and M1
         @c1EndAddress  //PUSH
@@ -201,8 +195,5 @@
 (END)
     @END  // GOTO
     0;JMP  // GOTO
-
-
-
 
 
