@@ -4,8 +4,7 @@
 // and see how functions could be called recursively
 
     // skip if function is not called (just the declaration here)
-    @MFEnd
-    0;JMP
+    $$GOTO,MFEnd
 (MF) //MF stands for multiplication function
     // we have MF0, MF1, and MF2 as global variables 
     // reserved for this function
@@ -33,8 +32,7 @@
     // q = MF1
     $$ASSIGN, q=MF1
     $$ASSIGN, p=MF0
-    @ENDMF1LessThanMF0
-    0;JMP
+    $$GOTO,ENDMF1LessThanMF0
 
 (MF1LessThanMF0) //R[1] < R[0]
     $$ASSIGN, p=MF1
@@ -76,8 +74,7 @@
     D=M
     M=D+M //r=r+r
 
-    @LOOP
-    0;JMP
+    $$GOTO, LOOP
 
 (ENDLoop)
 
@@ -90,31 +87,22 @@
     // initialize sum to 0
     $$ASSIGN, sum=0
 
-    // 1st caller stores exit address (users are to write code in this way)
-    $$PUSH, c1EndAddress
-    // set variables required for the job
-    $$PUSH, 5
-    $$PUSH, 7
-    @MF
-    0;JMP
+    // call MF with return address, M0 and M1
+    $$CALL, c1EndAddress, 5, 7, MF
 (c1EndAddress)
     //store result of calculation
     $$ASSIGN, R0=MF2
 
 
-    // 2nd caller stores exit address 
-    $$PUSH, c2EndAddress
-    // set variables required for the job
-    $$PUSH, 11
-    $$PUSH, 32
-    @MF
-    0;JMP
+    // call MF with return address, M0 and M1
+    $$CALL, c2EndAddress, 11, 32, MF
 (c2EndAddress)
     //store result of calculation
     $$ASSIGN, R1=MF2
 
 (END)
-    @END
-    0;JMP
+    $$GOTO, END
+
+
 
 

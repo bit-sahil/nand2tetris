@@ -97,6 +97,60 @@ void handle_push(char* macro, char* f_contents, char* intermediate_file) {
 }
 
 
+void handle_goto(char* macro, char* f_contents, char* intermediate_file) {
+    // special handling of GOTO macro
+    // $$GOTO,x
+
+    FILE *iFile = fopen(intermediate_file, "w");
+
+    char x[128] = {0};
+
+    // everything after ',' in macro is x
+    copy_str(x, &macro[5]);
+
+    // x is only variable to be passed
+    fprintf(iFile, f_contents, x);
+
+    fclose(iFile);
+}
+
+
+void handle_call(char* macro, char* intermediate_file) {
+    // special handling of CALL macro, slightly more special cos it's not simple string substitution in CALL.m macro file
+    // form: CALL, returnAddr, val1, val2, ..., funcAddr
+
+    FILE *iFile = fopen(intermediate_file, "w");
+
+    char x[128] = {0};
+    char statement[128] = {0};
+
+    int idx = 5;  //that's where first variable to put on stack starts
+    int next_idx = search_char(&macro[idx], ',');  // search index of first ',' in substring
+
+    while(next_idx != -1) {
+        // this is a variable to be pushed on stack
+        copy_str_until(x, &macro[idx], next_idx);
+
+        // replace with PUSH macro in intermediate file
+        replace_substr_end(statement, "$PUSH,", 0);  //statement="$PUSH,"
+        replace_substr_end(statement, x, 6);  //statement="$PUSH,x"
+        replace_with_macro(statement, iFile);  // write statements corresponding to macro in intermediate file
+
+        idx = idx+next_idx+1;
+        next_idx = search_char(&macro[idx], ',');  // search index of first ',' in substring
+    }
+
+    // we're at last term in CALL macro line, which is function name to be called
+    // replace with GOTO macro in intermediate file
+    replace_substr_end(statement, "$GOTO,", 0);  //statement="$GOTO,"
+    replace_substr_end(statement, &macro[idx], 6);  //statement="$GOTO,x"
+    //printf("handle_call: %s\n", statement);
+    replace_with_macro(statement, iFile);  // write statements corresponding to macro in intermediate file
+
+    fclose(iFile);
+}
+
+
 void handle_spcl_macro(char* macro, char* f_contents, char* intermediate_file) {
     // figure out which special macro type it is and handle it
 
@@ -104,6 +158,8 @@ void handle_spcl_macro(char* macro, char* f_contents, char* intermediate_file) {
         handle_assign(macro, f_contents, intermediate_file);
     else if(find_substr(macro, "PUSH,") != -1)
         handle_push(macro, f_contents, intermediate_file);
+    else if(find_substr(macro, "GOTO,") != -1)
+        handle_goto(macro, f_contents, intermediate_file);
 }
 
 
@@ -118,7 +174,8 @@ void get_macro_file_name(char* macro, char* macro_file) {
 
 void get_spcl_macro_file_name(char* macro, char* macro_file, int f_type) {
     // return .intm or .m file path based on f_type
-    // handling special macro with $$, but passed to function without $, i.e. ASSIGN, ...
+    // handling special macro with $$, but passed to function without $
+    //form: MACRO,...
 
     replace_substr_end(macro_file, "macros/", 0);
     replace_substr_end(macro_file, macro, -1);
@@ -153,6 +210,13 @@ void file_to_str(char* file_name, char* f_contents) {
 
 void generate_intermediate_file(char* macro, char* intermediate_file) {
     // generate intermediate file by substituting relevant %s placeholders from macro file and 
+    // form: MACRO,...
+
+    if(find_substr(macro, "CALL,") != -1) {
+        // special handling of $$CALL (does not have a macro file of it's own)
+        handle_call(macro, intermediate_file);
+        return;
+    }
 
     char macro_file[128];
     char f_contents[MAX_LINE_SIZE*MAX_LINES_HANDLED];
@@ -179,6 +243,7 @@ FILE* get_macro_file(char* macro) {
         return fopen(macro_file, "r");
     } else {
         // macro with substitution
+        // form: $MACRO,...
         char intermediate_file[128];
         get_spcl_macro_file_name(&macro[1], intermediate_file, Intermediate_T);
         //printf("w/: %s; %s\n", macro, intermediate_file);
@@ -194,6 +259,8 @@ void replace_with_macro(char* macro, FILE* cFile) {
     if there's a macro present in file, then replace it with code of that macro (recursively call this function)
     
     To simplify, again we assume no cycles
+
+    form: MACRO or $MACRO,...
     */
 
     FILE* macroFile = get_macro_file(macro);

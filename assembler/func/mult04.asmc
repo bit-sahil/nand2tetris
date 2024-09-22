@@ -14,8 +14,8 @@
 // and see how functions could be called recursively
 
     // skip if function is not called (just the declaration here)
-    @MFEnd
-    0;JMP
+    @MFEnd  // GOTO
+    0;JMP  // GOTO
 (MF) //MF stands for multiplication function
     // we have MF0, MF1, and MF2 as global variables 
     // reserved for this function
@@ -58,8 +58,8 @@
     D=M  // ASSIGN
     @p  // ASSIGN
     M=D  // ASSIGN
-    @ENDMF1LessThanMF0
-    0;JMP
+    @ENDMF1LessThanMF0  // GOTO
+    0;JMP  // GOTO
 
 (MF1LessThanMF0) //R[1] < R[0]
     @MF1  // ASSIGN
@@ -110,8 +110,8 @@
     D=M
     M=D+M //r=r+r
 
-    @LOOP
-    0;JMP
+    @LOOP  // GOTO
+    0;JMP  // GOTO
 
 (ENDLoop)
 
@@ -135,7 +135,7 @@
     @sum  // ASSIGN
     M=D  // ASSIGN
 
-    // 1st caller stores exit address (users are to write code in this way)
+    // call MF with return address, M0 and M1
         @c1EndAddress  //PUSH
         D=A  //PUSH
 	@SPC  //PUSH 
@@ -143,7 +143,6 @@
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
-    // set variables required for the job
         @5  //PUSH
         D=A  //PUSH
 	@SPC  //PUSH 
@@ -158,8 +157,8 @@
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
-    @MF
-    0;JMP
+    @MF  // GOTO
+    0;JMP  // GOTO
 (c1EndAddress)
     //store result of calculation
     @MF2  // ASSIGN
@@ -168,7 +167,7 @@
     M=D  // ASSIGN
 
 
-    // 2nd caller stores exit address 
+    // call MF with return address, M0 and M1
         @c2EndAddress  //PUSH
         D=A  //PUSH
 	@SPC  //PUSH 
@@ -176,7 +175,6 @@
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
-    // set variables required for the job
         @11  //PUSH
         D=A  //PUSH
 	@SPC  //PUSH 
@@ -191,8 +189,8 @@
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
-    @MF
-    0;JMP
+    @MF  // GOTO
+    0;JMP  // GOTO
 (c2EndAddress)
     //store result of calculation
     @MF2  // ASSIGN
@@ -201,8 +199,10 @@
     M=D  // ASSIGN
 
 (END)
-    @END
-    0;JMP
+    @END  // GOTO
+    0;JMP  // GOTO
+
+
 
 
 
