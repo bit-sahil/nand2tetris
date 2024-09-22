@@ -86,14 +86,12 @@
 
     // call MF with return address, M0 and M1
     $$CALL, c1EndAddress, 5, 7, MF
-(c1EndAddress)
     //store result of calculation
     $$ASSIGN, R0=MF2
 
 
     // call MF with return address, M0 and M1
     $$CALL, c2EndAddress, 11, 32, MF
-(c2EndAddress)
     //store result of calculation
     $$ASSIGN, R1=MF2
 

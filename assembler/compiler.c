@@ -117,7 +117,7 @@ void handle_goto(char* macro, char* f_contents, char* intermediate_file) {
 
 void handle_call(char* macro, char* intermediate_file) {
     // special handling of CALL macro, slightly more special cos it's not simple string substitution in CALL.m macro file
-    // form: CALL, returnAddr, val1, val2, ..., funcAddr
+    // form: CALL, retAddr, val1, val2, ..., funcAddr
 
     FILE *iFile = fopen(intermediate_file, "w");
 
@@ -126,6 +126,10 @@ void handle_call(char* macro, char* intermediate_file) {
 
     int idx = 5;  //that's where first variable to put on stack starts
     int next_idx = search_char(&macro[idx], ',');  // search index of first ',' in substring
+
+    // first term is retAddr
+    char retAddr[128];
+    copy_str_until(retAddr, &macro[idx], next_idx);
 
     while(next_idx != -1) {
         // this is a variable to be pushed on stack
@@ -146,6 +150,10 @@ void handle_call(char* macro, char* intermediate_file) {
     replace_substr_end(statement, &macro[idx], 6);  //statement="$GOTO,x"
     //printf("handle_call: %s\n", statement);
     replace_with_macro(statement, iFile);  // write statements corresponding to macro in intermediate file
+
+    // now add another line for return address
+    //(retAddr)
+    fprintf(iFile, "(%s)\n", retAddr);
 
     fclose(iFile);
 }
