@@ -6,6 +6,10 @@
 #include "compiler.h"
 
 
+#define Intermediate_T 0
+#define Macro_T 1
+
+
 void get_dir_path(char* file_name, char* dir_path) {
     // find last '/' in file_name and remove off everything after it
     
@@ -39,13 +43,14 @@ void get_c_file_name(char* file_name, char* c_file_name) {
 
 void handle_assign(char* macro, char* f_contents, char* intermediate_file) {
     // special handling of ASSIGN macro
+    // $$ASSIGN,x=a
 
     FILE *iFile = fopen(intermediate_file, "w");
 
     char statement[128] = {0};
 
     // assignment starts at index 6
-    copy_str(statement, &macro[6]);
+    copy_str(statement, &macro[7]);
 
     // now we have statement of the form x=a
     // we parse x and a, where x will always be a variable, 
@@ -74,6 +79,34 @@ void handle_assign(char* macro, char* f_contents, char* intermediate_file) {
 }
 
 
+void handle_push(char* macro, char* f_contents, char* intermediate_file) {
+    // special handling of PUSH macro
+    // $$PUSH,x
+
+    FILE *iFile = fopen(intermediate_file, "w");
+
+    char x[128] = {0};
+
+    // everything after ',' in macro is x
+    copy_str(x, &macro[5]);
+
+    // x is only variable to be passed
+    fprintf(iFile, f_contents, x);
+
+    fclose(iFile);
+}
+
+
+void handle_spcl_macro(char* macro, char* f_contents, char* intermediate_file) {
+    // figure out which special macro type it is and handle it
+
+    if(find_substr(macro, "ASSIGN,") != -1)
+        handle_assign(macro, f_contents, intermediate_file);
+    else if(find_substr(macro, "PUSH,") != -1)
+        handle_push(macro, f_contents, intermediate_file);
+}
+
+
 void get_macro_file_name(char* macro, char* macro_file) {
     // return .m file path
 
@@ -83,11 +116,22 @@ void get_macro_file_name(char* macro, char* macro_file) {
 }
 
 
-void get_intermediate_file_name(char* macro, char* intermediate_file) {
-    // return .intm file path
-    // todo: make generic, hardcoding to handle ASSIGN
-    replace_substr_end(intermediate_file, "macros/", 0);
-    replace_substr_end(intermediate_file, "ASSIGN.intm", -1);
+void get_spcl_macro_file_name(char* macro, char* macro_file, int f_type) {
+    // return .intm or .m file path based on f_type
+    // handling special macro with $$, but passed to function without $, i.e. ASSIGN, ...
+
+    replace_substr_end(macro_file, "macros/", 0);
+    replace_substr_end(macro_file, macro, -1);
+
+    int idx = search_char(macro_file, ',');
+    replace_substr_end(macro_file, "", idx); // remove everything post first ','
+
+    if(f_type == Intermediate_T)
+        replace_substr_end(macro_file, ".intm", -1);  // add .intm in the end
+    else
+        replace_substr_end(macro_file, ".m", -1);  // add .m in the end
+
+    //printf("gsmfn: %s; %d; %s\n", macro, f_type, macro_file);
 }
 
 
@@ -104,7 +148,7 @@ void file_to_str(char* file_name, char* f_contents) {
     }
 
     fclose(fp);
-}   
+}
 
 
 void generate_intermediate_file(char* macro, char* intermediate_file) {
@@ -112,13 +156,13 @@ void generate_intermediate_file(char* macro, char* intermediate_file) {
 
     char macro_file[128];
     char f_contents[MAX_LINE_SIZE*MAX_LINES_HANDLED];
-    get_macro_file_name("ASSIGN", macro_file); // todo: make it generic
+    get_spcl_macro_file_name(macro, macro_file, Macro_T);
 
     file_to_str(macro_file, f_contents);
 
-    // handle ASSIGN macro and update f_contents, that's the only macro we have to begin with
+    // handle macro and update f_contents
     // also adds updated contents after handling macro with substitution
-    handle_assign(macro, f_contents, intermediate_file);
+    handle_spcl_macro(macro, f_contents, intermediate_file);
 }
 
 
@@ -136,7 +180,7 @@ FILE* get_macro_file(char* macro) {
     } else {
         // macro with substitution
         char intermediate_file[128];
-        get_intermediate_file_name(macro, intermediate_file);
+        get_spcl_macro_file_name(&macro[1], intermediate_file, Intermediate_T);
         //printf("w/: %s; %s\n", macro, intermediate_file);
         generate_intermediate_file(&macro[1], intermediate_file);
         return fopen(intermediate_file, "r");

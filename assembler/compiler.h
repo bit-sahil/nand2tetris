@@ -22,9 +22,9 @@ void get_macro_file_name(char* macro, char* macro_file);
     // return .m file path
 
 
-void get_intermediate_file_name(char* macro, char* intermediate_file);
-    // return .intm file path
-    // todo: make generic, hardcoding to handle ASSIGN
+void get_spcl_macro_file_name(char* macro, char* macro_file, int f_type);
+    // return .intm or .m file path based on f_type
+    // handling special macro with $$, but passed to function with single $, i.e. $ASSIGN, ...
 
 
 void file_to_str(char* file_name, char* f_contents);

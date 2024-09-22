@@ -136,23 +136,23 @@
     M=D  // ASSIGN
 
     // 1st caller stores exit address (users are to write code in this way)
-    @c1EndAddress
-    D=A
+        @c1EndAddress  //PUSH
+        D=A  //PUSH
 	@SPC  //PUSH 
 	A=M  //PUSH 
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
     // set variables required for the job
-    @5
-    D=A
+        @5  //PUSH
+        D=A  //PUSH
 	@SPC  //PUSH 
 	A=M  //PUSH 
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
-    @7
-    D=A
+        @7  //PUSH
+        D=A  //PUSH
 	@SPC  //PUSH 
 	A=M  //PUSH 
 	M=D  //PUSH 
@@ -169,23 +169,23 @@
 
 
     // 2nd caller stores exit address 
-    @c2EndAddress
-    D=A
+        @c2EndAddress  //PUSH
+        D=A  //PUSH
 	@SPC  //PUSH 
 	A=M  //PUSH 
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
     // set variables required for the job
-    @11
-    D=A
+        @11  //PUSH
+        D=A  //PUSH
 	@SPC  //PUSH 
 	A=M  //PUSH 
 	M=D  //PUSH 
 	@SPC  //PUSH 
 	M=M-1  //PUSH 
-    @32
-    D=A
+        @32  //PUSH
+        D=A  //PUSH
 	@SPC  //PUSH 
 	A=M  //PUSH 
 	M=D  //PUSH 

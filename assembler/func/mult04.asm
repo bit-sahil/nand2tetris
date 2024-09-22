@@ -21,7 +21,7 @@
     M=D
 
     //initialize MF2=0
-    $$ASSIGN MF2=0
+    $$ASSIGN, MF2=0
 
     @MF0
     D=M
@@ -31,18 +31,18 @@
     D;JLT  //MF0 <= MF1
     
     // q = MF1
-    $$ASSIGN q=MF1
-    $$ASSIGN p=MF0
+    $$ASSIGN, q=MF1
+    $$ASSIGN, p=MF0
     @ENDMF1LessThanMF0
     0;JMP
 
 (MF1LessThanMF0) //R[1] < R[0]
-    $$ASSIGN p=MF1
-    $$ASSIGN q=MF0
+    $$ASSIGN, p=MF1
+    $$ASSIGN, q=MF0
 
 (ENDMF1LessThanMF0)
     //r=1
-    $$ASSIGN r=1
+    $$ASSIGN, r=1
 
 (LOOP)
     @q
@@ -88,42 +88,30 @@
 (MFEnd) 
 
     // initialize sum to 0
-    $$ASSIGN sum=0
+    $$ASSIGN, sum=0
 
     // 1st caller stores exit address (users are to write code in this way)
-    @c1EndAddress
-    D=A
-    $PUSH
+    $$PUSH, c1EndAddress
     // set variables required for the job
-    @5
-    D=A
-    $PUSH
-    @7
-    D=A
-    $PUSH
+    $$PUSH, 5
+    $$PUSH, 7
     @MF
     0;JMP
 (c1EndAddress)
     //store result of calculation
-    $$ASSIGN R0=MF2
+    $$ASSIGN, R0=MF2
 
 
     // 2nd caller stores exit address 
-    @c2EndAddress
-    D=A
-    $PUSH
+    $$PUSH, c2EndAddress
     // set variables required for the job
-    @11
-    D=A
-    $PUSH
-    @32
-    D=A
-    $PUSH
+    $$PUSH, 11
+    $$PUSH, 32
     @MF
     0;JMP
 (c2EndAddress)
     //store result of calculation
-    $$ASSIGN R1=MF2
+    $$ASSIGN, R1=MF2
 
 (END)
     @END
