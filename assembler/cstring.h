@@ -16,6 +16,7 @@ void copy_str(char* dest, char* src);
 void copy_str_until(char* dest, char* src, int max);
     // assume destination has required space and copy source string characters
     // copy until end of src string or max number of characters (excluding \0)
+    // if max=-1, copy entire string
 
 int search_char(char* str, char c);
 

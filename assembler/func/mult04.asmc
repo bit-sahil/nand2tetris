@@ -16,13 +16,13 @@
     // skip if function is not called (just the declaration here)
     @MFEnd  // GOTO
     0;JMP  // GOTO
-(MF) //MF stands for multiplication function
+    //MF stands for multiplication function
     // we have MF0, MF1, and MF2 as global variables 
     // reserved for this function
     // Multiplies MF0 and MF1 and stores the result in MF2
     // caller functions will have to set MF0 and MF1
-
-    // initialize MF1 and MF0 from stack
+    // MF1 and MF0 are initialized from stack
+(MF)
 	@SPC  //POP 
 	M=M+1  //POP 
 	A=M  //POP 
@@ -35,7 +35,7 @@
 	D=M  //POP 
     @MF0
     M=D
-
+    
     //initialize MF2=0
     @0  // ASSIGN
     D=A  // ASSIGN
@@ -195,5 +195,6 @@
 (END)
     @END  // GOTO
     0;JMP  // GOTO
+
 
 

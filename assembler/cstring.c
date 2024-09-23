@@ -44,6 +44,12 @@ void copy_str(char* dest, char* src) {
 void copy_str_until(char* dest, char* src, int max) {
     // assume destination has required space and copy source string characters
     // copy until end of src string or max number of characters (excluding \0)
+    // if max=-1, copy entire string
+
+    if(max==-1) {
+        copy_str(dest, src);
+        return;
+    }
 
     int i = 0;
     while(i<max && src[1]!='\0') {

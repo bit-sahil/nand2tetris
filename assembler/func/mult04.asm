@@ -5,20 +5,14 @@
 
     // skip if function is not called (just the declaration here)
     $$GOTO,MFEnd
-(MF) //MF stands for multiplication function
+    //MF stands for multiplication function
     // we have MF0, MF1, and MF2 as global variables 
     // reserved for this function
     // Multiplies MF0 and MF1 and stores the result in MF2
     // caller functions will have to set MF0 and MF1
-
-    // initialize MF1 and MF0 from stack
-    $POP
-    @MF1
-    M=D
-    $POP
-    @MF0
-    M=D
-
+    // MF1 and MF0 are initialized from stack
+$$FUNC, MF, MF0, MF1
+    
     //initialize MF2=0
     $$ASSIGN, MF2=0
 
@@ -97,4 +91,5 @@
 
 (END)
     $$GOTO, END
+
 

@@ -115,6 +115,24 @@ void handle_goto(char* macro, char* f_contents, char* intermediate_file) {
 }
 
 
+void handle_pop_c(char* macro, char* f_contents, char* intermediate_file) {
+    // special handling of POP_C macro
+    // $$POP_C,x
+
+    FILE *iFile = fopen(intermediate_file, "w");
+
+    char x[128] = {0};
+
+    // everything after ',' in macro is x
+    copy_str(x, &macro[6]);
+
+    // x is only variable to be passed
+    fprintf(iFile, f_contents, x);
+
+    fclose(iFile);
+}
+
+
 void handle_call(char* macro, char* intermediate_file) {
     // special handling of CALL macro, slightly more special cos it's not simple string substitution in CALL.m macro file
     // form: CALL, retAddr, val1, val2, ..., funcAddr
@@ -159,6 +177,55 @@ void handle_call(char* macro, char* intermediate_file) {
 }
 
 
+void handle_func(char* macro, char* intermediate_file) {
+    // special handling of FUNC macro, slightly more special cos it's not simple string substitution in CALL.m macro file
+    // form: FUNC, fName, var1, var2, ...
+
+    FILE *iFile = fopen(intermediate_file, "w");
+
+    // treat as array of 16 char* each 64 bit long
+    char vars[16*64] = {0};
+    int i = 0, vars_idx=0;
+
+    char statement[128] = {0};
+
+    int idx = 5;  //that's where first variable to put on stack starts
+    int next_idx = search_char(&macro[idx], ',');  // search index of first ',' in substring
+
+    // first term is fName
+    char fName[128];
+    copy_str_until(fName, &macro[idx], next_idx);
+    // add line for func address: (fName)
+    fprintf(iFile, "(%s)\n", fName);
+
+    // first pass to store all variables, if any, in vars array
+    while(next_idx != -1) {
+        idx = idx+next_idx+1;
+        next_idx = search_char(&macro[idx], ',');  // search index of first ',' in substring
+
+        // store i-th variable to be popped from stack and stored value into
+        vars_idx = 64*i;
+        copy_str_until(&vars[vars_idx], &macro[idx], next_idx);
+        //printf("func:%d,  %s\n", i, &vars[vars_idx]);
+        i++;
+    }
+
+    // second pass to pop vars in reverse order and assigning variable values in function from stack
+    while(i>0) {
+        i--;  // position of variable
+        vars_idx = 64*i;
+
+        // replace with POP_C macro in intermediate file
+        replace_substr_end(statement, "$POP_C,", 0);  //statement="$POP_C,"
+        replace_substr_end(statement, &vars[vars_idx], 7);  //statement="$POP_C,var"
+        //printf("func: %d, %s\n", i, &vars[vars_idx]);
+        replace_with_macro(statement, iFile);  // write statements corresponding to macro in intermediate file
+    }
+
+    fclose(iFile);
+}
+
+
 void handle_spcl_macro(char* macro, char* f_contents, char* intermediate_file) {
     // figure out which special macro type it is and handle it
 
@@ -168,6 +235,9 @@ void handle_spcl_macro(char* macro, char* f_contents, char* intermediate_file) {
         handle_push(macro, f_contents, intermediate_file);
     else if(find_substr(macro, "GOTO,") != -1)
         handle_goto(macro, f_contents, intermediate_file);
+    else if(find_substr(macro, "POP_C,") != -1)
+        handle_pop_c(macro, f_contents, intermediate_file);
+
 }
 
 
@@ -223,6 +293,10 @@ void generate_intermediate_file(char* macro, char* intermediate_file) {
     if(find_substr(macro, "CALL,") != -1) {
         // special handling of $$CALL (does not have a macro file of it's own)
         handle_call(macro, intermediate_file);
+        return;
+    } else if(find_substr(macro, "FUNC,") != -1) {
+        // special handling of $$FUNC (does not have a macro file of it's own)
+        handle_func(macro, intermediate_file);
         return;
     }
 
