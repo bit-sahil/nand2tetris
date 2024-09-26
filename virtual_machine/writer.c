@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include "parser.h"
-
+#include "arithmetic.h"
 
 
 void handle_push(char* seg, FILE* asmFile) {
@@ -26,24 +26,7 @@ void handle_push(char* seg, FILE* asmFile) {
 }
 
 
-void handle_add(FILE* asmFile) {
-    // pop two numbers from stack, store back result on stack
-
-    fputs("@SP\n", asmFile);
-    fputs("M=M-1\n", asmFile);
-    fputs("A=M\n", asmFile);
-    fputs("D=M\n", asmFile);
-    fputs("@SP\n", asmFile);
-    fputs("M=M-1\n", asmFile);
-    fputs("A=M\n", asmFile);
-    fputs("D=D+M\n", asmFile);
-    fputs("M=D\n", asmFile);
-    fputs("@SP\n", asmFile);
-    fputs("M=M+1\n", asmFile);
-}
-
-
-void parse_and_generate_asm(char* vc, FILE* asmFile) {
+void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num) {
 
     int vcType = parse_virtual_command(vc);
     //printf("%d\n", vcType);
@@ -52,13 +35,17 @@ void parse_and_generate_asm(char* vc, FILE* asmFile) {
         // Empty string or comment
         return;
 
+    *line_num = 1 + *line_num;
+
     // print virtual machine command for debugging
     fprintf(asmFile, "//%s\n", vc);
 
     if(vcType == Push)
         handle_push(&vc[5], asmFile);
 
-    else if(vcType == Add)
-        handle_add(asmFile);
+    else if(vcType == Arithmetic)
+        handle_arithmetic_op(vc, asmFile);
+    else if(vcType == Comparison)
+        handle_comparison_op(vc, asmFile, line_num);
 }
 

@@ -68,23 +68,32 @@ int parse_virtual_command(char* vc) {
 
     // arithmetic operations
     else if(compare_str_until(vc, "add", 3))
-        return Add;
+        return Arithmetic;
+        //return Add;
     else if(compare_str_until(vc, "sub", 3))
-        return Sub;
+        return Arithmetic;
+        //return Sub;
     else if(compare_str_until(vc, "neg", 3))
-        return Neg;
+        return Arithmetic;
+        //return Neg;
     else if(compare_str_until(vc, "eq", 2))
-        return Eq;
+        return Comparison;
+        //return Eq;
     else if(compare_str_until(vc, "gt", 2))
-        return Gt;
+        return Comparison;
+        //return Gt;
     else if(compare_str_until(vc, "lt", 2))
-        return Lt;
+        return Comparison;
+        //return Lt;
     else if(compare_str_until(vc, "and", 3))
-        return And;
+        return Arithmetic;
+        //return And;
     else if(compare_str_until(vc, "or", 2))
-        return Or;
+        return Arithmetic;
+        //return Or;
     else if(compare_str_until(vc, "not", 3))
-        return Not;
+        return Arithmetic;
+        //return Not;
 
     printf("Unhandled virtual command:%s\n", vc);
 }

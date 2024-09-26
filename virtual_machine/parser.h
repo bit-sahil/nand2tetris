@@ -16,6 +16,8 @@
 #define And 9
 #define Or 10
 #define Not 11
+#define Arithmetic 12
+#define Comparison 13
 
 // Stack segment types
 #define Argument 101

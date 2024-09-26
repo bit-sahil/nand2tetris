@@ -90,12 +90,13 @@ void process_file_and_translate(char* file_name) {
 
     char line[MAX_LINE_SIZE] = {0};
     char cleaned_line[MAX_LINE_SIZE] = {0};
+    int line_num = 0;
 
     while(fgets(line, MAX_LINE_SIZE, vmFile)) {
         line_without_space(line, cleaned_line);
         // printf("Original:%s;Cleaned:%s\n", line, cleaned_line);
 
-        parse_and_generate_asm(cleaned_line, asmFile);
+        parse_and_generate_asm(cleaned_line, asmFile, &line_num);
     }
 
     fclose(vmFile);
