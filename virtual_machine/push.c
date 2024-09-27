@@ -38,7 +38,7 @@ void handle_push_temp(int num, FILE* asmFile) {
         // just raise a warning without stopping
         printf("Invalid access of temp location: %d\n", num);
 
-    char* f_contents = get_f_contents("push_segment");
+    char* f_contents = get_f_contents("push_temp");
 
     // add file contents fortmatting num and segment, using R5 for Ram[5]
     fprintf(asmFile, f_contents, num, "R5");
@@ -55,7 +55,7 @@ void handle_push_pointer(int num, FILE* asmFile) {
         // just raise a warning without stopping
         printf("Invalid access of pointer location: %d\n", num);
 
-    char* f_contents = get_f_contents("push_segment");
+    char* f_contents = get_f_contents("push_temp");
 
     // add file contents fortmatting num and segment
     fprintf(asmFile, f_contents, num, "R3");

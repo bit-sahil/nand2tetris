@@ -2,7 +2,7 @@
     @%d //i
     D=A
     @%s //segment
-    A=D+M
+    A=D+A
     D=M
     @SP
     A=M

@@ -4,6 +4,7 @@
 #include "cstring.h"
 #include "arithmetic.h"
 #include "push.h"
+#include "pop.h"
 
 
 void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num) {
@@ -22,6 +23,8 @@ void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num) {
 
     if(vcType == Push)
         handle_push(&vc[5], asmFile);
+    else if(vcType == Pop)
+        handle_pop(&vc[4], asmFile);
 
     else if(vcType == Arithmetic)
         handle_arithmetic_op(vc, asmFile);

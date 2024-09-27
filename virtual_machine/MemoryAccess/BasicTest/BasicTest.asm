@@ -8,6 +8,21 @@
     @SP
     M=M+1
 //pop local 0
+    // pop value from stack to segment i 
+    @0 //i
+    D=A
+    @LCL //segment
+    D=D+M
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //push constant 21
     // handles push constant i
     @21 // i
@@ -27,7 +42,37 @@
     @SP
     M=M+1
 //pop argument 2
+    // pop value from stack to segment i 
+    @2 //i
+    D=A
+    @ARG //segment
+    D=D+M
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //pop argument 1
+    // pop value from stack to segment i 
+    @1 //i
+    D=A
+    @ARG //segment
+    D=D+M
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //push constant 36
     // handles push constant i
     @36 // i
@@ -38,6 +83,21 @@
     @SP
     M=M+1
 //pop this 6
+    // pop value from stack to segment i 
+    @6 //i
+    D=A
+    @THIS //segment
+    D=D+M
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //push constant 42
     // handles push constant i
     @42 // i
@@ -57,7 +117,37 @@
     @SP
     M=M+1
 //pop that 5
+    // pop value from stack to segment i 
+    @5 //i
+    D=A
+    @THAT //segment
+    D=D+M
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //pop that 2
+    // pop value from stack to segment i 
+    @2 //i
+    D=A
+    @THAT //segment
+    D=D+M
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //push constant 510
     // handles push constant i
     @510 // i
@@ -68,12 +158,27 @@
     @SP
     M=M+1
 //pop temp 6
+    // pop value from stack to segment i 
+    @6 //i
+    D=A
+    @R5 //segment
+    D=D+A
+    @SP
+    A=M
+    M=D
+    A=A-1
+    D=M
+    A=A+1
+    A=M
+    M=D
+    @SP
+    M=M-1
 //push local 0
     // push value at segment i onto stack (segment among local, argument, this, that)
     @0 //i
     D=A
     @LCL //segment
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
@@ -85,7 +190,7 @@
     @5 //i
     D=A
     @THAT //segment
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
@@ -109,7 +214,7 @@
     @1 //i
     D=A
     @ARG //segment
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
@@ -133,7 +238,7 @@
     @6 //i
     D=A
     @THIS //segment
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
@@ -145,7 +250,7 @@
     @6 //i
     D=A
     @THIS //segment
-    A=D+A
+    A=D+M
     D=M
     @SP
     A=M
