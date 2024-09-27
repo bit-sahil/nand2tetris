@@ -1,35 +1,15 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include "parser.h"
+#include "cstring.h"
 #include "arithmetic.h"
-
-
-void handle_push(char* seg, FILE* asmFile) {
-    // form:<segment> num
-
-    int segType = parse_stack_segment(seg);
-    int num = -1;
-
-    if(segType==Constant) {
-        // constant num
-        num = parse_numeric_arg(&seg[9]);
-        //printf("constant segment:%s:%d\n", &seg[9], num);
-
-        // write in asmFile
-        fprintf(asmFile, "@%d\n", num);
-        fputs("D=A\n", asmFile);
-        fputs("@SP\n", asmFile);
-        fputs("A=M\n", asmFile);
-        fputs("M=D\n", asmFile);
-        fputs("@SP\n", asmFile);
-        fputs("M=M+1\n", asmFile);
-    }
-}
+#include "push.h"
 
 
 void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num) {
 
     int vcType = parse_virtual_command(vc);
-    //printf("%d\n", vcType);
+    //printf("vcType=%d\n", vcType);
 
     if(vcType==Empty)
         // Empty string or comment

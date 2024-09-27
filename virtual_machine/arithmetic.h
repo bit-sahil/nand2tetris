@@ -3,10 +3,6 @@
 #define ARITHMETIC_H
 
 
-#define MAX_LINE_SIZE 128
-#define MAX_LINES_HANDLED 64
-
-
 void handle_arithmetic_op(char* vc, FILE* asmFile);
     // Handles arithmetic operations in a generic way
     // These operations do not contain any variables to deal with, so replacement from a static file work well
