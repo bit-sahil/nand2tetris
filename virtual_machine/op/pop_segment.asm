@@ -2,13 +2,9 @@
     @%d //i
     D=A
     @%s //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val

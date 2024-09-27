@@ -11,16 +11,12 @@
     @0 //i
     D=A
     @LCL //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val
 //push constant 21
     // handles push constant i
     @21 // i
@@ -42,31 +38,23 @@
     @2 //i
     D=A
     @ARG //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val
 //pop argument 1
     // pop value from stack to segment i 
     @1 //i
     D=A
     @ARG //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val
 //push constant 36
     // handles push constant i
     @36 // i
@@ -80,16 +68,12 @@
     @6 //i
     D=A
     @THIS //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val
 //push constant 42
     // handles push constant i
     @42 // i
@@ -111,31 +95,23 @@
     @5 //i
     D=A
     @THAT //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val
 //pop that 2
     // pop value from stack to segment i 
     @2 //i
     D=A
     @THAT //segment
-    D=D+M
-    @R14
-    M=D
+    D=D+M  // addr
     @SP
-    M=M-1
-    A=M
-    D=M
-    @R14
-    A=M
-    M=D
+    AM=M-1 // point to address M-1, while simulataneously updating @SP
+    D=D+M // addr+val
+    A=D-M // addr+val-val = addr
+    M=D-A // addr+val-addr = val
 //push constant 510
     // handles push constant i
     @510 // i
@@ -187,12 +163,8 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D+M
-    @SP
-    M=M+1
 //push argument 1
     // push value at segment i onto stack (segment among local, argument, this, that)
     @1 //i
@@ -210,12 +182,8 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=M-D
-    @SP
-    M=M+1
 //push this 6
     // push value at segment i onto stack (segment among local, argument, this, that)
     @6 //i
@@ -244,24 +212,16 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D+M
-    @SP
-    M=M+1
 //sub
     // pop b | pop a | push a-b
     @SP
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=M-D
-    @SP
-    M=M+1
 //push temp 6
     // push value at segment i onto stack (segment among local, argument, this, that)
     @6 //i
@@ -279,9 +239,5 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D+M
-    @SP
-    M=M+1
