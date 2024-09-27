@@ -20,17 +20,15 @@
     @SP
     M=M-1
     A=M
-    D=M  // D=b
+    D=M-1  // D=b-1
     A=A-1
-    D=D-M // D=a-b
+    MD=D-M // D=a-b-1; M=-1 if a==b
     @EQ_3
-    D;JEQ //jump if a==b, i.e. D=0
-    D=-1
-(EQ_3)
-    D=!D  // !0=-1
+    D=D+1;JEQ //jump if a==b, i.e. (a-b-1)+1==0
     @SP
     A=M-1
-    M=D
+    M=0
+(EQ_3)
     // 33 - to not change code formatting file with 4 values
 //push constant 17
     // handles push constant i
@@ -54,17 +52,15 @@
     @SP
     M=M-1
     A=M
-    D=M  // D=b
+    D=M-1  // D=b-1
     A=A-1
-    D=D-M // D=a-b
+    MD=D-M // D=a-b-1; M=-1 if a==b
     @EQ_6
-    D;JEQ //jump if a==b, i.e. D=0
-    D=-1
-(EQ_6)
-    D=!D  // !0=-1
+    D=D+1;JEQ //jump if a==b, i.e. (a-b-1)+1==0
     @SP
     A=M-1
-    M=D
+    M=0
+(EQ_6)
     // 66 - to not change code formatting file with 4 values
 //push constant 16
     // handles push constant i
@@ -88,17 +84,15 @@
     @SP
     M=M-1
     A=M
-    D=M  // D=b
+    D=M-1  // D=b-1
     A=A-1
-    D=D-M // D=a-b
+    MD=D-M // D=a-b-1; M=-1 if a==b
     @EQ_9
-    D;JEQ //jump if a==b, i.e. D=0
-    D=-1
-(EQ_9)
-    D=!D  // !0=-1
+    D=D+1;JEQ //jump if a==b, i.e. (a-b-1)+1==0
     @SP
     A=M-1
-    M=D
+    M=0
+(EQ_9)
     // 99 - to not change code formatting file with 4 values
 //push constant 892
     // handles push constant i
