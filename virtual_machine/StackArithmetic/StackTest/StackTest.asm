@@ -3,19 +3,17 @@
     @17 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 17
     // handles push constant i
     @17 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //eq
     // pop b | pop a | push a==b (true or false)
     // true = -1, false = 0
@@ -39,19 +37,17 @@
     @17 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 16
     // handles push constant i
     @16 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //eq
     // pop b | pop a | push a==b (true or false)
     // true = -1, false = 0
@@ -75,19 +71,17 @@
     @16 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 17
     // handles push constant i
     @17 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //eq
     // pop b | pop a | push a==b (true or false)
     // true = -1, false = 0
@@ -111,19 +105,17 @@
     @892 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 891
     // handles push constant i
     @891 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //lt
     // pop b | pop a | push a<b (true or false)
     // true = -1, false = 0
@@ -131,42 +123,34 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @LT_12
     D;JLT // if a<b
-    @SP
-    A=M
-    M=0 // if a>b
     @END_12
-    0;JMP
+    D=0;JMP
 (LT_12)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_12)
     @SP
-    M=M+1
+    A=M-1
+    M=D
 //push constant 891
     // handles push constant i
     @891 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 892
     // handles push constant i
     @892 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //lt
     // pop b | pop a | push a<b (true or false)
     // true = -1, false = 0
@@ -174,42 +158,34 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @LT_15
     D;JLT // if a<b
-    @SP
-    A=M
-    M=0 // if a>b
     @END_15
-    0;JMP
+    D=0;JMP
 (LT_15)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_15)
     @SP
-    M=M+1
+    A=M-1
+    M=D
 //push constant 891
     // handles push constant i
     @891 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 891
     // handles push constant i
     @891 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //lt
     // pop b | pop a | push a<b (true or false)
     // true = -1, false = 0
@@ -217,42 +193,34 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @LT_18
     D;JLT // if a<b
-    @SP
-    A=M
-    M=0 // if a>b
     @END_18
-    0;JMP
+    D=0;JMP
 (LT_18)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_18)
     @SP
-    M=M+1
+    A=M-1
+    M=D
 //push constant 32767
     // handles push constant i
     @32767 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 32766
     // handles push constant i
     @32766 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //gt
     // pop b | pop a | push a>b (true or false)
     // true = -1, false = 0
@@ -260,42 +228,34 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @GT_21
     D;JGT // if a>b
-    @SP
-    A=M
-    M=0 // if a<b
     @END_21
-    0;JMP
+    D=0;JMP
 (GT_21)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_21)
     @SP
-    M=M+1
+    A=M-1
+    M=D
 //push constant 32766
     // handles push constant i
     @32766 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 32767
     // handles push constant i
     @32767 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //gt
     // pop b | pop a | push a>b (true or false)
     // true = -1, false = 0
@@ -303,42 +263,34 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @GT_24
     D;JGT // if a>b
-    @SP
-    A=M
-    M=0 // if a<b
     @END_24
-    0;JMP
+    D=0;JMP
 (GT_24)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_24)
     @SP
-    M=M+1
+    A=M-1
+    M=D
 //push constant 32766
     // handles push constant i
     @32766 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 32766
     // handles push constant i
     @32766 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //gt
     // pop b | pop a | push a>b (true or false)
     // true = -1, false = 0
@@ -346,131 +298,98 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @GT_27
     D;JGT // if a>b
-    @SP
-    A=M
-    M=0 // if a<b
     @END_27
-    0;JMP
+    D=0;JMP
 (GT_27)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_27)
     @SP
-    M=M+1
+    A=M-1
+    M=D
 //push constant 57
     // handles push constant i
     @57 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 31
     // handles push constant i
     @31 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 53
     // handles push constant i
     @53 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //add
     // pop b| pop a| push a+b
     @SP
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D+M
-    @SP
-    M=M+1
 //push constant 112
     // handles push constant i
     @112 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //sub
     // pop b | pop a | push a-b
     @SP
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=M-D
-    @SP
-    M=M+1
 //neg
     // pop a single numbers from stack, store back negative of number on stack
     // pop a | push -a
     @SP
-    M=M-1
-    A=M
+    A=M-1
     M=-M //M = -a
-    @SP
-    M=M+1
 //and
     // pop b| pop a| push a&b (bitwise and)
     @SP
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D&M
-    @SP
-    M=M+1
 //push constant 82
     // handles push constant i
     @82 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //or
     // pop b| pop a| push a|b (bitwise or)
     @SP
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D|M
-    @SP
-    M=M+1
 //not
     // pop a | push !a (bitwise not)
     @SP
-    M=M-1
-    A=M
+    A=M-1
     M=!M
-    @SP
-    M=M+1

@@ -3,10 +3,9 @@
     @10 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //pop local 0
     // pop value from stack to segment i 
     @0 //i
@@ -27,19 +26,17 @@
     @21 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 22
     // handles push constant i
     @22 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //pop argument 2
     // pop value from stack to segment i 
     @2 //i
@@ -75,10 +72,9 @@
     @36 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //pop this 6
     // pop value from stack to segment i 
     @6 //i
@@ -99,19 +95,17 @@
     @42 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 45
     // handles push constant i
     @45 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //pop that 5
     // pop value from stack to segment i 
     @5 //i
@@ -147,26 +141,24 @@
     @510 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //pop temp 6
     // pop value from stack to segment i 
     @6 //i
     D=A
     @R5 //segment
     D=D+A
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push local 0
     // push value at segment i onto stack (segment among local, argument, this, that)
     @0 //i
@@ -175,10 +167,9 @@
     A=D+M
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push that 5
     // push value at segment i onto stack (segment among local, argument, this, that)
     @5 //i
@@ -187,10 +178,9 @@
     A=D+M
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //add
     // pop b| pop a| push a+b
     @SP
@@ -211,10 +201,9 @@
     A=D+M
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //sub
     // pop b | pop a | push a-b
     @SP
@@ -235,10 +224,9 @@
     A=D+M
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push this 6
     // push value at segment i onto stack (segment among local, argument, this, that)
     @6 //i
@@ -247,10 +235,9 @@
     A=D+M
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //add
     // pop b| pop a| push a+b
     @SP
@@ -283,10 +270,9 @@
     A=D+A
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //add
     // pop b| pop a| push a+b
     @SP

@@ -4,21 +4,15 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     D=M-D // D=a-b
     @LT_%d
     D;JLT // if a<b
-    @SP
-    A=M
-    M=0 // if a>b
     @END_%d
-    0;JMP
+    D=0;JMP
 (LT_%d)
-    @SP
-    A=M
-    M=-1
+    D=-1
 (END_%d)
     @SP
-    M=M+1
+    A=M-1
+    M=D

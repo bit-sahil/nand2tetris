@@ -3,13 +3,12 @@
     D=A
     @%s //segment
     D=D+A
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D

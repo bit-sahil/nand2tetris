@@ -3,28 +3,25 @@
     @111 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 333
     // handles push constant i
     @333 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 888
     // handles push constant i
     @888 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //pop static 8
     // pop value from stack to @file_name.i 
     @SP
@@ -54,19 +51,17 @@
     @StaticTest.3 //i
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push static 1
     // push value at <file_name>.i onto stack
     @StaticTest.1 //i
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //sub
     // pop b | pop a | push a-b
     @SP
@@ -84,10 +79,9 @@
     @StaticTest.8 //i
     D=M
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //add
     // pop b| pop a| push a+b
     @SP
