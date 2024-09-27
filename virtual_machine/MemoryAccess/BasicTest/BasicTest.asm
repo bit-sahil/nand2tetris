@@ -13,16 +13,15 @@
     D=A
     @LCL //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push constant 21
     // handles push constant i
     @21 // i
@@ -47,32 +46,30 @@
     D=A
     @ARG //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //pop argument 1
     // pop value from stack to segment i 
     @1 //i
     D=A
     @ARG //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push constant 36
     // handles push constant i
     @36 // i
@@ -88,16 +85,15 @@
     D=A
     @THIS //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push constant 42
     // handles push constant i
     @42 // i
@@ -122,32 +118,30 @@
     D=A
     @THAT //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //pop that 2
     // pop value from stack to segment i 
     @2 //i
     D=A
     @THAT //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push constant 510
     // handles push constant i
     @510 // i

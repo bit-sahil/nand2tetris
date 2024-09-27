@@ -63,16 +63,15 @@
     D=A
     @THIS //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push constant 46
     // handles push constant i
     @46 // i
@@ -88,16 +87,15 @@
     D=A
     @THAT //segment
     D=D+M
-    @SP
-    A=M
-    M=D
-    A=A-1
-    D=M
-    A=A+1
-    A=M
+    @R14
     M=D
     @SP
     M=M-1
+    A=M
+    D=M
+    @R14
+    A=M
+    M=D
 //push pointer 0
     // push value at segment i onto stack (segment among local, argument, this, that)
     @0 //i

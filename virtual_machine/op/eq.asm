@@ -3,22 +3,15 @@
     @SP
     M=M-1
     A=M
-    D=M
-    @SP
-    M=M-1
-    A=M
-    D=M-D // D=a-b
+    D=M  // D=b
+    A=A-1
+    D=D-M // D=a-b
     @EQ_%d
-    D;JEQ // if a==b
-    @SP
-    A=M
-    M=0 // if a!=b
-    @END_%d
-    0;JMP
+    D;JEQ //jump if a==b, i.e. D=0
+    D=-1
 (EQ_%d)
+    D=!D  // !0=-1
     @SP
-    A=M
-    M=-1
-(END_%d)
-    @SP
-    M=M+1
+    A=M-1
+    M=D
+    // %d%d - to not change code formatting file with 4 values
