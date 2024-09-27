@@ -64,7 +64,20 @@ void handle_push_pointer(int num, FILE* asmFile) {
 }
 
 
-void handle_push(char* seg, FILE* asmFile) {
+void handle_push_static(int num, FILE* asmFile, char* fvar) {
+    // Handles push static i
+    // we essentially declare a variable named @file_name.i 
+
+    char* f_contents = get_f_contents("push_static");
+
+    // add file contents fortmatting variable name
+    fprintf(asmFile, f_contents, fvar,  num);
+
+    free(f_contents);
+}
+
+
+void handle_push(char* seg, FILE* asmFile, char* fvar) {
     // form:<segment> num
 
     int segType = parse_stack_segment(seg);
@@ -90,6 +103,8 @@ void handle_push(char* seg, FILE* asmFile) {
         handle_push_temp(num, asmFile);
     } else if(segType==Pointer) {
         handle_push_pointer(num, asmFile);
+    } else if(segType==Static) {
+        handle_push_static(num, asmFile, fvar);
     }
 }
 

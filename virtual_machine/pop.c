@@ -52,7 +52,20 @@ void handle_pop_pointer(int num, FILE* asmFile) {
 }
 
 
-void handle_pop(char* seg, FILE* asmFile) {
+void handle_pop_static(int num, FILE* asmFile, char* fvar) {
+    // Handles static heap segment
+    // stores stack value in variable fvar.i
+
+    char* f_contents = get_f_contents("pop_static");
+
+    // add file contents fortmatting num and segment
+    fprintf(asmFile, f_contents, fvar, num);
+
+    free(f_contents);
+}
+
+
+void handle_pop(char* seg, FILE* asmFile, char* fvar) {
     // form:<segment> num
 
     int segType = parse_stack_segment(seg);
@@ -76,6 +89,8 @@ void handle_pop(char* seg, FILE* asmFile) {
         handle_pop_temp(num, asmFile);
     } else if(segType==Pointer) {
         handle_pop_pointer(num, asmFile);
+    } else if(segType==Static) {
+        handle_pop_static(num, asmFile, fvar);
     }
 }
 

@@ -96,7 +96,7 @@ void process_file_and_translate(char* file_name) {
         line_without_space(line, cleaned_line);
         // printf("Original:%s;Cleaned:%s\n", line, cleaned_line);
 
-        parse_and_generate_asm(cleaned_line, asmFile, &line_num);
+        parse_and_generate_asm(cleaned_line, asmFile, &line_num, file_name);
     }
 
     fclose(vmFile);
