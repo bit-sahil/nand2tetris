@@ -6,6 +6,8 @@
 #include "push.h"
 #include "pop.h"
 #include "helper.h"
+#include "function.h"
+#include "return.h"
 
 
 void get_file_variable_name(char* file_name, char* fvar) {
@@ -96,5 +98,10 @@ void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num, char* file_n
     else if(vcType == If_goto)
         handle_if_goto(&vc[8], asmFile);
     
+    // function, call and return
+    else if(vcType == Function)
+        handle_function(&vc[9], asmFile, fvar);
+    else if(vcType == Return)
+        handle_return(asmFile);
 }
 
