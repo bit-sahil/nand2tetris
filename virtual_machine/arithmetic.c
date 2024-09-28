@@ -17,7 +17,7 @@ void handle_arithmetic_op(char* vc, FILE* asmFile) {
 }
 
 
-void handle_comparison_op(char* vc, FILE* asmFile, int* line_num) {
+void handle_comparison_op(char* vc, FILE* asmFile, int line_num, char* fvar) {
     // Handles comparison operations in a generic way
     // These operations do not contain any variables as such, but we need jump statements with unique label
     // and use line_num to generate unique labels
@@ -25,7 +25,7 @@ void handle_comparison_op(char* vc, FILE* asmFile, int* line_num) {
     char* f_contents = get_f_contents(vc);
 
     // add formatted contents of operation file to asmFile
-    fprintf(asmFile, f_contents, *line_num, *line_num, *line_num, *line_num);
+    fprintf(asmFile, f_contents, fvar, line_num, fvar, line_num, fvar, line_num, fvar, line_num);
 
     free(f_contents);
 }

@@ -40,3 +40,26 @@ char* get_f_contents(char* vc) {
     return f_contents;
 }
 
+
+void get_file_variable_name(char* file_name, char* fvar) {
+    // takes in full file name, i.e. a/b/c.ext and returns c
+    // apart from initialization in this function, fvar is treated as a state variable and it's updated
+    // when we enter or exit a function by function and return handler respectively
+
+    char temp[128];
+    copy_str(temp, file_name);
+
+    int s_idx = 0;
+
+    // remove all '/'
+    int idx = search_char(temp, '/');
+    while(idx!=-1) {
+        s_idx += idx+1;
+        idx = search_char(&temp[s_idx], '/');
+        //printf("%d:%d:%s\n", idx, s_idx, &temp[idx+1]);
+    }
+
+    int max = search_char(&temp[s_idx], '.');
+    copy_str_until(fvar, &temp[s_idx], max);
+}
+

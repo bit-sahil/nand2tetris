@@ -18,7 +18,7 @@
     A=D-M // addr+val-val = addr
     M=D-A // addr+val-addr = val
 //label LOOP
-(LOOP)
+(BasicLoop$LOOP)
 //push argument 0
     // push value at segment i onto stack (segment among local, argument, this, that)
     @0 //i
@@ -115,7 +115,7 @@
     M=M-1
     A=M
     D=M
-    @LOOP
+    @BasicLoop$LOOP
     D;JNE
 //push local 0
     // push value at segment i onto stack (segment among local, argument, this, that)

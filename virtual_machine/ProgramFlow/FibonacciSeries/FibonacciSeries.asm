@@ -101,7 +101,7 @@
     A=D-M // addr+val-val = addr
     M=D-A // addr+val-addr = val
 //label LOOP
-(LOOP)
+(FibonacciSeries$LOOP)
 //push argument 0
     // push value at segment i onto stack (segment among local, argument, this, that)
     @0 //i
@@ -119,14 +119,14 @@
     M=M-1
     A=M
     D=M
-    @COMPUTE_ELEMENT
+    @FibonacciSeries$COMPUTE_ELEMENT
     D;JNE
 //goto END
     // goto <label>
-    @END
+    @FibonacciSeries$END
     0;JMP
 //label COMPUTE_ELEMENT
-(COMPUTE_ELEMENT)
+(FibonacciSeries$COMPUTE_ELEMENT)
 //push that 0
     // push value at segment i onto stack (segment among local, argument, this, that)
     @0 //i
@@ -250,7 +250,7 @@
     M=D-A // addr+val-addr = val
 //goto LOOP
     // goto <label>
-    @LOOP
+    @FibonacciSeries$LOOP
     0;JMP
 //label END
-(END)
+(FibonacciSeries$END)

@@ -6,12 +6,12 @@
     D=M  // D=b
     A=A-1
     D=D-M // D=a-b
-    @EQ_%d
+    @%s$EQ_%d
     D;JEQ //jump if a==b, i.e. D=0
     D=-1
-(EQ_%d)
+(%s$EQ_%d)
     D=!D  // !0=-1
     @SP
     A=M-1
     M=D
-    // %d%d - to not change code formatting file with 4 values
+    // %s$%d, %s$%d - to not change code formatting file with 4 values
