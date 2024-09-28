@@ -95,6 +95,22 @@ int parse_virtual_command(char* vc) {
         return Arithmetic;
         //return Not;
 
+    // label and goto commands
+    else if(compare_str_until(vc, "label", 3))
+        return Label;
+    else if(compare_str_until(vc, "goto", 3))
+        return Goto;
+    else if(compare_str_until(vc, "if-goto", 3))
+        return If_goto;
+
+    // function call and return
+    else if(compare_str_until(vc, "function", 3))
+        return Function;
+    else if(compare_str_until(vc, "call", 3))
+        return Call;
+    else if(compare_str_until(vc, "return", 3))
+        return Return;
+    
     printf("Unhandled virtual command:%s\n", vc);
 }
 

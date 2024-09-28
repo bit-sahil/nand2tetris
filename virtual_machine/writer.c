@@ -5,6 +5,7 @@
 #include "arithmetic.h"
 #include "push.h"
 #include "pop.h"
+#include "helper.h"
 
 
 void get_file_variable_name(char* file_name, char* fvar) {
@@ -25,6 +26,37 @@ void get_file_variable_name(char* file_name, char* fvar) {
 
     int max = search_char(&temp[s_idx], '.');
     copy_str_until(fvar, &temp[s_idx], max);
+}
+
+
+void handle_label(char* label, FILE* asmFile) {
+    // form:<label>
+
+   fprintf(asmFile, "(%s)\n", label);
+}
+
+
+void handle_goto(char* label, FILE* asmFile) {
+    // form:<label>
+
+    char* f_contents = get_f_contents("goto");
+
+    // add file contents fortmatting num and segment
+    fprintf(asmFile, f_contents, label);
+
+    free(f_contents);
+}
+
+
+void handle_if_goto(char* label, FILE* asmFile) {
+    // form:<label>
+
+    char* f_contents = get_f_contents("if_goto");
+
+    // add file contents fortmatting num and segment
+    fprintf(asmFile, f_contents, label);
+
+    free(f_contents);
 }
 
 
@@ -55,5 +87,14 @@ void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num, char* file_n
         handle_arithmetic_op(vc, asmFile);
     else if(vcType == Comparison)
         handle_comparison_op(vc, asmFile, line_num);
+
+    // label and goto
+    else if(vcType == Label)
+        handle_label(&vc[6], asmFile);
+    else if(vcType == Goto)
+        handle_goto(&vc[5], asmFile);
+    else if(vcType == If_goto)
+        handle_if_goto(&vc[8], asmFile);
+    
 }
 

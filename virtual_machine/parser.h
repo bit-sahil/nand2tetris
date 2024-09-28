@@ -18,6 +18,12 @@
 #define Not 11
 #define Arithmetic 12
 #define Comparison 13
+#define Label 14
+#define Goto 15
+#define If_goto 16
+#define Function 17
+#define Call 18
+#define Return 19
 
 // Stack segment types
 #define Argument 101
