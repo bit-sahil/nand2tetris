@@ -5,22 +5,22 @@
 
 
 void test_file_reader(char* file_name) {
-    fConfig* fc = init_file_config(file_name, False, True, True, True, 128);
+    ReaderConfig* rc = init_file_config(file_name, False, True, True, True, 128);
 
     char* next_line;
 
-    while((next_line=get_next_line(fc)) != NULL) {
+    while((next_line=get_next_line(rc)) != NULL) {
         printf("$$$%s\n", next_line);
     }
 } 
 
 
 void test_file_handler(char* file_name) {
-    dirConfig* dc = init_dir_config(file_name, ".h", ".tmp");
+    DirConfig* dc = init_dir_config(file_name, ".h", ".tmp");
 
     char f_name[128];
 
-    FILE* out_file = get_out_file(dc);
+    FILE* out_file = get_out_file(dc, file_name);
     // returns pointer to output file in "w" mode
 
     while(get_next_file(dc, f_name)) 

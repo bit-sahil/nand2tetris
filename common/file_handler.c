@@ -14,45 +14,45 @@ If it's a directory, enumerates all *.in_extension files one by one
 */
 
 
-dirConfig* init_dir_config(char* file_name, char* in_ext, char* out_ext) {
-    // initialize config and returns dirConfig*
+DirConfig* init_dir_config(char* file_name, char* in_ext, char* out_ext) {
+    // initialize config and returns DirConfig*
     
-    dirConfig* c = (dirConfig*) malloc(sizeof(dirConfig));
-    strcpy(c->file_name, file_name);
-    strcpy(c->in_ext, in_ext);
-    strcpy(c->out_ext, out_ext);
-    c->file_sent = False;
+    DirConfig* dc = (DirConfig*) malloc(sizeof(DirConfig));
+    strcpy(dc->file_name, file_name);
+    strcpy(dc->in_ext, in_ext);
+    strcpy(dc->out_ext, out_ext);
+    dc->is_file_sent = False;
 
     // whether it's directory or file with given extension
     char* p;
     if((p=strstr(file_name, in_ext)) != NULL) {
         // extension found in file_name
         // it's a file
-        c->is_dir = False;
+        dc->is_dir = False;
     } else {
         // it's a directory
-        c->is_dir = True;
-        if(!(c->dir=opendir(file_name))) {
+        dc->is_dir = True;
+        if(!(dc->dir=opendir(file_name))) {
             printf("Error while opening directory:%s\n", file_name);
         }
     }
 
-    return c;
+    return dc;
 }
 
 
-FILE* get_out_file(dirConfig* c) {
+FILE* get_out_file(DirConfig* dc, char* f_name) {
     // returns pointer to output file in "w" mode
 
     char file_name[128];
-    strcpy(file_name, c->file_name);
+    strcpy(file_name, f_name);
     
     char* p;
-    if((p=strstr(file_name, c->in_ext)) != NULL) {
+    if((p=strstr(file_name, dc->in_ext)) != NULL) {
         // file
-        strcpy(p, c->out_ext);
+        strcpy(p, dc->out_ext);
     } else {
-        strcat(file_name, c->out_ext);
+        strcat(file_name, dc->out_ext);
     }
 
     return fopen(file_name, "w");
@@ -79,17 +79,17 @@ void get_file_name(char* dir_name, char* file_name, char* file_path) {
 }
 
 
-int get_next_file(dirConfig* c, char* file_name) {
+int get_next_file(DirConfig* dc, char* file_name) {
     // in case of file, return file_name only once
 
-    if(!c->is_dir) {
+    if(!dc->is_dir) {
         // file
-        if(c->file_sent) {
+        if(dc->is_file_sent) {
             return False;
         }
 
-        c->file_sent = True;
-        strcpy(file_name, c->file_name);
+        dc->is_file_sent = True;
+        strcpy(file_name, dc->file_name);
         return True;
     }
 
@@ -97,14 +97,14 @@ int get_next_file(dirConfig* c, char* file_name) {
     struct dirent *d;
     char* p;
     
-    while((d=readdir(c->dir)) != NULL) {
+    while((d=readdir(dc->dir)) != NULL) {
         // handle regular files only
         if(d->d_type != DT_REG)
             continue;
 
-        if((p=strstr(file_name, c->in_ext)) != NULL) {
+        if((p=strstr(file_name, dc->in_ext)) != NULL) {
             // file with required extension
-            get_file_name(c->file_name, d->d_name, file_name);
+            get_file_name(dc->file_name, d->d_name, file_name);
             // printf("//Processing file: %s\n", file_name);
             return True;
         }
@@ -114,15 +114,15 @@ int get_next_file(dirConfig* c, char* file_name) {
 }
 
 
-void dealloc_dirconfig(dirConfig* c, FILE* fp) {
-    // deallocate space taken by dirConfig and opened write file
+void dealloc_dirconfig(DirConfig* dc, FILE* fp) {
+    // deallocate space taken by DirConfig and opened write file
 
     if(fp!=NULL)
         fclose(fp);
 
-    if(c->is_dir)
-        closedir(c->dir);
+    if(dc->is_dir)
+        closedir(dc->dir);
 
-    free(c);
+    free(dc);
 }
 

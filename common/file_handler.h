@@ -5,27 +5,27 @@
 #ifndef FILE_HANDLER_H
 #define FILE_HANDLER_H
 
-typedef struct dirConfig {
+typedef struct DirConfig {
     char file_name[128];
     char in_ext[128];
     char out_ext[128];
 
     int is_dir;
-    int file_sent;
+    int is_file_sent;
     DIR* dir;
-} dirConfig;
+} DirConfig;
 
-dirConfig* init_dir_config(char* file_name, char* in_ext, char* out_ext);
-    // initialize config and returns dirConfig*
+DirConfig* init_dir_config(char* file_name, char* in_ext, char* out_ext);
+    // initialize config and returns DirConfig*
     
-FILE* get_out_file(dirConfig* c);
+FILE* get_out_file(DirConfig* dc, char* f_name);
     // returns pointer to output file in "w" mode
 
-int get_next_file(dirConfig* c, char* file_name);
+int get_next_file(DirConfig* dc, char* file_name);
     // in case of file, return file_name only once
 
-void dealloc_dirconfig(dirConfig* c, FILE* fp);
-    // deallocate space taken by dirConfig and opened write file
+void dealloc_dirconfig(DirConfig* dc, FILE* fp);
+    // deallocate space taken by DirConfig and opened write file
 
 #endif
 
