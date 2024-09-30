@@ -5,7 +5,7 @@
 
 
 void test_file_reader(char* file_name) {
-    ReaderConfig* rc = init_file_config(file_name, False, True, True, True, 128);
+    ReaderConfig* rc = init_reader_config(file_name, False, True, True, True, 128);
 
     char* next_line;
 
@@ -27,7 +27,7 @@ void test_file_handler(char* file_name) {
         printf("fName:%s\n", f_name);
     // in case of file, return file_name only once
 
-    dealloc_dirconfig(dc, out_file);
+    dealloc_dir_config(dc, out_file);
 } 
 
 

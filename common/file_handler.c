@@ -114,7 +114,7 @@ int get_next_file(DirConfig* dc, char* file_name) {
 }
 
 
-void dealloc_dirconfig(DirConfig* dc, FILE* fp) {
+void dealloc_dir_config(DirConfig* dc, FILE* fp) {
     // deallocate space taken by DirConfig and opened write file
 
     if(fp!=NULL)

@@ -24,7 +24,7 @@ FILE* get_out_file(DirConfig* dc, char* f_name);
 int get_next_file(DirConfig* dc, char* file_name);
     // in case of file, return file_name only once
 
-void dealloc_dirconfig(DirConfig* dc, FILE* fp);
+void dealloc_dir_config(DirConfig* dc, FILE* fp);
     // deallocate space taken by DirConfig and opened write file
 
 #endif

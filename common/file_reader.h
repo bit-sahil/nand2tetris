@@ -27,7 +27,7 @@ typedef struct ReaderConfig {
     FILE* fp;
 } ReaderConfig;
 
-ReaderConfig* init_file_config(char* file_name, int remove_space, int remove_trailing_space, int remove_comments, int non_empty_only, int max_len);
+ReaderConfig* init_reader_config(char* file_name, int remove_space, int remove_trailing_space, int remove_comments, int non_empty_only, int max_len);
     // initialize file config with settings and returns config
 
 
@@ -38,7 +38,7 @@ char* get_next_line(ReaderConfig* rc);
     if there is no non-empty line, returns NULL pointer
     */
 
-void dealloc_file_config(ReaderConfig* rc); 
+void dealloc_reader_config(ReaderConfig* rc); 
     // deallocate memory assigned for config and it's sub-elements
 
 #endif

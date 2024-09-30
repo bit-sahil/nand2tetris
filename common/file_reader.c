@@ -26,7 +26,7 @@ for not having to store FILE* as part of moving config back and forth
 */
 
 
-ReaderConfig* init_file_config(char* file_name, int remove_space, int remove_trailing_space, int remove_comments, int non_empty_only, int max_len) {
+ReaderConfig* init_reader_config(char* file_name, int remove_space, int remove_trailing_space, int remove_comments, int non_empty_only, int max_len) {
     // initialize file config with settings and returns config
 
     ReaderConfig* rc = (ReaderConfig*) malloc(sizeof(ReaderConfig));
@@ -174,7 +174,7 @@ char* get_next_line(ReaderConfig* rc) {
 }
 
 
-void dealloc_file_config(ReaderConfig* rc) {
+void dealloc_reader_config(ReaderConfig* rc) {
     // deallocate memory assigned for config and it's sub-elements
     free(rc->line);
     free(rc);
