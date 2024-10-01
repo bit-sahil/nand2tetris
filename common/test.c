@@ -3,7 +3,6 @@
 #include "file_handler.h"
 #include "file_reader.h"
 #include "word_delimit.h"
-#include "delimiter.h"
 
 
 void test_file_reader(char* file_name) {

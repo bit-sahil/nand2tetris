@@ -34,5 +34,7 @@ int next_token(Delimiter* dl, char* dest);
     // copy next delimited token in dest, if present
     // returns True if word is found, false otherwise
 
+void dealloc_delimiter(Delimiter* dl);
+
 #endif
 

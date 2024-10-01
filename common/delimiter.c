@@ -83,3 +83,10 @@ int next_token(Delimiter* dl, char* dest) {
     return True;
 }
 
+
+void dealloc_delimiter(Delimiter* dl) {
+    free(dl->line);
+    free(dl->delim);
+    free(dl);
+}
+
