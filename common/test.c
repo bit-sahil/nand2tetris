@@ -2,6 +2,8 @@
 #include "boolean.h"
 #include "file_handler.h"
 #include "file_reader.h"
+#include "word_delimit.h"
+#include "delimiter.h"
 
 
 void test_file_reader(char* file_name) {
@@ -31,6 +33,18 @@ void test_file_handler(char* file_name) {
 } 
 
 
+void test_delim() {
+    char* str = " A test   str";
+
+    Delimiter* dl = init_word_delimiter(str);
+
+    char dest[16];
+    while(next_word(dl, dest)) {
+        printf("Next word:%s:\n", dest);
+    }
+}
+
+
 int main(int argc, char* argv[]) {
     // vm file is provided as argv[1]
 
@@ -38,5 +52,6 @@ int main(int argc, char* argv[]) {
 
     test_file_reader(file_name);
     test_file_handler(file_name);
+    test_delim();
 }
 
