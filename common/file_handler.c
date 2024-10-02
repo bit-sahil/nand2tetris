@@ -99,13 +99,15 @@ int get_next_file(DirConfig* dc, char* file_name) {
     
     while((d=readdir(dc->dir)) != NULL) {
         // handle regular files only
+        //printf("file in directory=%s;type=%d;in_ext=%s\n", d->d_name, d->d_type, dc->in_ext);
+
         if(d->d_type != DT_REG)
             continue;
 
-        if((p=strstr(file_name, dc->in_ext)) != NULL) {
+        if((p=strstr(d->d_name, dc->in_ext)) != NULL) {
             // file with required extension
             get_file_name(dc->file_name, d->d_name, file_name);
-            // printf("//Processing file: %s\n", file_name);
+            //printf("//Processing file: %s\n", file_name);
             return True;
         }
     }

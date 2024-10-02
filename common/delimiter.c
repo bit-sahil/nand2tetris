@@ -38,10 +38,14 @@ void advance_ptr(Delimiter* dl) {
 
 
 Delimiter* init_delimiter(char* line, char* delim, int ignore_multiple_delim) {
+    //printf("Allocating delimiter with line:%s\n", line);
+
     Delimiter* dl = (Delimiter*) malloc(sizeof(Delimiter));
 
-    dl->line = (char*) malloc(strlen(line)*sizeof(char));
-    dl->delim = (char*) malloc(strlen(delim)*sizeof(char));
+    dl->line = (char*) malloc((1+strlen(line))*sizeof(char));
+    //dl->line = (char*) malloc(128*sizeof(char));
+    //dl->delim = (char*) malloc(128*sizeof(char));
+    dl->delim = (char*) malloc((1+strlen(delim))*sizeof(char));
     dl->ignore_multiple_delim = ignore_multiple_delim;
 
     strcpy(dl->line, line);
@@ -85,6 +89,9 @@ int next_token(Delimiter* dl, char* dest) {
 
 
 void dealloc_delimiter(Delimiter* dl) {
+    
+    //printf("Deallocating delimiter for line: %s\n", dl->line);
+
     free(dl->line);
     free(dl->delim);
     free(dl);
