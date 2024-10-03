@@ -9,6 +9,7 @@
 #include "../common/code_delimit.h"
 #include "tokenizer.h"
 #include "token_handler.h"
+#include "xml_writer.h"
 
 
 TokenizerConfig* init_tokenizer(char* file_name, char* out_ext) {
@@ -235,40 +236,6 @@ char* get_string_val(TokenizerConfig* tc) {
 }
 
 
-void out_str(char* token, char* tokenType, FILE* outfp) {
-        fprintf(outfp, "<%s> %s </%s>\n", tokenType, token, tokenType);
-}
-
-
-void out_sym_str(char* token, char* tokenType, FILE* outfp) {
-    // output to file, also handling symbols for xm
-    fprintf(outfp, "<%s> ", tokenType);
-
-    char curr;
-    for(int i=0; (token[i] != '\0'); i++) {
-
-        switch(token[i]) {
-            case '<':
-                fprintf(outfp, "&lt;");
-                break;
-            case '>':
-                fprintf(outfp, "&gt;");
-                break;
-            case '"':
-                fprintf(outfp, "&quot;");
-                break;
-            case '&':
-                fprintf(outfp, "&amp;");
-                break;
-            default:
-                fprintf(outfp, "%c", token[i]);
-        }
-    }
-
-    fprintf(outfp, " </%s>\n", tokenType);
-}
-
-
 void out_token(TokenizerConfig* tc, FILE* outfp) {
     // add token into xml file
 
@@ -305,8 +272,8 @@ void generate_output(TokenizerConfig* tc) {
 
     while(has_more_tokens(tc)) {
         advance_token(tc);
-        //printf("word:%s\n", tc->word);
-        printf("token:%s;type=%d\n", tc->token, tc->t);
+        // printf("word:%s\n", tc->word);
+        // printf("token:%s;type=%d\n", tc->token, tc->t);
         out_token(tc, outfp);
     }
 
@@ -321,6 +288,7 @@ void handle_file_or_directory(char* file_name) {
     while(adv_next_file(tc)) {
         // file should be returned first time
         // printf("Error: No file returned for the first time: file_name=%s\n", file_name);
+        printf("Generating output for file_name=%s\n", tc->rc->file_name);
 
         generate_output(tc);
     }
