@@ -3,9 +3,12 @@
 #include "file_handler.h"
 #include "file_reader.h"
 #include "word_delimit.h"
+#include "code_delimit.h"
 
 
 void test_file_reader(char* file_name) {
+    printf("********* Testing File Reader **********\n");
+
     ReaderConfig* rc = init_reader_config(file_name, False, True, True, True, 128);
 
     char* next_line;
@@ -17,6 +20,8 @@ void test_file_reader(char* file_name) {
 
 
 void test_file_handler(char* file_name) {
+    printf("********* Testing File Handler **********\n");
+
     DirConfig* dc = init_dir_config(file_name, ".h", ".tmp");
 
     char f_name[128];
@@ -33,6 +38,8 @@ void test_file_handler(char* file_name) {
 
 
 void test_delim() {
+    printf("********* Testing Line Delimiter **********\n");
+
     char* str = " A test   str";
 
     Delimiter* dl = init_word_delimiter(str);
@@ -40,6 +47,20 @@ void test_delim() {
     char dest[16];
     while(next_word(dl, dest)) {
         printf("Next word:%s:\n", dest);
+    }
+}
+
+
+void test_code_delim() {
+    printf("********* Testing Code Line Delimiter **********\n");
+
+    char* str = "char* lms =&func(\"This is my string\n end string\", &p2);";
+
+    Delimiter* dl = init_code_delimiter(str);
+    int n=20;
+    char dest[64];
+    while(n-- && next_code_token(dl, dest)) {
+        printf("Next code token:%s:\n", dest);
     }
 }
 
@@ -52,5 +73,6 @@ int main(int argc, char* argv[]) {
     test_file_reader(file_name);
     test_file_handler(file_name);
     test_delim();
+    test_code_delim();
 }
 

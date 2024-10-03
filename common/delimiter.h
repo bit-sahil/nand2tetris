@@ -22,6 +22,7 @@ typedef struct Delimiter {
     int ignore_multiple_delim;
 
     char* ptr;
+    int state;
 } Delimiter;
 
 

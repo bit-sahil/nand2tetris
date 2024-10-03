@@ -4,13 +4,7 @@
 #ifndef FILE_READER_H
 #define FILE_READER_H
 
-
-typedef enum {
-    CODE = 1,
-    COMMENT = 2,
-    CHAR = 3,
-    STRING = 4,
-} CodeState;
+#include "code_state.h"
 
 
 typedef struct ReaderConfig {

@@ -122,6 +122,8 @@ int init_advance(TokenizerConfig* tc) {
         // not empty line should anyways have non-empty word, but putting this redundant check anyhow
         printf("Error: Empty word in line: f_name=%s; line=%s\n", tc->dc->file_name, tc->rc->line);
     }
+
+    tc->state = CODE;
 }
 
 

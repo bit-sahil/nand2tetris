@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include "boolean.h"
+#include "code_state.h"
 #include "file_reader.h"
 
 
