@@ -6,7 +6,7 @@
 #include "../common/file_handler.h"
 #include "../common/file_reader.h"
 #include "../common/code_reader.h"
-#include "../common/word_delimit.h"
+#include "../common/code_delimit.h"
 #include "tokenizer.h"
 #include "token_handler.h"
 
@@ -81,7 +81,7 @@ int adv_next_line(TokenizerConfig* tc) {
         dealloc_delimiter(tc->dl);
         tc->dl = NULL;
 
-    tc->dl = init_word_delimiter(l);
+    tc->dl = init_code_delimiter(l);
 
     return True;
 }
@@ -98,7 +98,7 @@ int adv_next_word(TokenizerConfig* tc) {
     
     char word[128];
 
-    while(!next_word(tc->dl, word)) {
+    while(!next_code_token(tc->dl, word)) {
         if(!adv_next_line(tc))
             return False;
     }
@@ -123,7 +123,7 @@ int init_advance(TokenizerConfig* tc) {
         printf("Error: Empty word in line: f_name=%s; line=%s\n", tc->dc->file_name, tc->rc->line);
     }
 
-    tc->state = CODE;
+    tc->dl->state = CODE;
 }
 
 

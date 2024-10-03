@@ -88,8 +88,11 @@ void handle_str_const(TokenizerConfig* tc) {
             return;
         }
 
-        if(*(tc->wp) == '"' && !(*(tc->wp - 1) != '\\')) {
+        //printf("curr=%c;prev=%c;cond=%d\n", *(tc->wp), *(tc->wp - 1), !(*(tc->wp - 1) != '\\'));
+
+        if((*(tc->wp) == '"') && (*(tc->wp - 1) != '\\')) {
             // string termination
+            //printf("Terminating string now\n");
             tc->token[idx] = '\0';
             tc->wp++;
             return;
