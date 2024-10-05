@@ -105,7 +105,7 @@ void handle_str_const(TokenizerConfig* tc) {
 }
 
 
-int handle_keyword(TokenizerConfig* tc) {
+int handle_keyword_token(TokenizerConfig* tc) {
     // store keyword in token field if keyword is found, and return True
     // return False if word doesn't match keyword
 
@@ -139,7 +139,7 @@ int handle_keyword(TokenizerConfig* tc) {
 }
 
 
-void handle_identifier(TokenizerConfig* tc) {
+void handle_identifier_token(TokenizerConfig* tc) {
     // store identifier/variable name
     // alphanumeric and _ are applicable
 

@@ -12,34 +12,6 @@
 #include "xml_writer.h"
 
 
-TokenizerConfig* init_tokenizer(char* file_name, char* out_ext) {
-    // initialize tokenizer with relevant state to process files, 
-    // to be able to return one token at a time
-
-    TokenizerConfig* tc = (TokenizerConfig*) malloc(sizeof(TokenizerConfig));
-
-    tc->dc = init_dir_config(file_name, ".jack", out_ext);
-    tc->rc = NULL;
-    tc->dl = NULL;
-
-    return tc;
-}
-
-
-void dealloc_tokenizer(TokenizerConfig* tc) {
-    // deallocate space taken by DirConfig and opened write file
-    dealloc_dir_config(tc->dc, NULL);
-
-    if(tc->rc != NULL)
-        dealloc_reader_config(tc->rc);
-
-    if(tc->dl != NULL)
-        dealloc_delimiter(tc->dl);
-
-    free(tc);
-}
-
-
 int adv_next_file(TokenizerConfig* tc) {
     /* advance to next file and update tc to store it
     If there are no more files to process, return false, o.w. return true
@@ -128,7 +100,7 @@ int init_advance(TokenizerConfig* tc) {
 }
 
 
-int has_more_tokens(TokenizerConfig* tc) {
+int has_more_tokens_nla(TokenizerConfig* tc) {
     // returns true if more tokens are there to be processed, ow false
     // if there's a non-empty word, that means there should be a token
 
@@ -136,7 +108,7 @@ int has_more_tokens(TokenizerConfig* tc) {
 }
 
 
-void advance_token(TokenizerConfig* tc) {
+void advance_token_nla(TokenizerConfig* tc) {
     // advance token and store it's result to be retrieved later
 
     int idx = 0;
@@ -157,10 +129,10 @@ void advance_token(TokenizerConfig* tc) {
         tc->t = STRING_CONST;
 
     } else {
-        if(handle_keyword(tc)) {
+        if(handle_keyword_token(tc)) {
             tc->t = KEYWORD;
         } else {
-            handle_identifier(tc);
+            handle_identifier_token(tc);
             tc->t = IDENTIFIER;
         }
     }
@@ -172,136 +144,17 @@ void advance_token(TokenizerConfig* tc) {
 }
 
 
-TokenType get_token_type(TokenizerConfig* tc) {
+TokenType get_token_type_nla(TokenizerConfig* tc) {
     // return current token
 
     return tc->t;
 }
 
 
-char get_symbol(TokenizerConfig* tc) {
-    // returns symbol char
-
-    if(tc->t != SYMBOL)
-        printf("Error: Incorrect method (SYMBOL) called to retrieve current token for TokenType:%d, token:%s\n", tc->t, tc->token);
-
-    return tc->token[0];
-}
-
-
-char* get_keyword(TokenizerConfig* tc) {
-    // returns pointer to stored keyword string
-
-    if(tc->t != KEYWORD)
-        printf("Error: Incorrect method (KEYWORD) called to retrieve current token for TokenType:%d, token:%s\n", tc->t, tc->token);
+const char* get_raw_token_nla(TokenizerConfig* tc) {
+    // returns raw token value as a string
+    // this value should not be updated by caller so trying const there
 
     return tc->token;
-}
-
-
-char* get_identifier(TokenizerConfig* tc) {
-    // returns pointer to identifier (string)
-
-    if(tc->t != IDENTIFIER)
-        printf("Error: Incorrect method (IDENTIFIER) called to retrieve current token for TokenType:%d, token:%s\n", tc->t, tc->token);
-
-    return tc->token;
-}
-
-
-long get_int_val(TokenizerConfig* tc) {
-    // returns integer value
-
-    if(tc->t != INT_CONST)
-        printf("Error: Incorrect method (INT_CONST) called to retrieve current token for TokenType:%d, token:%s\n", tc->t, tc->token);
-
-    char* err;
-
-    long val = strtol(tc->token, &err, 10);
-
-    if(err[0] != '\0')
-        printf("Error while converting to number, token=%s; err=%s\n", tc->token, err);
-
-    return val;
-}
-
-
-char* get_string_val(TokenizerConfig* tc) {
-    // returns pointer to string constant
-
-    if(tc->t != STRING_CONST)
-        printf("Error: Incorrect method (STR_CONST) called to retrieve current token for TokenType:%d, token:%s\n", tc->t, tc->token);
-
-    return tc->token;
-}
-
-
-void out_token(TokenizerConfig* tc, FILE* outfp) {
-    // add token into xml file
-
-    switch(tc->t) {
-
-        case SYMBOL:
-            out_sym_str(tc->token, "symbol", outfp);
-            break;
-
-        case KEYWORD:
-            out_str(tc->token, "keyword", outfp);
-            break;
-
-        case IDENTIFIER:
-            out_str(tc->token, "identifier", outfp);
-            break;
-
-        case INT_CONST:
-            out_str(tc->token, "integerConstant", outfp);
-            break;
-
-        case STRING_CONST:
-            out_sym_str(tc->token, "stringConstant", outfp);
-            break;
-    }
-}
-
-
-void generate_output(TokenizerConfig* tc) {
-    // create output file corresponding to each input file
-    FILE* outfp = get_out_file(tc->dc, tc->rc->file_name);
-
-    fprintf(outfp, "<tokens>\n");
-
-    while(has_more_tokens(tc)) {
-        advance_token(tc);
-        // printf("word:%s\n", tc->word);
-        // printf("token:%s;type=%d\n", tc->token, tc->t);
-        out_token(tc, outfp);
-    }
-
-    fprintf(outfp, "</tokens>\n");
-    fclose(outfp);
-}
-
-
-void handle_file_or_directory(char* file_name) {
-    TokenizerConfig* tc = init_tokenizer(file_name, "Tout.xml");
-
-    while(adv_next_file(tc)) {
-        // file should be returned first time
-        // printf("Error: No file returned for the first time: file_name=%s\n", file_name);
-        printf("Generating output for file_name=%s\n", tc->rc->file_name);
-
-        generate_output(tc);
-    }
-
-    dealloc_tokenizer(tc);
-}
-
-
-int main(int argc, char* argv[]) {
-    // .jack file or directory name is provided as argv[1]
-
-    char* file_name = argv[1];
-
-    handle_file_or_directory(file_name);
 }
 

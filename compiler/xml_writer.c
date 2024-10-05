@@ -34,3 +34,28 @@ void out_sym_str(char* token, char* tokenType, FILE* outfp) {
     fprintf(outfp, " </%s>\n", tokenType);
 }
 
+
+void out_symbol(char c, char* tokenType, FILE* outfp) {
+    // output to file, also handling symbols for xml
+    fprintf(outfp, "<%s> ", tokenType);
+
+    switch(c) {
+        case '<':
+            fprintf(outfp, "&lt;");
+            break;
+        case '>':
+            fprintf(outfp, "&gt;");
+            break;
+        case '"':
+            fprintf(outfp, "&quot;");
+            break;
+        case '&':
+            fprintf(outfp, "&amp;");
+            break;
+        default:
+            fprintf(outfp, "%c", c);
+    }
+
+    fprintf(outfp, " </%s>\n", tokenType);
+}
+
