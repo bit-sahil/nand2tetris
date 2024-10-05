@@ -16,6 +16,10 @@
 // function declarations
 int handle_statements(TokenizerConfig* tc, FILE* outfp);
 
+int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp);
+
+int handle_expression(TokenizerConfig* tc, FILE* outfp);
+
 
 typedef struct ParserConfig {
     TokenizerConfig* tc;
@@ -355,6 +359,26 @@ int handle_var_dec(TokenizerConfig* tc, FILE* outfp) {
 }
 
 
+int handle_unaryop(TokenizerConfig* tc, FILE* outfp) {
+    // '-'|'~'
+
+    if(lookahead_symbol(tc, '-')) {
+        if(!expect_char(tc, '-', outfp))
+            return False;
+    
+    } else if(lookahead_symbol(tc, '~')) {
+        if(!expect_char(tc, '~', outfp))
+            return False;
+    
+    } else {
+        printf("ParserError: handle_unaryop, expected unary op not found\n");
+        return False;
+    }
+
+    return True;
+}
+
+
 int handle_term(TokenizerConfig* tc, FILE* outfp) {
     //  integerConstant | stringConstant | keywordConstant | varName | varName '[' expression ']' | subroutineCall |
     // '(' expression ')' | unaryOp term
@@ -369,22 +393,107 @@ int handle_term(TokenizerConfig* tc, FILE* outfp) {
         if(!handle_string_const(tc, outfp))
             return False;
     
-    } else if(lookahead_k(tc, KEYWORD, 1)) {
+    } else if(lookahead_k(tc, KEYWORD, 1)) {        
         if(!handle_keyword_const(tc, outfp))
             return False;
+        
     
-    } else {
-        if(!handle_var_name(tc, outfp))
-            return False;
+    } else if(lookahead_k(tc, SYMBOL, 1)) {
+        // '(' expression ')' | unaryOp term
 
-        // todo: other terms to be handled...
-        // printf("Some possible unhandled term here :p\n");
-        // return True;
+        if(lookahead_symbol(tc, '(')) {
+
+            if(!expect_char(tc, '(', outfp))
+                return False;
+
+            if(!handle_expression(tc, outfp))
+                return False;
+
+            if(!expect_char(tc, ')', outfp))
+                return False;
+        
+        } else {
+
+            if(!handle_unaryop(tc, outfp))
+                return False;
+
+            if(!handle_term(tc, outfp))
+                return False;
+        }
+    
+    } else  {
+        // varName | varName '[' expression ']' 
+        // | subroutineCall = subroutineName '(' expressionList ')' | (className | varName) '.' subroutineName '(' expressionList ')'
+
+        if(lookahead_k(tc, SYMBOL, 2)) {
+            // varName '[' expression ']' | subroutineCall
+            
+            char* raw = lookahead_raw_token(tc, 2);
+            char c = get_symbol_token(raw);
+
+            if( c == '[') {
+                if(!handle_var_name(tc, outfp))
+                    return False;
+
+                if(!expect_char(tc, '[', outfp))
+                    return False;
+
+                if(!handle_expression(tc, outfp))
+                    return False;
+
+                if(!expect_char(tc, ']', outfp))
+                    return False;
+            
+            } else if( c == '(' || c == '.') {
+                if(!handle_subroutine_call(tc, outfp))
+                    return False;
+            
+            } else {
+                // just handle variable name
+                if(!handle_var_name(tc, outfp))
+                    return False;
+            }
+        }
     }
 
     fprintf(outfp, "</term>\n");
 
     return True;
+}
+
+
+int lookahead_op(TokenizerConfig* tc) {
+    // '+'|'-'|'*'|'/'|'&'|'|'|'<'|'>'|'='
+
+    if(!lookahead_k(tc, SYMBOL, 1))
+        return False;
+
+    char* raw = lookahead_raw_token(tc, 1);
+    char c = get_symbol_token(raw);
+
+    switch (c) {
+        case '+':
+            return '+';
+        case '-':
+            return '-';
+        case '*':
+            return '*';
+        case '/':
+            return '/';
+        case '&':
+            return '&';
+        case '|':
+            return '|';
+        case '<':
+            return '<';
+        case '>':
+            return '>';
+        case '=':
+            return '=';
+        default:
+            // printf("ParserError: lookahead_op, binary op not found:%c\n", c);
+            return False;
+    }
 }
 
 
@@ -397,6 +506,17 @@ int handle_expression(TokenizerConfig* tc, FILE* outfp) {
         return False;
 
     // todo: handle (op term)*
+
+    char c;
+
+    while( (c = lookahead_op(tc)) ) {
+        // op is just a char
+        if(!expect_char(tc, c, outfp))
+            return False;
+
+        if(!handle_term(tc, outfp))
+            return False;
+    }
 
     fprintf(outfp, "</expression>\n");
 
