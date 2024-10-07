@@ -30,7 +30,7 @@ void process_file_and_translate(ReaderConfig* rc, FILE* asmFile) {
 
     while((cleaned_line = get_next_line(rc)) != NULL) {
         line_num++;
-        parse_and_generate_asm(cleaned_line, asmFile, &line_num, rc->file_name, fvar);
+        parse_and_generate_asm(cleaned_line, asmFile, line_num, rc->file_name, fvar);
     }
 }
 

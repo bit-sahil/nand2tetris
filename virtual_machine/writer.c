@@ -27,14 +27,17 @@ void add_bootstrap_code(FILE* asmFile) {
 }
 
 
-void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num, char* file_name, char* fvar) {
+void parse_and_generate_asm(char* vc, FILE* asmFile, int line_num, char* file_name, char* fvar) {
 
     int vcType = parse_virtual_command(vc);
     //printf("vcType=%d\n", vcType);
 
-    if(vcType==Empty)
+    if(vcType==Empty) {
         // Empty string or comment
+        // Should no longer be relevant
+        printf("WriterError: Parsed virtual command is empty\n");
         return;
+    }
 
     // print virtual machine command for debugging
     fprintf(asmFile, "//%s\n", vc);
@@ -48,7 +51,7 @@ void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num, char* file_n
     else if(vcType == Arithmetic)
         handle_arithmetic_op(vc, asmFile);
     else if(vcType == Comparison)
-        handle_comparison_op(vc, asmFile, *line_num, fvar);
+        handle_comparison_op(vc, asmFile, line_num, fvar);
 
     // label and goto
     else if(vcType == Label)
@@ -66,6 +69,6 @@ void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num, char* file_n
         // fvar should no longer contain function name, just file name
         get_file_variable_name(file_name, fvar);
     } else if(vcType == Call)
-        handle_call(&vc[5], asmFile, *line_num);
+        handle_call(&vc[5], asmFile, line_num);
 }
 
