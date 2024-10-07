@@ -1,3 +1,4 @@
+//Processing file: MemoryAccess/BasicTest/BasicTest.vm
 //push constant 10
     // handles push constant i
     @10 // i

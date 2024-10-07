@@ -1,3 +1,4 @@
+//Processing file: MemoryAccess/PointerTest/PointerTest.vm
 //push constant 3030
     // handles push constant i
     @3030 // i

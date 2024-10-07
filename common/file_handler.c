@@ -52,6 +52,15 @@ FILE* get_out_file(DirConfig* dc, char* f_name) {
         // file
         strcpy(p, dc->out_ext);
     } else {
+        // remove last '/' from dir path, if present
+        int idx = 0;
+        while(file_name[idx] != '\0')
+            // move upto end of string
+            idx++;
+
+        if(file_name[idx-1] == '/')
+            file_name[idx-1] = '\0';
+
         strcat(file_name, dc->out_ext);
     }
 

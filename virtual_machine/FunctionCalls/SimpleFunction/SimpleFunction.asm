@@ -1,5 +1,6 @@
+//Processing file: FunctionCalls/SimpleFunction/SimpleFunction.vm
 //function SimpleFunction.test 2
-(SimpleFunction.SimpleFunction.test)
+(SimpleFunction.test)
     // helper to function to push initializing values on stack
     @SP
     M=M+1

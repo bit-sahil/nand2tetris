@@ -1,3 +1,4 @@
+//Processing file: MemoryAccess/StaticTest/StaticTest.vm
 //push constant 111
     // handles push constant i
     @111 // i
@@ -68,12 +69,8 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=M-D
-    @SP
-    M=M+1
 //push static 8
     // push value at <file_name>.i onto stack
     @StaticTest.8 //i
@@ -88,9 +85,5 @@
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D+M
-    @SP
-    M=M+1

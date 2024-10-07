@@ -36,8 +36,6 @@ void parse_and_generate_asm(char* vc, FILE* asmFile, int* line_num, char* file_n
         // Empty string or comment
         return;
 
-    *line_num = 1 + *line_num;
-
     // print virtual machine command for debugging
     fprintf(asmFile, "//%s\n", vc);
     //printf("fvar=%s;vc=%s\n", fvar, vc);

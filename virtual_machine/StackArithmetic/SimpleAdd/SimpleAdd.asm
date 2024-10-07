@@ -3,28 +3,22 @@
     @7 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //push constant 8
     // handles push constant i
     @8 // i
     D=A
     @SP
-    A=M
-    M=D
-    @SP
     M=M+1
+    A=M-1
+    M=D
 //add
     // pop b| pop a| push a+b
     @SP
     M=M-1
     A=M
     D=M
-    @SP
-    M=M-1
-    A=M
+    A=A-1
     M=D+M
-    @SP
-    M=M+1
