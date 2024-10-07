@@ -1,12 +1,12 @@
 #include "cstring.h"
-#include "map.h"
+#include "../common/map.h"
 #include "binary.h"
 
 
 int curr_address = 16;
 
 
-void add_numeric_value(struct Map* symbolTable, char* key, int num) {
+void add_numeric_value(Map* symbolTable, char* key, int num) {
     /* Add numeric value for specified key in map
     First numeric value is converted to binary
     Then we convert it to 16-bit binary string + 1 bit for '/0'
@@ -22,7 +22,7 @@ void add_numeric_value(struct Map* symbolTable, char* key, int num) {
 }
 
 
-void resolve_var(struct Map* symbolTable, char* var, char* binary_str) {
+void resolve_var(Map* symbolTable, char* var, char* binary_str) {
     /* resolve variable from symbol table
     Check for variable in symbol table and return address in binary_str
     If variable is not present, then allocate memory space in Ram, starting address 16
@@ -39,7 +39,7 @@ void resolve_var(struct Map* symbolTable, char* var, char* binary_str) {
 }
 
 
-void add_label(struct Map* symbolTable, char* label, int address) {
+void add_label(Map* symbolTable, char* label, int address) {
     /* Add label = (Symbol) to symbol table
     We need to remove closing brackets from label for the key
     No changes with address (address refers to ROM address where instruction is stored)
@@ -73,7 +73,7 @@ void ram_key(int num, char* key) {
 }
 
 
-void add_ram(struct Map* symbolTable) {
+void add_ram(Map* symbolTable) {
     // Add R0-R15 to symbol table
 
     char key[4];
@@ -85,13 +85,13 @@ void add_ram(struct Map* symbolTable) {
 }
 
 
-struct Map* new_symbol_table() {
+Map* new_symbol_table() {
     /* Allocate space for new table to be used as symbol table
     We pre-populate symbol table with pre-defined symbols
     Can make it dynamic to use optimum space, but starting with static 1024 elements in map
     */
 
-    struct Map* symbolTable = new_map(1024);
+    Map* symbolTable = init_map(1024);
     
     // special symbols
     add_numeric_value(symbolTable, "SP", 0);

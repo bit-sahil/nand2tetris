@@ -4,6 +4,7 @@
 #include "file_reader.h"
 #include "word_delimit.h"
 #include "code_delimit.h"
+#include "map.h"
 
 
 void test_file_reader(char* file_name) {
@@ -65,6 +66,23 @@ void test_code_delim() {
 }
 
 
+int test_map() {
+    Map* map = init_map(5);
+    char s1[] = "Hellow";
+    char s2[] = "tableau";
+    add_key(map, s1, s2);
+    add_key(map, s2, s1);
+    print_map(map);
+    char value[16];
+    int v = get_value(map, s2, value);
+    printf("v=%d\n", v);
+    printf("value=%s\n", value);
+    int v2 = get_value(map, "N", value);
+    printf("v2=%d\n", v2);
+    dealloc_map(map);
+}
+
+
 int main(int argc, char* argv[]) {
     // vm file is provided as argv[1]
 
@@ -74,5 +92,7 @@ int main(int argc, char* argv[]) {
     test_file_handler(file_name);
     test_delim();
     test_code_delim();
+
+    test_map();
 }
 

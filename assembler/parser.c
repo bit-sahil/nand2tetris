@@ -1,12 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "cstring.h"
-#include "map.h"
+#include "../common/map.h"
 #include "symbol_table.h"
 #include "binary.h"
 
 
-void populate_alu_op(struct Map* ALU_OP) {
+void populate_alu_op(Map* ALU_OP) {
     if(ALU_OP->cnt > 0) return; //map is already populated
     
     // adding a=0 operations (Address register, Data register and constants)
@@ -84,7 +84,7 @@ void parse_alu_operation(char* inst, int* binary) {
     
     for(int i=12; i>=6;i--) binary[i] = 0; //initialize
     
-    struct Map* ALU_OP = new_map(28); //todo: make it global variable for efficient reuse
+    Map* ALU_OP = init_map(28); //todo: make it global variable for efficient reuse
     // we have a total of 28 operations
     populate_alu_op(ALU_OP);
     
@@ -192,7 +192,7 @@ void parse_c_instruction(char* inst, char* binary_str) {
 }
 
 
-void parse_a_instruction(char* inst, char* binary_str, struct Map* symbolTable) {
+void parse_a_instruction(char* inst, char* binary_str, Map* symbolTable) {
     /* parsing a-instruction of type @address
     if address is a numeric string, so first converting it to int, and then integer to 16-bit binary,
     and storing it in 16-bit binary string
@@ -211,7 +211,7 @@ void parse_a_instruction(char* inst, char* binary_str, struct Map* symbolTable) 
 }
 
 
-void parse_instruction(char* inst, int inst_number, char* binary_str, struct Map* symbolTable) {
+void parse_instruction(char* inst, int inst_number, char* binary_str, Map* symbolTable) {
     if(inst[0] == '@')
         parse_a_instruction(inst, binary_str, symbolTable);
     else

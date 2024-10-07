@@ -3,7 +3,7 @@
 #include "cstring.h"
 #include "parser.h"
 #include "binary.h"
-#include "map.h"
+#include "../common/map.h"
 #include "symbol_table.h"
 
 
@@ -98,7 +98,7 @@ void get_hack_file_name(char* file_name, char* hack_file_name) {
 }
 
 
-void populate_labels_from_file(char* file_name, struct Map* symbolTable) {
+void populate_labels_from_file(char* file_name, Map* symbolTable) {
     /* This function opens a file, and process it's line one by one, ignoring comments and whitespaces
     Then we want line numbers (as addresses of given instruction), for jump instruction to jump to
     Whenever we find a label, we add it's jump address to symbol table to be used later in Jump instructions
@@ -117,7 +117,7 @@ void populate_labels_from_file(char* file_name, struct Map* symbolTable) {
         // printf("ORIGINAL: %s; Cleaned: %s\n", line, cleaned_line);
         iType = instruction_type_with_line_number(cleaned_line, &current_line_number, 0);
         
-        //printf("LJ: %d: %s : %d\n", current_line_number, cleaned_line, iType);
+        // printf("LJ: %d: %s : %d\n", current_line_number, cleaned_line, iType);
         if(iType == Label)
             add_label(symbolTable, cleaned_line, current_line_number+1);
     }
@@ -125,7 +125,7 @@ void populate_labels_from_file(char* file_name, struct Map* symbolTable) {
 }
 
 
-void read_file_and_generate_machine_code(char* file_name, struct Map* symbolTable) {
+void read_file_and_generate_machine_code(char* file_name, Map* symbolTable) {
     /* This function opens a file, and process it's line one by one, ignoring comments and whitespaces
     Then we want line numbers (as addresses of given instruction, for jump instruction to be functional, and that's what we do
     
@@ -154,7 +154,7 @@ void read_file_and_generate_machine_code(char* file_name, struct Map* symbolTabl
         // printf("MC: %d: %s : %d\n", current_line_number, cleaned_line, iType);
         if(iType == Machine) {
             parse_instruction(cleaned_line, current_line_number, binary_str, symbolTable);
-            //printf("Instruction: %s ; Binary: %s \n", cleaned_line, binary_str);
+            // printf("Instruction: %s ; Binary: %s \n", cleaned_line, binary_str);
             //printf("%s\n", binary_str);
             fputs(binary_str, hackFile);
             fputs("\n", hackFile);
@@ -177,7 +177,9 @@ void read_file_and_process_instructions(char* file_name) {
     But currently (I might be wrong), this effort seems lesser compared to having to store instructions.
     */
 
-    struct Map* symbolTable = new_symbol_table();
+    Map* symbolTable = new_symbol_table();
+
+    // print_map(symbolTable);
     
     // 1st pass - populate symbol table
     populate_labels_from_file(file_name, symbolTable);
@@ -187,9 +189,8 @@ void read_file_and_process_instructions(char* file_name) {
 }
 
 
-int main(){
-    char file_name[128];
-    scanf("%s", file_name); //read input from prompt in terminal
+int main(int argc, char* argv[]){
+    char* file_name = argv[1];
     read_file_and_process_instructions(file_name);
     return 0;
 }
