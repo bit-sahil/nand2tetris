@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include "../common/boolean.h"
+#include<stdbool.h>
 #include "../common/file_handler.h"
 #include "../common/file_reader.h"
 #include "../common/code_reader.h"

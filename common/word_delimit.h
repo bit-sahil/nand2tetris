@@ -22,7 +22,7 @@ Delimiter* init_word_delimiter(char* line);
 
 int next_word(Delimiter* dl, char* dest);
     // copy next delimited token in dest, if present
-    // returns True if word is found, false otherwise
+    // returns true if word is found, false otherwise
 
 #endif
 

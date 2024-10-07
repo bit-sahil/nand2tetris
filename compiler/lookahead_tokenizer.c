@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include "../common/boolean.h"
+#include<stdbool.h>
 #include "../common/file_handler.h"
 #include "../common/file_reader.h"
 #include "../common/code_reader.h"
@@ -17,10 +17,10 @@ int is_la_tokenizer(TokenizerConfig* tc) {
 
 int add_lookahead(TokenizerConfig* tc) {
 	// adds a value from token to lookahead
-	// return False if all tokens are consumed
+	// return false if all tokens are consumed
 
 	if(!has_more_tokens_nla(tc))
-		return False;
+		return false;
 
 	advance_token_nla(tc);
 
@@ -30,7 +30,7 @@ int add_lookahead(TokenizerConfig* tc) {
 	tc->ttype[tc->idx % tc->n] =  get_token_type_nla(tc);
 
 	tc->idx = ( tc->idx + 1 );
-	return True;
+	return true;
 }
 
 
@@ -39,17 +39,17 @@ int advance_lookahead(TokenizerConfig* tc, int k) {
 	
 	if(k > tc->n) {
 		printf("LookaheadError: Received %d tokens to lookahead with capacity %d\n", k, tc->n);
-		return False;
+		return false;
 	}
 
 	while(tc->idx - tc->curr - 1 < k) {
 		if(!add_lookahead(tc)) {
 			printf("LookaheadError: Not enough tokens\n");
-			return False;
+			return false;
 		}
 	}
 
-	return True;
+	return true;
 }
 
 
@@ -94,7 +94,7 @@ int has_more_tokens_la(TokenizerConfig* tc) {
 	// has more tokens in lookahead
 
 	if( (tc->curr + 1) < tc->idx)
-		return True;
+		return true;
 
 	return add_lookahead(tc);
 }

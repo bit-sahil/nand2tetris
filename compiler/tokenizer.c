@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include "../common/boolean.h"
+#include<stdbool.h>
 #include "../common/file_handler.h"
 #include "../common/file_reader.h"
 #include "../common/code_reader.h"
@@ -27,14 +27,14 @@ int adv_next_file(TokenizerConfig* tc) {
 
     char f_name[128];
     if(!get_next_file(tc->dc, f_name)) {
-        return False;
+        return false;
     }
 
     tc->rc = init_code_reader(f_name);
 
     init_advance(tc);
 
-    return True;
+    return true;
 }
 
 
@@ -47,7 +47,7 @@ int adv_next_line(TokenizerConfig* tc) {
 
     if((l = get_next_line(tc->rc)) == NULL) {
         // no more lines to read in file
-        return False;
+        return false;
     }
 
     if(tc->dl != NULL)
@@ -56,7 +56,7 @@ int adv_next_line(TokenizerConfig* tc) {
 
     tc->dl = init_code_delimiter(l);
 
-    return True;
+    return true;
 }
 
 
@@ -73,13 +73,13 @@ int adv_next_word(TokenizerConfig* tc) {
 
     while(!next_code_token(tc->dl, word)) {
         if(!adv_next_line(tc))
-            return False;
+            return false;
     }
 
     strcpy(tc->word, word);
     tc->wp = tc->word;
 
-    return True;
+    return true;
 }
 
 

@@ -16,8 +16,8 @@ void handle_str_const(TokenizerConfig* tc);
     // store string constant without "
 
 int handle_keyword_token(TokenizerConfig* tc);
-    // store keyword in token field if keyword is found, and return True
-    // return False if word doesn't match keyword
+    // store keyword in token field if keyword is found, and return true
+    // return false if word doesn't match keyword
 
 void handle_identifier_token(TokenizerConfig* tc);
     // store identifier/variable name

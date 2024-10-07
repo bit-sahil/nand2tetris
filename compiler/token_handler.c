@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include "../common/boolean.h"
+#include<stdbool.h>
 #include "../common/file_handler.h"
 #include "../common/file_reader.h"
 #include "../common/code_reader.h"
@@ -106,12 +106,12 @@ void handle_str_const(TokenizerConfig* tc) {
 
 
 int handle_keyword_token(TokenizerConfig* tc) {
-    // store keyword in token field if keyword is found, and return True
-    // return False if word doesn't match keyword
+    // store keyword in token field if keyword is found, and return true
+    // return false if word doesn't match keyword
 
     char* keywords = "class|constructor|function|method|field|static|var|int|char|boolean|void|true|false|null|this|let|do|if|else|while|return";
 
-    Delimiter* kw_dl = init_delimiter(keywords, "|", False);
+    Delimiter* kw_dl = init_delimiter(keywords, "|", false);
     char kw[32];
     int len;
 
@@ -130,12 +130,12 @@ int handle_keyword_token(TokenizerConfig* tc) {
             tc->token[len] = '\0';
             tc->wp = tc->wp + len;
             dealloc_delimiter(kw_dl);
-            return True;
+            return true;
         }
     }
 
     dealloc_delimiter(kw_dl);
-    return False;
+    return false;
 }
 
 

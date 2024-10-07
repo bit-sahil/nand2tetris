@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-#include "boolean.h"
+#include<stdbool.h>
 #include "delimiter.h"
 
 
@@ -59,17 +59,17 @@ Delimiter* init_delimiter(char* line, char* delim, int ignore_multiple_delim) {
 
 int next_token(Delimiter* dl, char* dest) {
     // copy next delimited token in dest, if present
-    // returns True if word is found, false otherwise
+    // returns true if word is found, false otherwise
 
     if(dl->ptr == NULL)
-        return False;
+        return false;
 
     char* p = strstr(dl->ptr, dl->delim);
 
     if(p==NULL) {
         strcpy(dest, dl->ptr);
         dl->ptr = NULL;
-        return True;
+        return true;
     }
 
     //printf("p:%s\n", p);
@@ -84,7 +84,7 @@ int next_token(Delimiter* dl, char* dest) {
     dl->ptr = p + strlen(dl->delim);
     advance_ptr(dl);
 
-    return True;
+    return true;
 }
 
 

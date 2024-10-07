@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
-#include "../common/boolean.h"
+#include<stdbool.h>
 #include "../common/file_handler.h"
 #include "../common/file_reader.h"
 #include "../common/code_reader.h"
@@ -50,20 +50,20 @@ int lookahead_keyword(TokenizerConfig* tc, char* expected) {
 
     if(!advance_lookahead(tc, 1)) {
         printf("ParserError: advance_lookahead failed\n");
-        return False;
+        return false;
     }
 
     if(lookahead_token_type(tc, 1) != KEYWORD) {
         // printf("ParserError: lookahead_token_type\n");
-        return False;
+        return false;
     }
 
     if( strcmp( lookahead_raw_token(tc, 1), expected) != 0 ) {
         // printf("ParserError: lookahead_raw_token=%s; expected=%s\n", lookahead_raw_token(tc, 1), expected);
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 
@@ -72,15 +72,15 @@ int lookahead_k(TokenizerConfig* tc, TokenType t, int k) {
 
     if(!advance_lookahead(tc, k)) {
         printf("ParserError: lookahead_k advance_lookahead failed\n");
-        return False;
+        return false;
     }
 
     if(lookahead_token_type(tc, k) != t) {
         // printf("ParserError: lookahead_k lookahead_token_type\n");
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 
@@ -88,25 +88,25 @@ int lookahead_symbol(TokenizerConfig* tc, char expected) {
     // lookahead by 1 place to check whether it's expected symbol
 
     if(!advance_lookahead(tc, 1))
-        return False;
+        return false;
 
     if(lookahead_token_type(tc, 1) != SYMBOL)
-        return False;
+        return false;
 
     if(get_symbol_token(lookahead_raw_token(tc, 1)) != expected)
-        return False;
+        return false;
 
-    return True;
+    return true;
 }
 
 
 int adv(TokenizerConfig* tc, TokenType expected) {
     // advance token, checking that we do have more tokens
-    // also match expected token type with current token type and return True/False
+    // also match expected token type with current token type and return true/false
 
     if(!has_more_tokens(tc)) {
         printf("ParserError: No more tokens, but we're expecting token type = %d\n", expected);
-        return False;
+        return false;
     }
 
     advance_token(tc);
@@ -114,12 +114,12 @@ int adv(TokenizerConfig* tc, TokenType expected) {
 
     if(t != expected) {
         // printf("ParserError: Expected token type=%d; returned token type=%d for token=%s\n", expected, t, get_raw_token(tc));
-        return False;
+        return false;
     }
 
     // printf("Emitted Token: %s; token type=%d\n", get_raw_token(tc), t);
 
-    return True;
+    return true;
 }
 
 
@@ -127,16 +127,16 @@ int handle_keyword(TokenizerConfig* tc,  char* val, FILE* outfp) {
     // advance and handle keyword to be same as val
 
     if(!adv(tc, KEYWORD))
-        return False;
+        return false;
 
     char* kw = get_keyword(tc);
 
     if(strcmp(kw, val) != 0)
-        return False;
+        return false;
 
     out_str(kw, "keyword", outfp);
 
-    return True;
+    return true;
 }
 
 
@@ -144,15 +144,15 @@ int expect_char(TokenizerConfig* tc, char c, FILE* outfp) {
     // just expecting this character to be present as next token
 
     if(!adv(tc, SYMBOL))
-        return False;
+        return false;
     
     if( (get_token_type(tc) != SYMBOL) || ( get_symbol(tc) != c ) )
         // not required symbol
-        return False;
+        return false;
 
     out_symbol(c, "symbol", outfp);
 
-    return True;
+    return true;
 }
 
 
@@ -160,11 +160,11 @@ int handle_identifier(TokenizerConfig* tc, FILE* outfp) {
     // identifier cannot be last token
 
     if(!adv(tc, IDENTIFIER))
-        return False;
+        return false;
 
     out_str(get_identifier(tc), "identifier", outfp);
 
-    return True;
+    return true;
 }
 
 
@@ -172,11 +172,11 @@ int handle_int_const(TokenizerConfig* tc, FILE* outfp) {
     // integer constant cannot be last token
 
     if(!adv(tc, INT_CONST))
-        return False;
+        return false;
 
     out_str(get_raw_token(tc), "integerConstant", outfp);
 
-    return True;
+    return true;
 }
 
 
@@ -184,11 +184,11 @@ int handle_string_const(TokenizerConfig* tc, FILE* outfp) {
     // integer constant cannot be last token
 
     if(!adv(tc, STRING_CONST))
-        return False;
+        return false;
 
     out_sym_str(get_string_val(tc), "stringConstant", outfp);
 
-    return True;
+    return true;
 }
 
 
@@ -206,7 +206,7 @@ int handle_keyword_const(TokenizerConfig* tc, FILE* outfp) {
         kw = "this";
     } else {
         printf("ParserError: Failed to handle keyword constant\n");
-        return False;
+        return false;
     }
 
     return handle_keyword(tc, kw, outfp);
@@ -260,7 +260,7 @@ int handle_class_var_dec(TokenizerConfig* tc, FILE* outfp) {
     } else if(lookahead_keyword(tc, "field")) {
         kw = "field";
     } else {
-        return True;
+        return true;
     }
 
     //printf("handle_class_var_dec: kw=%s;\n", kw);
@@ -269,25 +269,25 @@ int handle_class_var_dec(TokenizerConfig* tc, FILE* outfp) {
 
     // it is a class variable declaration
     if(!handle_keyword(tc, kw, outfp))
-        return False;
+        return false;
 
-    if(!handle_type(tc, outfp, False))
-        return False;
+    if(!handle_type(tc, outfp, false))
+        return false;
 
     if(!handle_var_name(tc, outfp))
-        return False;
+        return false;
 
     // (',' varName)*
     while( lookahead_symbol(tc, ',') ) {
         if(!expect_char(tc, ',', outfp))
-            return False;
+            return false;
 
         if(!handle_var_name(tc, outfp))
-            return False;
+            return false;
     }
 
     if( !expect_char(tc, ';', outfp) )
-        return False;
+        return false;
 
     fprintf(outfp, "</classVarDec>\n");
 
@@ -306,22 +306,22 @@ int handle_param_list(TokenizerConfig* tc, FILE* outfp) {
     // ((type varName) (',' type varName)*)?
     // assume param list is not empty, caller needs to check
 
-    while(True) {
-        if(!handle_type(tc, outfp, False))
-            return False;
+    while(true) {
+        if(!handle_type(tc, outfp, false))
+            return false;
 
         if(!handle_var_name(tc, outfp))
-            return False;
+            return false;
 
         if(!lookahead_symbol(tc, ',')) {
             break;
         }
 
         if(!expect_char(tc, ',', outfp))
-            return False;
+            return false;
     }
 
-    return True;
+    return true;
 }
 
 
@@ -329,29 +329,29 @@ int handle_var_dec(TokenizerConfig* tc, FILE* outfp) {
     // 'var' type varName (',' varName)* ';'
 
     if(!lookahead_keyword(tc, "var"))
-        return True;
+        return true;
 
     fprintf(outfp, "<varDec>\n");
 
     if(!handle_keyword(tc, "var", outfp))
-        return False;
+        return false;
 
-    if(!handle_type(tc, outfp, False))
-        return False;
+    if(!handle_type(tc, outfp, false))
+        return false;
 
     if(!handle_var_name(tc, outfp))
-        return False;
+        return false;
 
     while(lookahead_symbol(tc, ',')) {
         if(!expect_char(tc, ',', outfp))
-            return False;
+            return false;
 
         if(!handle_var_name(tc, outfp))
-            return False;
+            return false;
     }
 
     if(!expect_char(tc, ';', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</varDec>\n");
 
@@ -364,18 +364,18 @@ int handle_unaryop(TokenizerConfig* tc, FILE* outfp) {
 
     if(lookahead_symbol(tc, '-')) {
         if(!expect_char(tc, '-', outfp))
-            return False;
+            return false;
     
     } else if(lookahead_symbol(tc, '~')) {
         if(!expect_char(tc, '~', outfp))
-            return False;
+            return false;
     
     } else {
         printf("ParserError: handle_unaryop, expected unary op not found\n");
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 
@@ -387,15 +387,15 @@ int handle_term(TokenizerConfig* tc, FILE* outfp) {
 
     if(lookahead_k(tc, INT_CONST, 1)) {
         if(!handle_int_const(tc, outfp))
-            return False;
+            return false;
     
     } else if(lookahead_k(tc, STRING_CONST, 1)) {
         if(!handle_string_const(tc, outfp))
-            return False;
+            return false;
     
     } else if(lookahead_k(tc, KEYWORD, 1)) {        
         if(!handle_keyword_const(tc, outfp))
-            return False;
+            return false;
         
     
     } else if(lookahead_k(tc, SYMBOL, 1)) {
@@ -404,21 +404,21 @@ int handle_term(TokenizerConfig* tc, FILE* outfp) {
         if(lookahead_symbol(tc, '(')) {
 
             if(!expect_char(tc, '(', outfp))
-                return False;
+                return false;
 
             if(!handle_expression(tc, outfp))
-                return False;
+                return false;
 
             if(!expect_char(tc, ')', outfp))
-                return False;
+                return false;
         
         } else {
 
             if(!handle_unaryop(tc, outfp))
-                return False;
+                return false;
 
             if(!handle_term(tc, outfp))
-                return False;
+                return false;
         }
     
     } else  {
@@ -433,32 +433,32 @@ int handle_term(TokenizerConfig* tc, FILE* outfp) {
 
             if( c == '[') {
                 if(!handle_var_name(tc, outfp))
-                    return False;
+                    return false;
 
                 if(!expect_char(tc, '[', outfp))
-                    return False;
+                    return false;
 
                 if(!handle_expression(tc, outfp))
-                    return False;
+                    return false;
 
                 if(!expect_char(tc, ']', outfp))
-                    return False;
+                    return false;
             
             } else if( c == '(' || c == '.') {
                 if(!handle_subroutine_call(tc, outfp))
-                    return False;
+                    return false;
             
             } else {
                 // just handle variable name
                 if(!handle_var_name(tc, outfp))
-                    return False;
+                    return false;
             }
         }
     }
 
     fprintf(outfp, "</term>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -466,7 +466,7 @@ int lookahead_op(TokenizerConfig* tc) {
     // '+'|'-'|'*'|'/'|'&'|'|'|'<'|'>'|'='
 
     if(!lookahead_k(tc, SYMBOL, 1))
-        return False;
+        return false;
 
     char* raw = lookahead_raw_token(tc, 1);
     char c = get_symbol_token(raw);
@@ -492,7 +492,7 @@ int lookahead_op(TokenizerConfig* tc) {
             return '=';
         default:
             // printf("ParserError: lookahead_op, binary op not found:%c\n", c);
-            return False;
+            return false;
     }
 }
 
@@ -503,7 +503,7 @@ int handle_expression(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<expression>\n");
 
     if(!handle_term(tc, outfp))
-        return False;
+        return false;
 
     // todo: handle (op term)*
 
@@ -512,15 +512,15 @@ int handle_expression(TokenizerConfig* tc, FILE* outfp) {
     while( (c = lookahead_op(tc)) ) {
         // op is just a char
         if(!expect_char(tc, c, outfp))
-            return False;
+            return false;
 
         if(!handle_term(tc, outfp))
-            return False;
+            return false;
     }
 
     fprintf(outfp, "</expression>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -528,17 +528,17 @@ int handle_expression_list(TokenizerConfig* tc, FILE* outfp) {
     //  (expression (',' expression)* )?
 
     if(!handle_expression(tc, outfp))
-        return False;
+        return false;
 
     while(lookahead_symbol(tc, ',')) {
         if(!expect_char(tc, ',', outfp))
-            return False;
+            return false;
 
         if(!handle_expression(tc, outfp))
-            return False;
+            return false;
     }
 
-    return True;
+    return true;
 }
 
 
@@ -549,34 +549,34 @@ int handle_let_statement(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<letStatement>\n");
 
     if(!handle_keyword(tc, "let", outfp))
-        return False;
+        return false;
 
     if(!handle_var_name(tc, outfp))
-        return False;
+        return false;
 
     if(lookahead_symbol(tc, '[')) {
         if(!expect_char(tc, '[', outfp))
-            return False;
+            return false;
 
         if(!handle_expression(tc, outfp))
-            return False;
+            return false;
 
         if(!expect_char(tc, ']', outfp))
-            return False;
+            return false;
     }
 
     if(!expect_char(tc, '=', outfp))
-        return False;
+        return false;
 
     if(!handle_expression(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, ';', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</letStatement>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -587,47 +587,47 @@ int handle_if_statement(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<ifStatement>\n");
 
     if(!handle_keyword(tc, "if", outfp))
-        return False;
+        return false;
 
     // expression
     if(!expect_char(tc, '(', outfp))
-        return False;
+        return false;
 
     if(!handle_expression(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, ')', outfp))
-        return False;
+        return false;
 
     // statements
     if(!expect_char(tc, '{', outfp))
-        return False;
+        return false;
 
     if(!handle_statements(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, '}', outfp))
-        return False;
+        return false;
 
     // else
     if(lookahead_keyword(tc, "else")) {
         // statements
         if(!handle_keyword(tc, "else", outfp))
-            return False;
+            return false;
 
         if(!expect_char(tc, '{', outfp))
-            return False;
+            return false;
 
         if(!handle_statements(tc, outfp))
-            return False;
+            return false;
 
         if(!expect_char(tc, '}', outfp))
-            return False;
+            return false;
     }
 
     fprintf(outfp, "</ifStatement>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -638,31 +638,31 @@ int handle_while_statement(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<whileStatement>\n");
 
     if(!handle_keyword(tc, "while", outfp))
-        return False;
+        return false;
 
     // expression
     if(!expect_char(tc, '(', outfp))
-        return False;
+        return false;
 
     if(!handle_expression(tc, outfp))
-            return False;
+            return false;
 
     if(!expect_char(tc, ')', outfp))
-        return False;
+        return false;
 
     // statements
     if(!expect_char(tc, '{', outfp))
-        return False;
+        return false;
 
     if(!handle_statements(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, '}', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</whileStatement>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -671,7 +671,7 @@ int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp) {
 
     if(!lookahead_k(tc, SYMBOL, 2)) {
         printf("ParserError: expecting lookahead 2 token to be symbol\n");
-        return False;
+        return false;
     }
 
     char* raw = lookahead_raw_token(tc, 2);
@@ -681,53 +681,53 @@ int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp) {
         // subroutineName '(' expressionList ')'
 
         if(!handle_subroutine_name(tc, outfp))
-            return False;
+            return false;
 
         if(!expect_char(tc, '(', outfp))
-            return False;
+            return false;
 
         fprintf(outfp, "<expressionList>\n");
         if(!lookahead_symbol(tc, ')')) {
             if(!handle_expression_list(tc, outfp))
-                return False;
+                return false;
         }
         fprintf(outfp, "</expressionList>\n");
 
         if(!expect_char(tc, ')', outfp))
-            return False;
+            return false;
 
     } else if( c == '.') {
         // (className | varName) '.' subroutineName '(' expressionList ')'
 
         if(!handle_var_name(tc, outfp))
-            return False;
+            return false;
 
         if(!expect_char(tc, '.', outfp))
-            return False;
+            return false;
 
         if(!handle_subroutine_name(tc, outfp))
-            return False;
+            return false;
 
         if(!expect_char(tc, '(', outfp))
-            return False;
+            return false;
 
         fprintf(outfp, "<expressionList>\n");
         if(!lookahead_symbol(tc, ')')) {
             if(!handle_expression_list(tc, outfp))
-                return False;
+                return false;
         }
         fprintf(outfp, "</expressionList>\n");
 
         if(!expect_char(tc, ')', outfp))
-            return False;
+            return false;
 
     } else {
         // expected either variations of subroutine call
         printf("ParserError: handle_subroutine_call, got c=%c; raw=%s\n", c, raw);
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 
@@ -738,17 +738,17 @@ int handle_do_statement(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<doStatement>\n");
     
     if(!handle_keyword(tc, "do", outfp))
-        return False;
+        return false;
 
     if(!handle_subroutine_call(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, ';', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</doStatement>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -759,19 +759,19 @@ int handle_return_statement(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<returnStatement>\n");
     
     if(!handle_keyword(tc, "return", outfp))
-        return False;
+        return false;
 
     if(!lookahead_symbol(tc, ';')) {
         if(!handle_expression(tc, outfp))
-            return False;
+            return false;
     }
 
     if(!expect_char(tc, ';', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</returnStatement>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -780,27 +780,27 @@ int handle_statement(TokenizerConfig* tc, FILE* outfp) {
 
     if(lookahead_keyword(tc, "let")) {
         if(!handle_let_statement(tc, outfp))
-            return False;
+            return false;
     
     } else if(lookahead_keyword(tc, "if")) {
         if(!handle_if_statement(tc, outfp))
-            return False;
+            return false;
 
     } else if(lookahead_keyword(tc, "do")) {
         if(!handle_do_statement(tc, outfp))
-            return False;
+            return false;
 
     } else if(lookahead_keyword(tc, "while")) {
         if(!handle_while_statement(tc, outfp))
-            return False;
+            return false;
 
     } else if(lookahead_keyword(tc, "return")) {
         if(!handle_return_statement(tc, outfp))
-            return False;
+            return false;
 
     } else {
         // return true if it's not a statements, that is, we've handled all statements already
-        return True;
+        return true;
     }
 
     return handle_statement(tc, outfp);
@@ -812,7 +812,7 @@ int handle_statements(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<statements>\n");
 
     if(!handle_statement(tc, outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</statements>\n");
     
@@ -825,20 +825,20 @@ int handle_subroutine_body(TokenizerConfig* tc, FILE* outfp) {
     fprintf(outfp, "<subroutineBody>\n");
 
     if(!expect_char(tc, '{', outfp))
-        return False;
+        return false;
 
     if(!handle_var_dec(tc, outfp))
-        return False;
+        return false;
 
     if(!handle_statements(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, '}', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</subroutineBody>\n");
 
-    return True;
+    return true;
 }
 
 
@@ -853,38 +853,38 @@ int handle_subroutine_dec(TokenizerConfig* tc, FILE* outfp) {
     } else if(lookahead_keyword(tc, "method")) {
         kw = "method";
     } else {
-        return True;
+        return true;
     }
 
     fprintf(outfp, "<subroutineDec>\n");
 
     // it is a subroutine declaration
     if(!handle_keyword(tc, kw, outfp))
-        return False;
+        return false;
 
-    if(!handle_type(tc, outfp, True))
-        return False;
+    if(!handle_type(tc, outfp, true))
+        return false;
 
     if(!handle_subroutine_name(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, '(', outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "<parameterList>\n");
     if(!lookahead_symbol(tc, ')')) {
         // if next token is ')', then there are no params to function
 
         if(!handle_param_list(tc, outfp))
-            return False;
+            return false;
     }
     fprintf(outfp, "</parameterList>\n");
 
     if(!expect_char(tc, ')', outfp))
-        return False;
+        return false;
 
     if(!handle_subroutine_body(tc, outfp))
-        return False;
+        return false;
 
     fprintf(outfp, "</subroutineDec>\n");
 
@@ -897,24 +897,24 @@ int handle_class(TokenizerConfig* tc, FILE* outfp) {
     // 'class' className '{' classVarDec* subroutineDec* '}'
 
     if(!handle_keyword(tc, "class", outfp))
-        return False;
+        return false;
 
     if(!handle_classname(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, '{', outfp))
-        return False;
+        return false;
 
     if(!handle_class_var_dec(tc, outfp))
-        return False;
+        return false;
 
     if(!handle_subroutine_dec(tc, outfp))
-        return False;
+        return false;
 
     if(!expect_char(tc, '}', outfp))
-        return False;
+        return false;
 
-    return True;
+    return true;
 }
 
 

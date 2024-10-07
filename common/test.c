@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include "boolean.h"
+#include<stdbool.h>
 #include "file_handler.h"
 #include "file_reader.h"
 #include "word_delimit.h"
@@ -9,7 +9,7 @@
 void test_file_reader(char* file_name) {
     printf("********* Testing File Reader **********\n");
 
-    ReaderConfig* rc = init_reader_config(file_name, False, True, True, True, 128);
+    ReaderConfig* rc = init_reader_config(file_name, false, true, true, true, 128);
 
     char* next_line;
 

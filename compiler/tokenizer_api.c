@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include "../common/boolean.h"
+#include<stdbool.h>
 #include "tokenizer.h"
 #include "lookahead_tokenizer.h"
 

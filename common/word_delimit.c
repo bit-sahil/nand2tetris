@@ -1,5 +1,5 @@
 #include<string.h>
-#include "boolean.h"
+#include<stdbool.h>
 #include "word_delimit.h"
 #include "delimiter.h"
 
@@ -18,13 +18,13 @@ next_word - copy and return, without delim
 
 
 Delimiter* init_word_delimiter(char* line) {
-    return init_delimiter(line, " ", True);
+    return init_delimiter(line, " ", true);
 }
 
 
 int next_word(Delimiter* dl, char* dest) {
     // copy next word in dest, if present
-    // returns True if word is found, false otherwise
+    // returns true if word is found, false otherwise
 
     return next_token(dl, dest);
 }

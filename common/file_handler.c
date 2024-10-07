@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<dirent.h>
 #include<string.h>
-#include "boolean.h"
+#include<stdbool.h>
 #include "file_handler.h"
 
 
@@ -21,17 +21,17 @@ DirConfig* init_dir_config(char* file_name, char* in_ext, char* out_ext) {
     strcpy(dc->file_name, file_name);
     strcpy(dc->in_ext, in_ext);
     strcpy(dc->out_ext, out_ext);
-    dc->is_file_sent = False;
+    dc->is_file_sent = false;
 
     // whether it's directory or file with given extension
     char* p;
     if((p=strstr(file_name, in_ext)) != NULL) {
         // extension found in file_name
         // it's a file
-        dc->is_dir = False;
+        dc->is_dir = false;
     } else {
         // it's a directory
-        dc->is_dir = True;
+        dc->is_dir = true;
         if(!(dc->dir=opendir(file_name))) {
             printf("Error while opening directory:%s\n", file_name);
         }
@@ -85,12 +85,12 @@ int get_next_file(DirConfig* dc, char* file_name) {
     if(!dc->is_dir) {
         // file
         if(dc->is_file_sent) {
-            return False;
+            return false;
         }
 
-        dc->is_file_sent = True;
+        dc->is_file_sent = true;
         strcpy(file_name, dc->file_name);
-        return True;
+        return true;
     }
 
     // handle directory
@@ -108,11 +108,11 @@ int get_next_file(DirConfig* dc, char* file_name) {
             // file with required extension
             get_file_name(dc->file_name, d->d_name, file_name);
             //printf("//Processing file: %s\n", file_name);
-            return True;
+            return true;
         }
     }
 
-    return False;
+    return false;
 }
 
 
