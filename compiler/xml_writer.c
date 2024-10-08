@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include "tokenizer.h"
 #include "tokenizer_api.h"
-#include "xml_writer.h"
 
 
 void out_str(char* token, char* tokenType, FILE* outfp) {
@@ -98,7 +97,7 @@ void out_xml(char* token, int action, FILE* outfp) {
         end(token, outfp);
     } else {
         // code to output terminals
-        // token contains value and action is one 
+        // token contains value and action is among TokenType
         terminal(token, action, outfp);
     }
 }

@@ -21,6 +21,10 @@ typedef enum {
 } TokenType;
 
 
+#define BEGIN 10
+#define END 11
+
+
 typedef struct TokenizerConfig {
     DirConfig* dc;
     ReaderConfig* rc;
