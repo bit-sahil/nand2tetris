@@ -151,7 +151,7 @@ TokenType get_token_type_nla(TokenizerConfig* tc) {
 }
 
 
-const char* get_raw_token_nla(TokenizerConfig* tc) {
+char* get_raw_token_nla(TokenizerConfig* tc) {
     // returns raw token value as a string
     // this value should not be updated by caller so trying const there
 

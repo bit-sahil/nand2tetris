@@ -94,7 +94,7 @@ TokenType get_token_type(TokenizerConfig* tc) {
 }
 
 
-const char* get_raw_token(TokenizerConfig* tc) {
+char* get_raw_token(TokenizerConfig* tc) {
     // returns raw token value as a string
     // this value should not be updated by caller so trying const there
 
@@ -122,7 +122,7 @@ char get_symbol(TokenizerConfig* tc) {
 }
 
 
-const char* get_keyword(TokenizerConfig* tc) {
+char* get_keyword(TokenizerConfig* tc) {
     // returns pointer to stored keyword string
 
     if(get_token_type(tc) != KEYWORD)
@@ -132,7 +132,7 @@ const char* get_keyword(TokenizerConfig* tc) {
 }
 
 
-const char* get_identifier(TokenizerConfig* tc) {
+char* get_identifier(TokenizerConfig* tc) {
     // returns pointer to identifier (string)
 
     if(get_token_type(tc) != IDENTIFIER)

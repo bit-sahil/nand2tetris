@@ -1,4 +1,7 @@
 #include<stdio.h>
+#include "tokenizer.h"
+#include "tokenizer_api.h"
+#include "xml_writer.h"
 
 
 void out_str(char* token, char* tokenType, FILE* outfp) {
@@ -59,3 +62,43 @@ void out_symbol(char c, char* tokenType, FILE* outfp) {
     fprintf(outfp, " </%s>\n", tokenType);
 }
 
+
+void begin(char* token, FILE* outfp) {
+    fprintf(outfp, "<%s>\n", token);
+}
+
+
+void end(char* token, FILE* outfp) {
+    fprintf(outfp, "</%s>\n", token);
+}
+
+
+void terminal(char* token_value, int action, FILE* outfp) {
+    if(action == KEYWORD) {
+        out_str(token_value, "keyword", outfp);
+    } else if (action == SYMBOL) {
+        char c = get_symbol_token(token_value);
+        out_symbol(c, "symbol", outfp);
+    } else if (action == IDENTIFIER) {
+        out_str(token_value, "identifier", outfp);
+    } else if (action == INT_CONST) {
+        out_str(token_value, "integerConstant", outfp);
+    } else if (action == STRING_CONST) {
+        out_sym_str(token_value, "stringConstant", outfp);
+    }
+}
+
+
+void out_xml(char* token, int action, FILE* outfp) {
+    // printf("token=%s;action=%d\n", token, action);
+    
+    if(action == BEGIN) {
+        begin(token, outfp);
+    } else if (action == END) {
+        end(token, outfp);
+    } else {
+        // code to output terminals
+        // token contains value and action is one 
+        terminal(token, action, outfp);
+    }
+}

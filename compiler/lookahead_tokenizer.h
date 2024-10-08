@@ -23,7 +23,7 @@ TokenType get_token_type_la(TokenizerConfig* tc);
     // return current token type
 
 
-const char* get_raw_token_la(TokenizerConfig* tc);
+char* get_raw_token_la(TokenizerConfig* tc);
     // returns raw token value as a string
 
 
@@ -39,7 +39,7 @@ TokenType lookahead_token_type(TokenizerConfig* tc, int k);
 	*/
 
 
-const char* lookahead_raw_token(TokenizerConfig* tc, int k);
+char* lookahead_raw_token(TokenizerConfig* tc, int k);
     /* lookahead k tokens, k=1 mean lookahead next token
 	k=0th token is currently being pointed at
 

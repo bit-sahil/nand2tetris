@@ -58,7 +58,7 @@ void advance_token_nla(TokenizerConfig* tc);
 TokenType get_token_type_nla(TokenizerConfig* tc);
     // return current token
 
-const char* get_raw_token_nla(TokenizerConfig* tc);
+char* get_raw_token_nla(TokenizerConfig* tc);
     // returns raw token value as a string
 
 #endif
