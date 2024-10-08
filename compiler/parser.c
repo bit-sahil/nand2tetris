@@ -11,21 +11,16 @@
 #include "tokenizer_api.h"
 #include "lookahead_tokenizer.h"
 #include "xml_writer.h"
+#include "parser.h"
+#include "config.h"
 
-// function signature to be passed around
-#define GenFuncPtr(F) void (*F) (char*, int, FILE*)
 
 // function declarations
-int handle_statements(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc));
+int handle_statements(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc));
 
-int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc));
+int handle_subroutine_call(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc));
 
-int handle_expression(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc));
-
-
-typedef struct ParserConfig {
-    TokenizerConfig* tc;
-} ParserConfig;
+int handle_expression(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc));
 
 
 ParserConfig* init_parser(char* file_name, char* out_ext, int max_lookahead) {
@@ -125,7 +120,7 @@ int adv(TokenizerConfig* tc, TokenType expected) {
 }
 
 
-int handle_keyword(TokenizerConfig* tc,  char* val, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_keyword(TokenizerConfig* tc,  char* val, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // advance and handle keyword to be same as val
 
     if(!adv(tc, KEYWORD))
@@ -136,13 +131,13 @@ int handle_keyword(TokenizerConfig* tc,  char* val, FILE* outfp, GenFuncPtr(genF
     if(strcmp(kw, val) != 0)
         return false;
 
-    genFunc(kw, KEYWORD, outfp);
+    genFunc(kw, KEYWORD, genConfig);
 
     return true;
 }
 
 
-int expect_char(TokenizerConfig* tc, char c, FILE* outfp, GenFuncPtr(genFunc)) {
+int expect_char(TokenizerConfig* tc, char c, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // just expecting this character to be present as next token
 
     if(!adv(tc, SYMBOL))
@@ -152,49 +147,49 @@ int expect_char(TokenizerConfig* tc, char c, FILE* outfp, GenFuncPtr(genFunc)) {
         // not required symbol
         return false;
 
-    genFunc(get_raw_token(tc), SYMBOL, outfp);
+    genFunc(get_raw_token(tc), SYMBOL, genConfig);
 
     return true;
 }
 
 
-int handle_identifier(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_identifier(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // identifier cannot be last token
 
     if(!adv(tc, IDENTIFIER))
         return false;
 
-    genFunc(get_identifier(tc), IDENTIFIER, outfp);
+    genFunc(get_identifier(tc), IDENTIFIER, genConfig);
 
     return true;
 }
 
 
-int handle_int_const(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_int_const(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // integer constant cannot be last token
 
     if(!adv(tc, INT_CONST))
         return false;
 
-    genFunc(get_raw_token(tc), INT_CONST, outfp);
+    genFunc(get_raw_token(tc), INT_CONST, genConfig);
 
     return true;
 }
 
 
-int handle_string_const(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_string_const(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // integer constant cannot be last token
 
     if(!adv(tc, STRING_CONST))
         return false;
 
-    genFunc(get_string_val(tc), STRING_CONST, outfp);
+    genFunc(get_string_val(tc), STRING_CONST, genConfig);
 
     return true;
 }
 
 
-int handle_keyword_const(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_keyword_const(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'true'|'false'|'null'|'this'
 
     char* kw;
@@ -211,25 +206,38 @@ int handle_keyword_const(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) 
         return false;
     }
 
-    return handle_keyword(tc, kw, outfp, genFunc);
+    return handle_keyword(tc, kw, genConfig, genFunc);
 }
 
 
-int handle_classname(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_classname(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // class name is just an identifier
 
-    return handle_identifier(tc, outfp, genFunc);
+    genFunc("className", EXPECT, genConfig);
+
+    return handle_identifier(tc, genConfig, genFunc);
 }
 
 
-int handle_var_name(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_var_name(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // variable name
 
-    return handle_identifier(tc, outfp, genFunc);
+    genFunc("varName", EXPECT, genConfig);
+
+    return handle_identifier(tc, genConfig, genFunc);
 }
 
 
-int handle_type(TokenizerConfig* tc, int include_void, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_dec_var_name(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
+    // declared variable name
+
+    genFunc("decVarName", EXPECT, genConfig);
+
+    return handle_identifier(tc, genConfig, genFunc);
+}
+
+
+int handle_type(TokenizerConfig* tc, int include_void, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'int'|'char'|'boolean' | className
     // include_void: include void as well for type checking
 
@@ -243,16 +251,16 @@ int handle_type(TokenizerConfig* tc, int include_void, FILE* outfp, GenFuncPtr(g
     } else if(include_void && lookahead_keyword(tc, "void")) {
         kw = "void";
     } else {
-        return handle_identifier(tc, outfp, genFunc);
+        return handle_identifier(tc, genConfig, genFunc);
     }
 
     // printf("handle_type with kw=%s\n", kw);
 
-    return handle_keyword(tc, kw, outfp, genFunc);
+    return handle_keyword(tc, kw, genConfig, genFunc);
 }
 
 
-int handle_class_var_dec(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_class_var_dec(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  ('static'|'field') type varName (',' varName)* ';'
     
     // 0 or more
@@ -267,59 +275,62 @@ int handle_class_var_dec(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) 
 
     //printf("handle_class_var_dec: kw=%s;\n", kw);
 
-    genFunc("classVarDec", BEGIN, outfp);
+    genFunc("classVarDec", BEGIN, genConfig);
 
+    genFunc("varKind", EXPECT, genConfig);
     // it is a class variable declaration
-    if(!handle_keyword(tc, kw, outfp, genFunc))
+    if(!handle_keyword(tc, kw, genConfig, genFunc))
         return false;
 
-    if(!handle_type(tc, false, outfp, genFunc))
+    genFunc("varType", EXPECT, genConfig);
+    if(!handle_type(tc, false, genConfig, genFunc))
         return false;
 
-    if(!handle_var_name(tc, outfp, genFunc))
+    if(!handle_dec_var_name(tc, genConfig, genFunc))
         return false;
 
     // (',' varName)*
     while( lookahead_symbol(tc, ',') ) {
-        if(!expect_char(tc, ',', outfp, genFunc))
+        if(!expect_char(tc, ',', genConfig, genFunc))
             return false;
 
-        if(!handle_var_name(tc, outfp, genFunc))
+        if(!handle_dec_var_name(tc, genConfig, genFunc))
             return false;
     }
 
-    if( !expect_char(tc, ';', outfp, genFunc))
+    if( !expect_char(tc, ';', genConfig, genFunc))
         return false;
 
-    genFunc("classVarDec", END, outfp);
+    genFunc("classVarDec", END, genConfig);
 
-    return handle_class_var_dec(tc, outfp, genFunc);
+    return handle_class_var_dec(tc, genConfig, genFunc);
 }
 
 
-int handle_subroutine_name(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_subroutine_name(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // identifying name
 
-    return handle_identifier(tc, outfp, genFunc);
+    return handle_identifier(tc, genConfig, genFunc);
 }
 
 
-int handle_param_list(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_param_list(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // ((type varName) (',' type varName)*)?
     // assume param list is not empty, caller needs to check
 
     while(true) {
-        if(!handle_type(tc, false, outfp, genFunc))
+        genFunc("varType", EXPECT, genConfig);
+        if(!handle_type(tc, false, genConfig, genFunc))
             return false;
 
-        if(!handle_var_name(tc, outfp, genFunc))
+        if(!handle_dec_var_name(tc, genConfig, genFunc))
             return false;
 
         if(!lookahead_symbol(tc, ',')) {
             break;
         }
 
-        if(!expect_char(tc, ',', outfp, genFunc))
+        if(!expect_char(tc, ',', genConfig, genFunc))
             return false;
     }
 
@@ -327,49 +338,51 @@ int handle_param_list(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
 }
 
 
-int handle_var_dec(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_var_dec(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'var' type varName (',' varName)* ';'
 
     if(!lookahead_keyword(tc, "var"))
         return true;
 
-    genFunc("varDec", BEGIN, outfp);
+    genFunc("varDec", BEGIN, genConfig);
 
-    if(!handle_keyword(tc, "var", outfp, genFunc))
+    genFunc("varKind", EXPECT, genConfig);
+    if(!handle_keyword(tc, "var", genConfig, genFunc))
         return false;
 
-    if(!handle_type(tc, false, outfp, genFunc))
+    genFunc("varType", EXPECT, genConfig);
+    if(!handle_type(tc, false, genConfig, genFunc))
         return false;
 
-    if(!handle_var_name(tc, outfp, genFunc))
+    if(!handle_dec_var_name(tc, genConfig, genFunc))
         return false;
 
     while(lookahead_symbol(tc, ',')) {
-        if(!expect_char(tc, ',', outfp, genFunc))
+        if(!expect_char(tc, ',', genConfig, genFunc))
             return false;
 
-        if(!handle_var_name(tc, outfp, genFunc))
+        if(!handle_dec_var_name(tc, genConfig, genFunc))
             return false;
     }
 
-    if(!expect_char(tc, ';', outfp, genFunc))
+    if(!expect_char(tc, ';', genConfig, genFunc))
         return false;
 
-    genFunc("varDec", END, outfp);
+    genFunc("varDec", END, genConfig);
 
-    return handle_var_dec(tc, outfp, genFunc);
+    return handle_var_dec(tc, genConfig, genFunc);
 }
 
 
-int handle_unaryop(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_unaryop(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // '-'|'~'
 
     if(lookahead_symbol(tc, '-')) {
-        if(!expect_char(tc, '-', outfp, genFunc))
+        if(!expect_char(tc, '-', genConfig, genFunc))
             return false;
     
     } else if(lookahead_symbol(tc, '~')) {
-        if(!expect_char(tc, '~', outfp, genFunc))
+        if(!expect_char(tc, '~', genConfig, genFunc))
             return false;
     
     } else {
@@ -381,22 +394,22 @@ int handle_unaryop(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
 }
 
 
-int handle_term(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  integerConstant | stringConstant | keywordConstant | varName | varName '[' expression ']' | subroutineCall |
     // '(' expression ')' | unaryOp term
 
-    genFunc("term", BEGIN, outfp);
+    genFunc("term", BEGIN, genConfig);
 
     if(lookahead_k(tc, INT_CONST, 1)) {
-        if(!handle_int_const(tc, outfp, genFunc))
+        if(!handle_int_const(tc, genConfig, genFunc))
             return false;
     
     } else if(lookahead_k(tc, STRING_CONST, 1)) {
-        if(!handle_string_const(tc, outfp, genFunc))
+        if(!handle_string_const(tc, genConfig, genFunc))
             return false;
     
     } else if(lookahead_k(tc, KEYWORD, 1)) {        
-        if(!handle_keyword_const(tc, outfp, genFunc))
+        if(!handle_keyword_const(tc, genConfig, genFunc))
             return false;
         
     
@@ -405,21 +418,21 @@ int handle_term(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
 
         if(lookahead_symbol(tc, '(')) {
 
-            if(!expect_char(tc, '(', outfp, genFunc))
+            if(!expect_char(tc, '(', genConfig, genFunc))
                 return false;
 
-            if(!handle_expression(tc, outfp, genFunc))
+            if(!handle_expression(tc, genConfig, genFunc))
                 return false;
 
-            if(!expect_char(tc, ')', outfp, genFunc))
+            if(!expect_char(tc, ')', genConfig, genFunc))
                 return false;
         
         } else {
 
-            if(!handle_unaryop(tc, outfp, genFunc))
+            if(!handle_unaryop(tc, genConfig, genFunc))
                 return false;
 
-            if(!handle_term(tc, outfp, genFunc))
+            if(!handle_term(tc, genConfig, genFunc))
                 return false;
         }
     
@@ -434,31 +447,31 @@ int handle_term(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
             char c = get_symbol_token(raw);
 
             if( c == '[') {
-                if(!handle_var_name(tc, outfp, genFunc))
+                if(!handle_var_name(tc, genConfig, genFunc))
                     return false;
 
-                if(!expect_char(tc, '[', outfp, genFunc))
+                if(!expect_char(tc, '[', genConfig, genFunc))
                     return false;
 
-                if(!handle_expression(tc, outfp, genFunc))
+                if(!handle_expression(tc, genConfig, genFunc))
                     return false;
 
-                if(!expect_char(tc, ']', outfp, genFunc))
+                if(!expect_char(tc, ']', genConfig, genFunc))
                     return false;
             
             } else if( c == '(' || c == '.') {
-                if(!handle_subroutine_call(tc, outfp, genFunc))
+                if(!handle_subroutine_call(tc, genConfig, genFunc))
                     return false;
             
             } else {
                 // just handle variable name
-                if(!handle_var_name(tc, outfp, genFunc))
+                if(!handle_var_name(tc, genConfig, genFunc))
                     return false;
             }
         }
     }
 
-    genFunc("term", END, outfp);
+    genFunc("term", END, genConfig);
 
     return true;
 }
@@ -499,12 +512,12 @@ int lookahead_op(TokenizerConfig* tc) {
 }
 
 
-int handle_expression(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_expression(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // term (op term)*
 
-    genFunc("expression", BEGIN, outfp);
+    genFunc("expression", BEGIN, genConfig);
 
-    if(!handle_term(tc, outfp, genFunc))
+    if(!handle_term(tc, genConfig, genFunc))
         return false;
 
     // todo: handle (op term)*
@@ -513,30 +526,30 @@ int handle_expression(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
 
     while( (c = lookahead_op(tc)) ) {
         // op is just a char
-        if(!expect_char(tc, c, outfp, genFunc))
+        if(!expect_char(tc, c, genConfig, genFunc))
             return false;
 
-        if(!handle_term(tc, outfp, genFunc))
+        if(!handle_term(tc, genConfig, genFunc))
             return false;
     }
 
-    genFunc("expression", END, outfp);
+    genFunc("expression", END, genConfig);
 
     return true;
 }
 
 
-int handle_expression_list(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_expression_list(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  (expression (',' expression)* )?
 
-    if(!handle_expression(tc, outfp, genFunc))
+    if(!handle_expression(tc, genConfig, genFunc))
         return false;
 
     while(lookahead_symbol(tc, ',')) {
-        if(!expect_char(tc, ',', outfp, genFunc))
+        if(!expect_char(tc, ',', genConfig, genFunc))
             return false;
 
-        if(!handle_expression(tc, outfp, genFunc))
+        if(!handle_expression(tc, genConfig, genFunc))
             return false;
     }
 
@@ -544,131 +557,131 @@ int handle_expression_list(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)
 }
 
 
-int handle_let_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_let_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'let' varName ('[' expression ']')? '=' expression ';'
     // already checked that it's a let statement
 
-    genFunc("letStatement", BEGIN, outfp);
+    genFunc("letStatement", BEGIN, genConfig);
 
-    if(!handle_keyword(tc, "let", outfp, genFunc))
+    if(!handle_keyword(tc, "let", genConfig, genFunc))
         return false;
 
-    if(!handle_var_name(tc, outfp, genFunc))
+    if(!handle_var_name(tc, genConfig, genFunc))
         return false;
 
     if(lookahead_symbol(tc, '[')) {
-        if(!expect_char(tc, '[', outfp, genFunc))
+        if(!expect_char(tc, '[', genConfig, genFunc))
             return false;
 
-        if(!handle_expression(tc, outfp, genFunc))
+        if(!handle_expression(tc, genConfig, genFunc))
             return false;
 
-        if(!expect_char(tc, ']', outfp, genFunc))
+        if(!expect_char(tc, ']', genConfig, genFunc))
             return false;
     }
 
-    if(!expect_char(tc, '=', outfp, genFunc))
+    if(!expect_char(tc, '=', genConfig, genFunc))
         return false;
 
-    if(!handle_expression(tc, outfp, genFunc))
+    if(!handle_expression(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, ';', outfp, genFunc))
+    if(!expect_char(tc, ';', genConfig, genFunc))
         return false;
 
-    genFunc("letStatement", END, outfp);
+    genFunc("letStatement", END, genConfig);
 
     return true;
 }
 
 
-int handle_if_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_if_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'if' '(' expression ')' '{' statements '}' ('else' '{' statements '}')?
     // already checked that it's an if statement
 
-    genFunc("ifStatement", BEGIN, outfp);
+    genFunc("ifStatement", BEGIN, genConfig);
 
-    if(!handle_keyword(tc, "if", outfp, genFunc))
+    if(!handle_keyword(tc, "if", genConfig, genFunc))
         return false;
 
     // expression
-    if(!expect_char(tc, '(', outfp, genFunc))
+    if(!expect_char(tc, '(', genConfig, genFunc))
         return false;
 
-    if(!handle_expression(tc, outfp, genFunc))
+    if(!handle_expression(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, ')', outfp, genFunc))
+    if(!expect_char(tc, ')', genConfig, genFunc))
         return false;
 
     // statements
-    if(!expect_char(tc, '{', outfp, genFunc))
+    if(!expect_char(tc, '{', genConfig, genFunc))
         return false;
 
-    if(!handle_statements(tc, outfp, genFunc))
+    if(!handle_statements(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, '}', outfp, genFunc))
+    if(!expect_char(tc, '}', genConfig, genFunc))
         return false;
 
     // else
     if(lookahead_keyword(tc, "else")) {
         // statements
-        if(!handle_keyword(tc, "else", outfp, genFunc))
+        if(!handle_keyword(tc, "else", genConfig, genFunc))
             return false;
 
-        if(!expect_char(tc, '{', outfp, genFunc))
+        if(!expect_char(tc, '{', genConfig, genFunc))
             return false;
 
-        if(!handle_statements(tc, outfp, genFunc))
+        if(!handle_statements(tc, genConfig, genFunc))
             return false;
 
-        if(!expect_char(tc, '}', outfp, genFunc))
+        if(!expect_char(tc, '}', genConfig, genFunc))
             return false;
     }
 
-    genFunc("ifStatement", END, outfp);
+    genFunc("ifStatement", END, genConfig);
 
     return true;
 }
 
 
-int handle_while_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_while_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'while' '(' expression ')' '{' statements '}'
     // already checked that it's a 'while' statement
     
-    genFunc("whileStatement", BEGIN, outfp);
+    genFunc("whileStatement", BEGIN, genConfig);
 
-    if(!handle_keyword(tc, "while", outfp, genFunc))
+    if(!handle_keyword(tc, "while", genConfig, genFunc))
         return false;
 
     // expression
-    if(!expect_char(tc, '(', outfp, genFunc))
+    if(!expect_char(tc, '(', genConfig, genFunc))
         return false;
 
-    if(!handle_expression(tc, outfp, genFunc))
+    if(!handle_expression(tc, genConfig, genFunc))
             return false;
 
-    if(!expect_char(tc, ')', outfp, genFunc))
+    if(!expect_char(tc, ')', genConfig, genFunc))
         return false;
 
     // statements
-    if(!expect_char(tc, '{', outfp, genFunc))
+    if(!expect_char(tc, '{', genConfig, genFunc))
         return false;
 
-    if(!handle_statements(tc, outfp, genFunc))
+    if(!handle_statements(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, '}', outfp, genFunc))
+    if(!expect_char(tc, '}', genConfig, genFunc))
         return false;
 
-    genFunc("whileStatement", END, outfp);
+    genFunc("whileStatement", END, genConfig);
 
     return true;
 }
 
 
-int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_subroutine_call(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  subroutineName '(' expressionList ')' | (className | varName) '.' subroutineName '(' expressionList ')'
 
     if(!lookahead_k(tc, SYMBOL, 2)) {
@@ -682,45 +695,45 @@ int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)
     if( c == '(') {
         // subroutineName '(' expressionList ')'
 
-        if(!handle_subroutine_name(tc, outfp, genFunc))
+        if(!handle_subroutine_name(tc, genConfig, genFunc))
             return false;
 
-        if(!expect_char(tc, '(', outfp, genFunc))
+        if(!expect_char(tc, '(', genConfig, genFunc))
             return false;
 
-        genFunc("expressionList", BEGIN, outfp);
+        genFunc("expressionList", BEGIN, genConfig);
         if(!lookahead_symbol(tc, ')')) {
-            if(!handle_expression_list(tc, outfp, genFunc))
+            if(!handle_expression_list(tc, genConfig, genFunc))
                 return false;
         }
-        genFunc("expressionList", END, outfp);
+        genFunc("expressionList", END, genConfig);
 
-        if(!expect_char(tc, ')', outfp, genFunc))
+        if(!expect_char(tc, ')', genConfig, genFunc))
             return false;
 
     } else if( c == '.') {
         // (className | varName) '.' subroutineName '(' expressionList ')'
 
-        if(!handle_var_name(tc, outfp, genFunc))
+        if(!handle_var_name(tc, genConfig, genFunc))
             return false;
 
-        if(!expect_char(tc, '.', outfp, genFunc))
+        if(!expect_char(tc, '.', genConfig, genFunc))
             return false;
 
-        if(!handle_subroutine_name(tc, outfp, genFunc))
+        if(!handle_subroutine_name(tc, genConfig, genFunc))
             return false;
 
-        if(!expect_char(tc, '(', outfp, genFunc))
+        if(!expect_char(tc, '(', genConfig, genFunc))
             return false;
 
-        genFunc("expressionList", BEGIN, outfp);
+        genFunc("expressionList", BEGIN, genConfig);
         if(!lookahead_symbol(tc, ')')) {
-            if(!handle_expression_list(tc, outfp, genFunc))
+            if(!handle_expression_list(tc, genConfig, genFunc))
                 return false;
         }
-        genFunc("expressionList", END, outfp);
+        genFunc("expressionList", END, genConfig);
 
-        if(!expect_char(tc, ')', outfp, genFunc))
+        if(!expect_char(tc, ')', genConfig, genFunc))
             return false;
 
     } else {
@@ -733,71 +746,71 @@ int handle_subroutine_call(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)
 }
 
 
-int handle_do_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_do_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'do' subroutineCall ';'
     // already checked that it's a 'do' statement
 
-    genFunc("doStatement", BEGIN, outfp);
+    genFunc("doStatement", BEGIN, genConfig);
     
-    if(!handle_keyword(tc, "do", outfp, genFunc))
+    if(!handle_keyword(tc, "do", genConfig, genFunc))
         return false;
 
-    if(!handle_subroutine_call(tc, outfp, genFunc))
+    if(!handle_subroutine_call(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, ';', outfp, genFunc))
+    if(!expect_char(tc, ';', genConfig, genFunc))
         return false;
 
-    genFunc("doStatement", END, outfp);
+    genFunc("doStatement", END, genConfig);
 
     return true;
 }
 
 
-int handle_return_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_return_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // 'return' expression? ';'
     // already checked that it's a 'return' statement
 
-    genFunc("returnStatement", BEGIN, outfp);
+    genFunc("returnStatement", BEGIN, genConfig);
     
-    if(!handle_keyword(tc, "return", outfp, genFunc))
+    if(!handle_keyword(tc, "return", genConfig, genFunc))
         return false;
 
     if(!lookahead_symbol(tc, ';')) {
-        if(!handle_expression(tc, outfp, genFunc))
+        if(!handle_expression(tc, genConfig, genFunc))
             return false;
     }
 
-    if(!expect_char(tc, ';', outfp, genFunc))
+    if(!expect_char(tc, ';', genConfig, genFunc))
         return false;
 
-    genFunc("returnStatement", END, outfp);
+    genFunc("returnStatement", END, genConfig);
 
     return true;
 }
 
 
-int handle_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  letStatement | ifStatement | whileStatement | doStatement | returnStatement
 
     if(lookahead_keyword(tc, "let")) {
-        if(!handle_let_statement(tc, outfp, genFunc))
+        if(!handle_let_statement(tc, genConfig, genFunc))
             return false;
     
     } else if(lookahead_keyword(tc, "if")) {
-        if(!handle_if_statement(tc, outfp, genFunc))
+        if(!handle_if_statement(tc, genConfig, genFunc))
             return false;
 
     } else if(lookahead_keyword(tc, "do")) {
-        if(!handle_do_statement(tc, outfp, genFunc))
+        if(!handle_do_statement(tc, genConfig, genFunc))
             return false;
 
     } else if(lookahead_keyword(tc, "while")) {
-        if(!handle_while_statement(tc, outfp, genFunc))
+        if(!handle_while_statement(tc, genConfig, genFunc))
             return false;
 
     } else if(lookahead_keyword(tc, "return")) {
-        if(!handle_return_statement(tc, outfp, genFunc))
+        if(!handle_return_statement(tc, genConfig, genFunc))
             return false;
 
     } else {
@@ -805,46 +818,46 @@ int handle_statement(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
         return true;
     }
 
-    return handle_statement(tc, outfp, genFunc);
+    return handle_statement(tc, genConfig, genFunc);
 }
 
 
-int handle_statements(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_statements(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     
-    genFunc("statements", BEGIN, outfp);
+    genFunc("statements", BEGIN, genConfig);
 
-    if(!handle_statement(tc, outfp, genFunc))
+    if(!handle_statement(tc, genConfig, genFunc))
         return false;
 
-    genFunc("statements", END, outfp);
+    genFunc("statements", END, genConfig);
     
 }
 
 
-int handle_subroutine_body(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_subroutine_body(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // '{' varDec* statements '}'
 
-    genFunc("subroutineBody", BEGIN, outfp);
+    genFunc("subroutineBody", BEGIN, genConfig);
 
-    if(!expect_char(tc, '{', outfp, genFunc))
+    if(!expect_char(tc, '{', genConfig, genFunc))
         return false;
 
-    if(!handle_var_dec(tc, outfp, genFunc))
+    if(!handle_var_dec(tc, genConfig, genFunc))
         return false;
 
-    if(!handle_statements(tc, outfp, genFunc))
+    if(!handle_statements(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, '}', outfp, genFunc))
+    if(!expect_char(tc, '}', genConfig, genFunc))
         return false;
 
-    genFunc("subroutineBody", END, outfp);
+    genFunc("subroutineBody", END, genConfig);
 
     return true;
 }
 
 
-int handle_subroutine_dec(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_subroutine_dec(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  ('constructor'|'function'|'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
     // 0 or more
     char* kw;
@@ -858,106 +871,78 @@ int handle_subroutine_dec(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc))
         return true;
     }
 
-    genFunc("subroutineDec", BEGIN, outfp);
+    genFunc("subroutineDec", BEGIN, genConfig);
 
+    genFunc("subroutineType", EXPECT, genConfig);
     // it is a subroutine declaration
-    if(!handle_keyword(tc, kw, outfp, genFunc))
+    if(!handle_keyword(tc, kw, genConfig, genFunc))
         return false;
 
-    if(!handle_type(tc, true, outfp, genFunc))
+    if(!handle_type(tc, true, genConfig, genFunc))
         return false;
 
-    if(!handle_subroutine_name(tc, outfp, genFunc))
+    if(!handle_subroutine_name(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, '(', outfp, genFunc))
+    if(!expect_char(tc, '(', genConfig, genFunc))
         return false;
 
-    genFunc("parameterList", BEGIN, outfp);
+    genFunc("parameterList", BEGIN, genConfig);
     if(!lookahead_symbol(tc, ')')) {
         // if next token is ')', then there are no params to function
 
-        if(!handle_param_list(tc, outfp, genFunc))
+        if(!handle_param_list(tc, genConfig, genFunc))
             return false;
     }
-    genFunc("parameterList", END, outfp);
+    genFunc("parameterList", END, genConfig);
 
-    if(!expect_char(tc, ')', outfp, genFunc))
+    if(!expect_char(tc, ')', genConfig, genFunc))
         return false;
 
-    if(!handle_subroutine_body(tc, outfp, genFunc))
+    if(!handle_subroutine_body(tc, genConfig, genFunc))
         return false;
 
-    genFunc("subroutineDec", END, outfp);
+    genFunc("subroutineDec", END, genConfig);
 
-    return handle_subroutine_dec(tc, outfp, genFunc);
+    return handle_subroutine_dec(tc, genConfig, genFunc);
 }
 
 
-int handle_class(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+int handle_class(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // handle class
     // 'class' className '{' classVarDec* subroutineDec* '}'
 
-    if(!handle_keyword(tc, "class", outfp, genFunc))
+    if(!handle_keyword(tc, "class", genConfig, genFunc))
         return false;
 
-    if(!handle_classname(tc, outfp, genFunc))
+    if(!handle_classname(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, '{', outfp, genFunc))
+    if(!expect_char(tc, '{', genConfig, genFunc))
         return false;
 
-    if(!handle_class_var_dec(tc, outfp, genFunc))
+    if(!handle_class_var_dec(tc, genConfig, genFunc))
         return false;
 
-    if(!handle_subroutine_dec(tc, outfp, genFunc))
+    if(!handle_subroutine_dec(tc, genConfig, genFunc))
         return false;
 
-    if(!expect_char(tc, '}', outfp, genFunc))
+    if(!expect_char(tc, '}', genConfig, genFunc))
         return false;
 
     return true;
 }
 
 
-void parse_and_generate_output(TokenizerConfig* tc, FILE* outfp, GenFuncPtr(genFunc)) {
+void parse_and_generate_output(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // create output file corresponding to each input file, one at a time
     // file should begin with a class, and each file has only one class
-    genFunc("class", BEGIN, outfp);
+    genFunc("class", BEGIN, genConfig);
 
-    if(!handle_class(tc, outfp, genFunc)) {
+    if(!handle_class(tc, genConfig, genFunc)) {
         // error during class handling
         printf("Error handling class with current token:%s; token type = %d\n", get_raw_token(tc), get_token_type(tc));
     }
 
-    genFunc("class", END, outfp);
+    genFunc("class", END, genConfig);
 }
-
-
-void parse_file_or_directory(char* file_name) {
-    ParserConfig* pc = init_parser(file_name, "out.xml", 2);
-
-    FILE* outfp;
-    TokenizerConfig* tc = pc->tc;
-
-    while(adv_next_file(tc)) {
-        outfp = get_out_file(tc->dc, tc->rc->file_name);
-
-        printf("Generating output for file_name=%s\n", tc->rc->file_name);
-        parse_and_generate_output(tc, outfp, out_xml);
-
-        fclose(outfp);
-    }
-
-    dealloc_parser(pc);
-}
-
-
-int main(int argc, char* argv[]) {
-    // .jack file or directory name is provided as argv[1]
-
-    char* file_name = argv[1];
-
-    parse_file_or_directory(file_name);
-}
-

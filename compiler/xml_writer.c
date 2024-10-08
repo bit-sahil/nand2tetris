@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include "tokenizer.h"
 #include "tokenizer_api.h"
+#include "config.h"
 
 
 void out_str(char* token, char* tokenType, FILE* outfp) {
@@ -88,16 +89,16 @@ void terminal(char* token_value, int action, FILE* outfp) {
 }
 
 
-void out_xml(char* token, int action, FILE* outfp) {
+void out_xml(char* token, int action, GenConfig* genConfig) {
     // printf("token=%s;action=%d\n", token, action);
     
     if(action == BEGIN) {
-        begin(token, outfp);
+        begin(token, genConfig->outfp);
     } else if (action == END) {
-        end(token, outfp);
+        end(token, genConfig->outfp);
     } else {
         // code to output terminals
         // token contains value and action is among TokenType
-        terminal(token, action, outfp);
+        terminal(token, action, genConfig->outfp);
     }
 }
