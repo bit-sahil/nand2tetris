@@ -14,6 +14,8 @@ void print_map(Map* map);
 
 void add_key(Map* map, char* key, char* value);
 
+char* get_str_value(Map* map, char* key);
+
 int get_value(Map* map, char* key, char* value);
 
 #endif

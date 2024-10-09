@@ -3,17 +3,18 @@
 #define CONFIG_H
 
 #include "symbol_table.h"
+#include "../common/map.h"
+
 
 #define GenFuncPtr(F) void (*F) (char*, int, GenConfig*)
-
 
 #define MAX_TOKEN_LEN 128
 
 
-typedef struct CodeStateStack {
+typedef struct StrValStack {
 	char val[MAX_TOKEN_LEN];
-	struct CodeStateStack* prev;
-} CodeStateStack;
+	struct StrValStack* prev;
+} StrValStack;
 
 
 typedef struct SymbolTableStack {
@@ -26,12 +27,12 @@ typedef struct GenConfig {
 	FILE* outfp;
 	SymbolTableStack* tableStack;
 
-	CodeStateStack* state;
-	CodeStateStack* expected;
+	StrValStack* state;
+	StrValStack* expected;
 
-	char className[MAX_TOKEN_LEN];
-	char varKind[MAX_TOKEN_LEN];
-	char varType[MAX_TOKEN_LEN];
+	Map* context;
+	int nArg;
+	StrValStack* term_op;
 } GenConfig;
 
 
@@ -46,9 +47,21 @@ void pop_symbol_table(GenConfig* genConfig);
 
 void add_var_symbol_table(GenConfig* genConfig, char* varName);
 
+int symbol_table_size(GenConfig* genConfig);
 
-int is_non_empty(CodeStateStack* state);
+int has_value_symbol_table(GenConfig* genConfig, char* key);
 
+char* var_type_symbol_table(GenConfig* genConfig, char* key);
+
+void vm_var_name_symbol_table(GenConfig* genConfig, char* key, char* val);
+
+
+void store_context(GenConfig* genConfig, char* key, char* value);
+
+char* context_value(GenConfig* genConfig, char* key);
+
+
+int is_non_empty(StrValStack* state);
 
 void push_state(GenConfig* genConfig, char* codeState);
 
@@ -66,6 +79,17 @@ char* top_expected(GenConfig* genConfig);
 int top_expected_cmp(GenConfig* genConfig, char* curr);
 
 void pop_expected(GenConfig* genConfig);
+
+
+int has_term_op(GenConfig* genConfig);
+
+void push_term_op(GenConfig* genConfig, char* termOp);
+
+char* top_term_op(GenConfig* genConfig);
+
+int top_term_op_cmp(GenConfig* genConfig, char* curr);
+
+void pop_term_op(GenConfig* genConfig);
 
 
 #endif

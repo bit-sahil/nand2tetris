@@ -8,5 +8,5 @@ parser: parser.c
 
 
 code_generator: code_generator.c
-	gcc code_generator.c parser.c tokenizer_api.c tokenizer.c token_handler.c lookahead_tokenizer.c symbol_table.c config.c ../common/{code_reader.c,delimiter.c,file_handler.c,file_reader.c,word_delimit.c,code_delimit.c,abstract_map.c}
+	gcc code_generator.c parser.c tokenizer_api.c tokenizer.c token_handler.c lookahead_tokenizer.c symbol_table.c config.c helper.c ../common/{code_reader.c,delimiter.c,file_handler.c,file_reader.c,word_delimit.c,code_delimit.c,abstract_map.c,map.c,file_content.c}
 

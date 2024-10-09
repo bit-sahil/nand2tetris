@@ -49,7 +49,7 @@ void print_symbol_table(SymbolTable* symbol_table) {
 
 void _add_key(SymbolTable* symbol_table, char* key, SymbolTableData* data) {
     // printf("key=%s;value=%s;val=%s\n", key, data->type);
-    add_abstract_key(symbol_table->map, key, (void*) data);
+    add_or_update_abstract_key(symbol_table->map, key, (void*) data);
 }
 
 
@@ -69,4 +69,37 @@ SymbolTableData* get_value_symbol_table(SymbolTable* symbol_table, char* key) {
     void *val = get_abstract_value(symbol_table->map, key);
     
     return (SymbolTableData*) val;
+}
+
+
+char* kind_to_str(Kind kind) {
+    switch (kind) {
+        case Static:
+            return "static";
+
+        case Field:
+            return "field";
+
+        case Local:
+            return "local";
+
+        case Argument:
+            return "argument";
+    }
+}
+
+
+Kind str_to_kind(char* varKind) {
+    if(strcmp(varKind, "static") == 0) {
+        return Static;
+    } else if(strcmp(varKind, "field") == 0) {
+        return Field;
+    } else if(strcmp(varKind, "local") == 0) {
+        return Local;
+    } else if(strcmp(varKind, "argument") == 0) {
+        return Argument;
+    } else {
+        printf("SymbolTableError: unhandled varKind=%s\n", varKind);
+        return Local;
+    }
 }

@@ -22,3 +22,13 @@ char* file_to_str(char* file_name, int line_size, int max_lines) {
 
     return f_contents;
 }
+
+
+void op_file_name(char* command, char* folder_name, char* file_ext, char* file_name) {
+    // file_name = folder_name/command.file_ext
+    // '/' and '.' are part of folder_name and file_ext already
+
+    strcpy(file_name, folder_name);
+    strcat(file_name, command);
+    strcat(file_name, file_ext);
+}

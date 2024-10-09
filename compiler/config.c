@@ -2,8 +2,10 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdbool.h>
+
 #include "config.h"
 #include "symbol_table.h"
+#include "../common/map.h"
 
 
 GenConfig* init_gen_config(FILE* outfp) {
@@ -15,6 +17,9 @@ GenConfig* init_gen_config(FILE* outfp) {
 
 	genConfig->state = NULL;
 	genConfig->expected = NULL;
+	genConfig->term_op = NULL;
+
+	genConfig->context = NULL;
 	
 	return genConfig;
 }
@@ -53,56 +58,100 @@ void pop_symbol_table(GenConfig* genConfig) {
 void add_var_symbol_table(GenConfig* genConfig, char* varName) {
 	// printf("add_var_symbol_table, varName=%s; varKind=%s; varType=%s\n", varName, genConfig->varKind, genConfig->varType);
 
-	Kind kind;
-	if(strcmp(genConfig->varKind, "static") == 0) {
-		kind = Static;
-	} else if(strcmp(genConfig->varKind, "field") == 0) {
-		kind = Field;
-	} else if(strcmp(genConfig->varKind, "local") == 0) {
-		kind = Local;
-	} else if(strcmp(genConfig->varKind, "argument") == 0) {
-		kind = Argument;
-	} else {
-		printf("SymbolTableError: unhandled varKind=%s\n", genConfig->varKind);
-		kind = Local;
-	}
+	char* varKind = context_value(genConfig, "varKind");
 
-	add_key_symbol_table(genConfig->tableStack->table, varName, genConfig->varType, kind);
+	add_key_symbol_table(genConfig->tableStack->table, varName, context_value(genConfig, "varType"), str_to_kind(varKind));
 }
 
 
-CodeStateStack* _push_state(char* codeState, CodeStateStack* prev) {
-	CodeStateStack* state = (CodeStateStack*) malloc(sizeof(CodeStateStack));
+SymbolTableData* _get_value_symbol_tables(GenConfig* genConfig, char* key) {
+	SymbolTableStack* tableStack = genConfig->tableStack;
+
+	SymbolTableData* data;
+
+	while(tableStack != NULL) {
+		if( (data=get_value_symbol_table(tableStack->table, key)) != NULL)
+			return data;
+
+		tableStack = tableStack->prev;
+	}
+
+	return NULL;
+}
+
+
+int has_value_symbol_table(GenConfig* genConfig, char* key) {
+	return _get_value_symbol_tables(genConfig, key) != NULL;
+}
+
+
+char* var_type_symbol_table(GenConfig* genConfig, char* key) {
+	SymbolTableData* data = _get_value_symbol_tables(genConfig, key);
+
+	return data->type;
+}
+
+
+void vm_var_name_symbol_table(GenConfig* genConfig, char* key, char* val) {
+	SymbolTableData* data = _get_value_symbol_tables(genConfig, key);
+
+	sprintf(val, "%s %d", kind_to_str(data->kind), data->num);
+}
+
+
+int symbol_table_size(GenConfig* genConfig) {
+	// returns number of elements in top symbol table
+	// usually that's the table for subroutine
+
+	return genConfig->tableStack->table->map->cnt;
+}
+
+
+void store_context(GenConfig* genConfig, char* key, char* value) {
+	if(genConfig->context == NULL)
+		printf("ContextError: context map not found\n");
+
+	add_key(genConfig->context, key, value);
+}
+
+
+char* context_value(GenConfig* genConfig, char* key) {
+	return get_str_value(genConfig->context, key);
+}
+
+
+StrValStack* _push_state(char* codeState, StrValStack* prev) {
+	StrValStack* state = (StrValStack*) malloc(sizeof(StrValStack));
 	strcpy(state->val, codeState);
 	state->prev = prev;
 	return state;
 }
 
 
-CodeStateStack* _pop_state(CodeStateStack* state) {
+StrValStack* _pop_state(StrValStack* state) {
 	if(state == NULL) {
-		printf("CodeStateStackError: popping from null state\n");
+		printf("StrValStackError: popping from null state\n");
 		return NULL;
 	}
 
-	CodeStateStack* prev = state->prev;
+	StrValStack* prev = state->prev;
 	free(state);
 	return prev;
 }
 
 
-int is_non_empty(CodeStateStack* state) {
+int is_non_empty(StrValStack* state) {
 	return state != NULL;
 }
 
 
-char* _top_state(CodeStateStack* state) {
+char* _top_state(StrValStack* state) {
 	// already checked state to be non-empty
 	return state->val;
 }
 
 
-int _top_state_cmp(CodeStateStack* state, char* curr) {
+int _top_state_cmp(StrValStack* state, char* curr) {
 	if(!is_non_empty(state))
 		return false;
 	
@@ -148,3 +197,29 @@ int top_expected_cmp(GenConfig* genConfig, char* curr) {
 void pop_expected(GenConfig* genConfig) {
 	genConfig->expected = _pop_state(genConfig->expected);
 }
+
+
+int has_term_op(GenConfig* genConfig) {
+	return is_non_empty(genConfig->term_op);
+}
+
+
+void push_term_op(GenConfig* genConfig, char* termOp) {
+	genConfig->term_op = _push_state(termOp, genConfig->term_op);
+}
+
+
+char* top_term_op(GenConfig* genConfig) {
+	return _top_state(genConfig->term_op);
+}
+
+
+int top_term_op_cmp(GenConfig* genConfig, char* curr) {
+	return _top_state_cmp(genConfig->term_op, curr);
+}
+
+
+void pop_term_op(GenConfig* genConfig) {
+	genConfig->term_op = _pop_state(genConfig->term_op);
+}
+

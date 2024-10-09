@@ -222,7 +222,7 @@ int handle_classname(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFu
 int handle_var_name(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // variable name
 
-    genFunc("varName", EXPECT, genConfig);
+    // genFunc("varName", EXPECT, genConfig);
 
     return handle_identifier(tc, genConfig, genFunc);
 }
@@ -309,6 +309,8 @@ int handle_class_var_dec(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(g
 
 int handle_subroutine_name(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     // identifying name
+
+    genFunc("subroutineName", EXPECT, genConfig);
 
     return handle_identifier(tc, genConfig, genFunc);
 }
@@ -418,6 +420,7 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
 
         if(lookahead_symbol(tc, '(')) {
 
+            genFunc("delayOp", END_DO, genConfig);
             if(!expect_char(tc, '(', genConfig, genFunc))
                 return false;
 
@@ -426,6 +429,7 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
 
             if(!expect_char(tc, ')', genConfig, genFunc))
                 return false;
+            genFunc("endDelayOp", END_DO, genConfig);
         
         } else {
 
@@ -526,6 +530,8 @@ int handle_expression(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genF
 
     while( (c = lookahead_op(tc)) ) {
         // op is just a char
+
+        genFunc("binaryOp", EXPECT, genConfig);
         if(!expect_char(tc, c, genConfig, genFunc))
             return false;
 
@@ -542,6 +548,7 @@ int handle_expression(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genF
 int handle_expression_list(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) {
     //  (expression (',' expression)* )?
 
+    genFunc("callArg", END_DO, genConfig);
     if(!handle_expression(tc, genConfig, genFunc))
         return false;
 
@@ -549,6 +556,7 @@ int handle_expression_list(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
         if(!expect_char(tc, ',', genConfig, genFunc))
             return false;
 
+        genFunc("callArg", END_DO, genConfig);
         if(!handle_expression(tc, genConfig, genFunc))
             return false;
     }
@@ -714,6 +722,7 @@ int handle_subroutine_call(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
     } else if( c == '.') {
         // (className | varName) '.' subroutineName '(' expressionList ')'
 
+        genFunc("callerClassName", EXPECT, genConfig);
         if(!handle_var_name(tc, genConfig, genFunc))
             return false;
 
@@ -779,6 +788,8 @@ int handle_return_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPt
     if(!lookahead_symbol(tc, ';')) {
         if(!handle_expression(tc, genConfig, genFunc))
             return false;
+    } else {
+        genFunc("noReturnExpression", END_DO, genConfig);
     }
 
     if(!expect_char(tc, ';', genConfig, genFunc))
@@ -844,6 +855,8 @@ int handle_subroutine_body(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
 
     if(!handle_var_dec(tc, genConfig, genFunc))
         return false;
+
+    genFunc("subroutineVarDec", END_DO, genConfig);
 
     if(!handle_statements(tc, genConfig, genFunc))
         return false;

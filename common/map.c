@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdbool.h>
-#include"map.h"
+#include "map.h"
 
 
 /* Using map instead of symbol_table cos map is equally intuitive and less typing, 
@@ -19,13 +19,13 @@ Map* init_map(int size) {
 }
 
 
-void _print_value(void* value) {
+void _print_map_value(void* value) {
     printf("value=%s", (char*) value);
 }
 
 
 void print_map(Map* map) {
-    print_abstract_map(map, _print_value);
+    print_abstract_map(map, _print_map_value);
 }
 
 
@@ -34,16 +34,26 @@ void add_key(Map* map, char* key, char* value) {
     strcpy(val, value);
 
     // printf("key=%s;value=%s;val=%s\n", key, value, val);
-    add_abstract_key(map, key, (void*) val);
+    add_or_update_abstract_key(map, key, (void*) val);
+}
+
+
+char* get_str_value(Map* map, char* key) {
+    void* val = get_abstract_value(map, key);
+
+    if(val == NULL)
+        return NULL;
+
+    return (char*) val;
 }
 
 
 int get_value(Map* map, char* key, char* value) {
-    void *val = get_abstract_value(map, key);
+    char* val = get_str_value(map, key);
     
     if(val == NULL)
         return 0;
 
-    strcpy(value, (char*) val);
+    strcpy(value, val);
     return 1;
 }

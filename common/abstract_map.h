@@ -26,6 +26,8 @@ void print_abstract_map(AbstractMap* map, void (*print_val)(void*) );
 
 void add_abstract_key(AbstractMap* map, char* key, void* value);
 
+void add_or_update_abstract_key(AbstractMap* map, char* key, void* value);
+
 void* get_abstract_value(AbstractMap* map, char* key);
 
 #endif

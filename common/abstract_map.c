@@ -58,6 +58,41 @@ void print_abstract_map(AbstractMap* map, void (*print_val)(void*) ) {
 }
 
 
+AbstractNode* find_node(AbstractMap* map, char* key) {
+    /* map and key are given arguments, return node if found
+    else return NULL
+
+    O(n) solution to being with, this function can be improved independently
+    */
+    
+    AbstractNode node;
+    for(int i=0;i<map->cnt;i++) {
+        node = map->nodes[i];
+        if(strcmp(key, node.key) == 0) {
+            return &map->nodes[i];
+        }
+    }
+    
+    return NULL;
+}
+
+
+int update_abstract_key(AbstractMap* map, char* key, void* value) {
+    /* update value in given map if key is found, and return true
+    if key not find, return false
+
+    */
+
+    AbstractNode* node = find_node(map, key);
+
+    if(node==NULL)
+        return false;
+
+    node->value = value;
+    return true;
+}
+
+
 void add_abstract_key(AbstractMap* map, char* key, void* value) {
     /* add key-value pair to given map
     allocate memory to key variable of AbstractNode, and copy key into it
@@ -81,6 +116,17 @@ void add_abstract_key(AbstractMap* map, char* key, void* value) {
 }
 
 
+void add_or_update_abstract_key(AbstractMap* map, char* key, void* value) {
+    // try update, if key is present
+    // if not present, add new key
+
+    if(update_abstract_key(map, key, value))
+        return;
+
+    add_abstract_key(map, key, value);
+}
+
+
 void* get_abstract_value(AbstractMap* map, char* key) {
     /* map and key are given arguments, result is returned as a pointer to value
     returns NULL if value is not found
@@ -88,15 +134,10 @@ void* get_abstract_value(AbstractMap* map, char* key) {
     O(n) solution to being with, this function can be improved independently
     */
     
-    AbstractNode node;
-    for(int i=0;i<map->cnt;i++) {
-        node = map->nodes[i];
-        if(strcmp(key, node.key) == 0) {
-            return node.value;
-        }
-    }
+    AbstractNode* node = find_node(map, key);
+
+    if(node==NULL)
+        return NULL;
     
-    return NULL;
+    return node->value;
 }
-
-
