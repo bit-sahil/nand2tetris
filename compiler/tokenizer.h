@@ -25,6 +25,8 @@ typedef enum {
 #define END 11
 #define EXPECT 20
 #define END_DO 21
+#define BEGIN_SP 30
+#define END_SP 31
 
 
 typedef struct TokenizerConfig {

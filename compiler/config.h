@@ -32,6 +32,8 @@ typedef struct GenConfig {
 
 	Map* context;
 	int nArg;
+	int nLabel;
+	StrValStack* curr_label;
 	StrValStack* term_op;
 } GenConfig;
 
@@ -54,6 +56,8 @@ int has_value_symbol_table(GenConfig* genConfig, char* key);
 char* var_type_symbol_table(GenConfig* genConfig, char* key);
 
 void vm_var_name_symbol_table(GenConfig* genConfig, char* key, char* val);
+
+int symbol_table_num_var_type(GenConfig* genConfig, Kind kind);
 
 
 void store_context(GenConfig* genConfig, char* key, char* value);
@@ -90,6 +94,17 @@ char* top_term_op(GenConfig* genConfig);
 int top_term_op_cmp(GenConfig* genConfig, char* curr);
 
 void pop_term_op(GenConfig* genConfig);
+
+
+int has_curr_label(GenConfig* genConfig);
+
+void push_curr_label(GenConfig* genConfig, char* termOp);
+
+char* top_curr_label(GenConfig* genConfig);
+
+int top_curr_label_cmp(GenConfig* genConfig, char* curr);
+
+void pop_curr_label(GenConfig* genConfig);
 
 
 #endif

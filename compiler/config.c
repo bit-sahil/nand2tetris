@@ -17,7 +17,9 @@ GenConfig* init_gen_config(FILE* outfp) {
 
 	genConfig->state = NULL;
 	genConfig->expected = NULL;
+	
 	genConfig->term_op = NULL;
+	genConfig->curr_label = NULL;
 
 	genConfig->context = NULL;
 	
@@ -104,6 +106,12 @@ int symbol_table_size(GenConfig* genConfig) {
 	// usually that's the table for subroutine
 
 	return genConfig->tableStack->table->map->cnt;
+}
+
+
+int symbol_table_num_var_type(GenConfig* genConfig, Kind kind) {
+	// returns number of variables of given type in top symbol table
+	return genConfig->tableStack->table->running_kind_num[kind];
 }
 
 
@@ -223,3 +231,27 @@ void pop_term_op(GenConfig* genConfig) {
 	genConfig->term_op = _pop_state(genConfig->term_op);
 }
 
+
+int has_curr_label(GenConfig* genConfig) {
+	return is_non_empty(genConfig->curr_label);
+}
+
+
+void push_curr_label(GenConfig* genConfig, char* termOp) {
+	genConfig->curr_label = _push_state(termOp, genConfig->curr_label);
+}
+
+
+char* top_curr_label(GenConfig* genConfig) {
+	return _top_state(genConfig->curr_label);
+}
+
+
+int top_curr_label_cmp(GenConfig* genConfig, char* curr) {
+	return _top_state_cmp(genConfig->curr_label, curr);
+}
+
+
+void pop_curr_label(GenConfig* genConfig) {
+	genConfig->curr_label = _pop_state(genConfig->curr_label);
+}

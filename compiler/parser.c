@@ -380,10 +380,12 @@ int handle_unaryop(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc
     // '-'|'~'
 
     if(lookahead_symbol(tc, '-')) {
+        genFunc("unaryOp", EXPECT, genConfig);
         if(!expect_char(tc, '-', genConfig, genFunc))
             return false;
     
     } else if(lookahead_symbol(tc, '~')) {
+        genFunc("unaryOp", EXPECT, genConfig);
         if(!expect_char(tc, '~', genConfig, genFunc))
             return false;
     
@@ -410,7 +412,8 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
         if(!handle_string_const(tc, genConfig, genFunc))
             return false;
     
-    } else if(lookahead_k(tc, KEYWORD, 1)) {        
+    } else if(lookahead_k(tc, KEYWORD, 1)) {
+        genFunc("termKeywordConstant", EXPECT, genConfig);
         if(!handle_keyword_const(tc, genConfig, genFunc))
             return false;
         
@@ -442,7 +445,7 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
     
     } else  {
         // varName | varName '[' expression ']' 
-        // | subroutineCall = subroutineName '(' expressionList ')' | (className | varName) '.' subroutineName '(' expressionList ')'
+        // | subroutineCall: subroutineName '(' expressionList ')' | (className | varName) '.' subroutineName '(' expressionList ')'
 
         if(lookahead_k(tc, SYMBOL, 2)) {
             // varName '[' expression ']' | subroutineCall
@@ -468,6 +471,7 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
                     return false;
             
             } else {
+                genFunc("termSimpleVarName", EXPECT, genConfig);
                 // just handle variable name
                 if(!handle_var_name(tc, genConfig, genFunc))
                     return false;
@@ -574,6 +578,7 @@ int handle_let_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(g
     if(!handle_keyword(tc, "let", genConfig, genFunc))
         return false;
 
+    genFunc("letVarName", EXPECT, genConfig);
     if(!handle_var_name(tc, genConfig, genFunc))
         return false;
 
@@ -621,6 +626,7 @@ int handle_if_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(ge
 
     if(!expect_char(tc, ')', genConfig, genFunc))
         return false;
+    genFunc("ifConditionEnd", END_DO, genConfig);
 
     // statements
     if(!expect_char(tc, '{', genConfig, genFunc))
@@ -631,6 +637,7 @@ int handle_if_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(ge
 
     if(!expect_char(tc, '}', genConfig, genFunc))
         return false;
+    genFunc("ifStatementsEnd", END_DO, genConfig);
 
     // else
     if(lookahead_keyword(tc, "else")) {
@@ -672,6 +679,7 @@ int handle_while_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
 
     if(!expect_char(tc, ')', genConfig, genFunc))
         return false;
+    genFunc("whileConditionEnd", END_DO, genConfig);
 
     // statements
     if(!expect_char(tc, '{', genConfig, genFunc))
@@ -696,6 +704,8 @@ int handle_subroutine_call(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
         printf("ParserError: expecting lookahead 2 token to be symbol\n");
         return false;
     }
+
+    genFunc("subroutineCall", BEGIN_SP, genConfig);
 
     char* raw = lookahead_raw_token(tc, 2);
     char c = get_symbol_token(raw);
@@ -750,6 +760,8 @@ int handle_subroutine_call(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
         printf("ParserError: handle_subroutine_call, got c=%c; raw=%s\n", c, raw);
         return false;
     }
+
+    genFunc("subroutineCall", END_SP, genConfig);
 
     return true;
 }
