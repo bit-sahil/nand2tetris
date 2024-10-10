@@ -51,6 +51,8 @@ void add_var_symbol_table(GenConfig* genConfig, char* varName);
 
 int symbol_table_size(GenConfig* genConfig);
 
+int class_symbol_table_size(GenConfig* genConfig);
+
 int has_value_symbol_table(GenConfig* genConfig, char* key);
 
 char* var_type_symbol_table(GenConfig* genConfig, char* key);

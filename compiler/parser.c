@@ -713,6 +713,8 @@ int handle_subroutine_call(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr
     if( c == '(') {
         // subroutineName '(' expressionList ')'
 
+        genFunc("methodCall", END_DO, genConfig);
+
         if(!handle_subroutine_name(tc, genConfig, genFunc))
             return false;
 

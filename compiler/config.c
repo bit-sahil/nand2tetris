@@ -101,11 +101,22 @@ void vm_var_name_symbol_table(GenConfig* genConfig, char* key, char* val) {
 }
 
 
+int _symbol_table_size(SymbolTableStack* tableStack) {
+	return tableStack->table->map->cnt;
+}
+
+
 int symbol_table_size(GenConfig* genConfig) {
 	// returns number of elements in top symbol table
 	// usually that's the table for subroutine
 
-	return genConfig->tableStack->table->map->cnt;
+	return _symbol_table_size(genConfig->tableStack);
+}
+
+
+int class_symbol_table_size(GenConfig* genConfig) {
+
+	return _symbol_table_size(genConfig->tableStack->prev);
 }
 
 

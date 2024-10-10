@@ -82,9 +82,12 @@ void out_keyword_equivalent(GenConfig* genConfig, char* var) {
 	} else if(strcmp(var, "null") == 0) {
 		out_push_vm_var(genConfig, "constant 0", var);
 
+	} else if(strcmp(var, "this") == 0) {
+		out_push_vm_var(genConfig, "pointer 0", var);
+
 	} else {
 		printf("CodeGeneratorError: unhandled keyword:%s\n", var);
-		out_statement(genConfig, "<unhandled keyword");
+		out_statement(genConfig, "<unhandled keyword>");
 	}
 }
 
@@ -212,6 +215,19 @@ void end_do(char* token, GenConfig* genConfig) {
 		// we can output function signature now
 
 		out_func_signature(genConfig);
+
+		if(strcmp(context_value(genConfig, "subroutineType"), "constructor") == 0) {
+			// if it's a constructor type, allocate memory for object on heap, and store it in this
+			fprintf(genConfig->outfp, "\tpush constant %d\n", class_symbol_table_size(genConfig));
+			fprintf(genConfig->outfp, "\tcall Memory.alloc 1\n");
+			out_pop_vm_var(genConfig, "pointer 0", "this");
+
+		} else if(strcmp(context_value(genConfig, "subroutineType"), "method") == 0) {
+			// for method, initialize this by pushing arg 0 onto pointer 0
+			out_push_vm_var(genConfig, "argument 0", "arg 0 is set to this by caller");
+			out_pop_vm_var(genConfig, "pointer 0", "this");
+
+		}
 		
 	} else if(strcmp(token, "noReturnExpression") == 0) {
 		// no expression in return statement
@@ -258,6 +274,13 @@ void end_do(char* token, GenConfig* genConfig) {
 		fprintf(genConfig->outfp, "\tgoto ELSE_END%s\n", top_curr_label(genConfig));
 		fprintf(genConfig->outfp, "label ELSE%s\n", top_curr_label(genConfig));
 		
+	} else if(strcmp(token, "methodCall") == 0) {
+		// it's a method call from a constructor or method
+		// add 1 to nArg
+		// push this to stack as arg 0
+
+		genConfig->nArg++;
+		out_push_vm_var(genConfig, "pointer 0", "this");
 	}
 
 }
@@ -297,6 +320,7 @@ void _identifier(char* token_value, GenConfig* genConfig) {
 			
 			// also mean that first argument is this, and to be passed in function as arg 0
 			out_push_var(genConfig, token_value);
+			genConfig->nArg++;
 
 		} else {
 			printf("top_expected_cmp callerClassName matched %s\n", token_value);

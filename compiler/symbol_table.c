@@ -78,7 +78,7 @@ char* kind_to_str(Kind kind) {
             return "static";
 
         case Field:
-            return "field";
+            return "this";
 
         case Local:
             return "local";

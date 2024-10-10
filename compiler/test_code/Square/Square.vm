@@ -1,0 +1,310 @@
+function Square.new 0
+	push constant 3
+	call Memory.alloc 1
+	pop pointer 0  // this
+	push argument 0  // ax
+	pop this 0  // x
+	push argument 1  // ay
+	pop this 1  // y
+	push argument 2  // asize
+	pop this 2  // size
+	push pointer 0  // this
+	call Square.draw 1
+	pop temp 7
+	push pointer 0  // this
+	return
+function Square.dispose 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push pointer 0  // this
+	call Memory.deAlloc 1
+	pop temp 7
+	push constant 0
+	return
+function Square.draw 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	push constant 0
+	return
+function Square.erase 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push constant 0  // false
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	push constant 0
+	return
+function Square.incSize 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push this 1  // y
+	push this 2  // size
+	add
+	push constant 254
+	lt
+	push this 0  // x
+	push this 2  // size
+	add
+	push constant 510
+	lt
+	and
+	not
+	if-goto ELSE0
+	push pointer 0  // this
+	call Square.erase 1
+	pop temp 7
+	push this 2  // size
+	push constant 2
+	add
+	pop this 2  // size
+	push pointer 0  // this
+	call Square.draw 1
+	pop temp 7
+	goto ELSE_END0
+label ELSE0
+label ELSE_END0
+	push constant 0
+	return
+function Square.decSize 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push this 2  // size
+	push constant 2
+	gt
+	not
+	if-goto ELSE1
+	push pointer 0  // this
+	call Square.erase 1
+	pop temp 7
+	push this 2  // size
+	push constant 2
+	sub
+	pop this 2  // size
+	push pointer 0  // this
+	call Square.draw 1
+	pop temp 7
+	goto ELSE_END1
+label ELSE1
+label ELSE_END1
+	push constant 0
+	return
+function Square.moveUp 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push this 1  // y
+	push constant 1
+	gt
+	not
+	if-goto ELSE2
+	push constant 0  // false
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 2  // size
+	add
+	push constant 1
+	sub
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	push this 1  // y
+	push constant 2
+	sub
+	pop this 1  // y
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push constant 1
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	goto ELSE_END2
+label ELSE2
+label ELSE_END2
+	push constant 0
+	return
+function Square.moveDown 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push this 1  // y
+	push this 2  // size
+	add
+	push constant 254
+	lt
+	not
+	if-goto ELSE3
+	push constant 0  // false
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push constant 1
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	push this 1  // y
+	push constant 2
+	add
+	pop this 1  // y
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 2  // size
+	add
+	push constant 1
+	sub
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	goto ELSE_END3
+label ELSE3
+label ELSE_END3
+	push constant 0
+	return
+function Square.moveLeft 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push this 0  // x
+	push constant 1
+	gt
+	not
+	if-goto ELSE4
+	push constant 0  // false
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 2  // size
+	add
+	push constant 1
+	sub
+	push this 1  // y
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	push this 0  // x
+	push constant 2
+	sub
+	pop this 0  // x
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 0  // x
+	push constant 1
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	goto ELSE_END4
+label ELSE4
+label ELSE_END4
+	push constant 0
+	return
+function Square.moveRight 0
+	push argument 0  // arg 0 is set to this by caller
+	pop pointer 0  // this
+	push this 0  // x
+	push this 2  // size
+	add
+	push constant 510
+	lt
+	not
+	if-goto ELSE5
+	push constant 0  // false
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 1  // y
+	push this 0  // x
+	push constant 1
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	push this 0  // x
+	push constant 2
+	add
+	pop this 0  // x
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 7
+	push this 0  // x
+	push this 2  // size
+	add
+	push constant 1
+	sub
+	push this 1  // y
+	push this 0  // x
+	push this 2  // size
+	add
+	push this 1  // y
+	push this 2  // size
+	add
+	call Screen.drawRectangle 4
+	pop temp 7
+	goto ELSE_END5
+label ELSE5
+label ELSE_END5
+	push constant 0
+	return
