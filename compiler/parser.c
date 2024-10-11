@@ -409,6 +409,7 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
             return false;
     
     } else if(lookahead_k(tc, STRING_CONST, 1)) {
+        genFunc("stringConstant", EXPECT, genConfig);
         if(!handle_string_const(tc, genConfig, genFunc))
             return false;
     
@@ -454,17 +455,22 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
             char c = get_symbol_token(raw);
 
             if( c == '[') {
+                genFunc("termArrVarName", EXPECT, genConfig);
                 if(!handle_var_name(tc, genConfig, genFunc))
                     return false;
 
                 if(!expect_char(tc, '[', genConfig, genFunc))
                     return false;
 
+                genFunc("delayOp", END_DO, genConfig);
                 if(!handle_expression(tc, genConfig, genFunc))
                     return false;
+                genFunc("endDelayOp", END_DO, genConfig);
 
                 if(!expect_char(tc, ']', genConfig, genFunc))
                     return false;
+
+                genFunc("termArrEnd", END_DO, genConfig);
             
             } else if( c == '(' || c == '.') {
                 if(!handle_subroutine_call(tc, genConfig, genFunc))
@@ -583,6 +589,7 @@ int handle_let_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(g
         return false;
 
     if(lookahead_symbol(tc, '[')) {
+        genFunc("letArrayBegin", END_DO, genConfig);
         if(!expect_char(tc, '[', genConfig, genFunc))
             return false;
 
@@ -591,6 +598,7 @@ int handle_let_statement(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(g
 
         if(!expect_char(tc, ']', genConfig, genFunc))
             return false;
+        genFunc("letArrayEnd", END_DO, genConfig);
     }
 
     if(!expect_char(tc, '=', genConfig, genFunc))

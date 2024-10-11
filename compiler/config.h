@@ -33,6 +33,7 @@ typedef struct GenConfig {
 	Map* context;
 	int nArg;
 	int nLabel;
+	int tmpCounter;
 	StrValStack* curr_label;
 	StrValStack* term_op;
 } GenConfig;

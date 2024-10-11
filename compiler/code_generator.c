@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stdarg.h>
 #include "tokenizer.h"
 #include "tokenizer_api.h"
 #include "parser.h"
@@ -10,15 +11,22 @@
 
 
 
-void out_statement(GenConfig* genConfig, char* statement) {
-	fprintf(genConfig->outfp, "\t%s\n", statement);
+void out_statement(GenConfig* genConfig, char* statement, ...) {
+	va_list va;
+
+	char formatted[128];
+	va_start(va, statement);
+	vsprintf(formatted, statement, va);
+	va_end(va);
+
+	fprintf(genConfig->outfp, "\t%s\n", formatted);
 }
 
 
 void out_func_call(GenConfig* genConfig) {
 	// call <class_name>.<function_name> nArgs
 
-	fprintf(genConfig->outfp, "\tcall %s.%s %d\n", context_value(genConfig, "callerClassName"), context_value(genConfig, "subroutineName"), genConfig->nArg);
+	out_statement(genConfig, "call %s.%s %d", context_value(genConfig, "callerClassName"), context_value(genConfig, "subroutineName"), genConfig->nArg);
 
 }
 
@@ -32,14 +40,14 @@ void out_func_signature(GenConfig* genConfig) {
 	fprintf(genConfig->outfp, "function %s.%s %d\n", context_value(genConfig, "className"), context_value(genConfig, "subroutineName"), nLocal);
 
 	// for(int i=0; i < nLocal; i++)
-	// 	fprintf(genConfig->outfp, "\tpush local %d\n", i);
+	// 	out_statement(genConfig, "push local %d", i);
 }
 
 
 void out_push_vm_var(GenConfig* genConfig, char* vm_var_name, char* local_var_name) {
 	// push argument to current stack
 
-	fprintf(genConfig->outfp, "\tpush %s  // %s\n", vm_var_name, local_var_name);
+	out_statement(genConfig, "push %s  // %s", vm_var_name, local_var_name);
 }
 
 
@@ -52,7 +60,7 @@ void out_push_var(GenConfig* genConfig, char* var) {
 
 
 void out_pop_vm_var(GenConfig* genConfig, char* vm_var_name, char* local_var_name) {
-	fprintf(genConfig->outfp, "\tpop %s  // %s\n", vm_var_name, local_var_name);
+	out_statement(genConfig, "pop %s  // %s", vm_var_name, local_var_name);
 }
 
 
@@ -103,6 +111,7 @@ void begin(char* token, GenConfig* genConfig) {
 
 		// reset running label count in class
 		genConfig->nLabel = 0;
+		genConfig->tmpCounter = 0;
 	
 	} else if(strcmp(token, "parameterList") == 0) {
 		// variable kind should be argument
@@ -175,18 +184,30 @@ void end(char* token, GenConfig* genConfig) {
 
 	} else if(strcmp(token, "doStatement") == 0) {
 		// additionally handle returned 0
-		out_statement(genConfig, "pop temp 7");  // last unused temp register to be safe
+		out_statement(genConfig, "pop temp %d", genConfig->tmpCounter);  // last free temp register
 
 	} else if(strcmp(token, "letStatement") == 0) {
 		// end of let statement
 		// put value in variable which is being set, let x = ...;
 
-		out_pop_var(genConfig, context_value(genConfig, "letVarName"));
-	
+		if(strcmp(context_value(genConfig, "letVarName"), "that") == 0) {
+			// means it's an array index in which we should be storing value
+			genConfig->tmpCounter--;
+
+			// push value in temp on stack, and pop it in pointer 1 for value to point to arr
+			out_statement(genConfig, "push temp %d", genConfig->tmpCounter);
+			out_pop_vm_var(genConfig, "pointer 1", "that = &arr + i");
+			out_pop_vm_var(genConfig, "that 0", "*(arr+i) = exp_value");
+
+		} else {
+			// do this for non-array variables
+			out_pop_var(genConfig, context_value(genConfig, "letVarName"));
+		}
+			
 	} else if(strcmp(token, "whileStatement") == 0) {
 		// end of while statement
 
-		fprintf(genConfig->outfp, "\tgoto LOOP%s\n", top_curr_label(genConfig));
+		out_statement(genConfig, "goto LOOP%s", top_curr_label(genConfig));
 		fprintf(genConfig->outfp, "label ENDLOOP%s\n", top_curr_label(genConfig));
 		pop_curr_label(genConfig);
 	
@@ -218,8 +239,8 @@ void end_do(char* token, GenConfig* genConfig) {
 
 		if(strcmp(context_value(genConfig, "subroutineType"), "constructor") == 0) {
 			// if it's a constructor type, allocate memory for object on heap, and store it in this
-			fprintf(genConfig->outfp, "\tpush constant %d\n", class_symbol_table_size(genConfig));
-			fprintf(genConfig->outfp, "\tcall Memory.alloc 1\n");
+			out_statement(genConfig, "push constant %d", class_symbol_table_size(genConfig));
+			out_statement(genConfig, "call Memory.alloc 1");
 			out_pop_vm_var(genConfig, "pointer 0", "this");
 
 		} else if(strcmp(context_value(genConfig, "subroutineType"), "method") == 0) {
@@ -260,18 +281,18 @@ void end_do(char* token, GenConfig* genConfig) {
 		// end delay since expression is fully resolved
 
 		out_statement(genConfig, "not");
-		fprintf(genConfig->outfp, "\tif-goto ENDLOOP%s\n", top_curr_label(genConfig));
+		out_statement(genConfig, "if-goto ENDLOOP%s", top_curr_label(genConfig));
 		
 	} else if(strcmp(token, "ifConditionEnd") == 0) {
 		// end of if condition, if condition is fully resolved
 
 		out_statement(genConfig, "not");
-		fprintf(genConfig->outfp, "\tif-goto ELSE%s\n", top_curr_label(genConfig));
+		out_statement(genConfig, "if-goto ELSE%s", top_curr_label(genConfig));
 
 	} else if(strcmp(token, "ifStatementsEnd") == 0) {
 		// end of if inner statements and beginning of else block
 
-		fprintf(genConfig->outfp, "\tgoto ELSE_END%s\n", top_curr_label(genConfig));
+		out_statement(genConfig, "goto ELSE_END%s", top_curr_label(genConfig));
 		fprintf(genConfig->outfp, "label ELSE%s\n", top_curr_label(genConfig));
 		
 	} else if(strcmp(token, "methodCall") == 0) {
@@ -281,7 +302,31 @@ void end_do(char* token, GenConfig* genConfig) {
 
 		genConfig->nArg++;
 		out_push_vm_var(genConfig, "pointer 0", "this");
+	
+	} else if(strcmp(token, "letArrayBegin") == 0) {
+		// put array value (address) on the stack
+		out_push_var(genConfig, context_value(genConfig, "letVarName"));
+
+	} else if(strcmp(token, "letArrayEnd") == 0) {
+		// update array variable address to contain arr + exp_result (in currently unused tmp register)
+
+		// i [exp_result] is already on stack
+		out_statement(genConfig, "add  // letArrayEnd");
+		out_statement(genConfig, "pop temp %d  // arr = arr + i", genConfig->tmpCounter++);
+	
+		// update letVarName to detect that we want to store this value at an array index
+		store_context(genConfig, "letVarName", "that");
+
+	} else if(strcmp(token, "termArrEnd") == 0) {
+		// stack contains &arr and arrIdx respectively
+		// so we add those, and push back value at that index on stack
+
+		out_statement(genConfig, "add  // termArrEnd");
+		out_pop_vm_var(genConfig, "pointer 1", "that = &arr + arrIdx");
+		out_push_vm_var(genConfig, "that 0", "push arr[arrIdx] on stack");
+	
 	}
+
 
 }
 
@@ -339,6 +384,13 @@ void _identifier(char* token_value, GenConfig* genConfig) {
 		out_push_var(genConfig, token_value);
 
 		pop_expected(genConfig);
+	
+	} else if(top_expected_cmp(genConfig, "termArrVarName")) {
+		store_context(genConfig, "termArrVarName", token_value);
+		pop_expected(genConfig);
+
+		// put array value (address) on the stack
+		out_push_var(genConfig, token_value);
 	
 	}
 
@@ -443,12 +495,34 @@ void _integerConstant(char* token_value, GenConfig* genConfig) {
 	// integerConstant is only part of term
 	// we simply like to push constant integer value on stack
 
-	fprintf(genConfig->outfp, "\tpush constant %s\n", token_value);
+	out_statement(genConfig, "push constant %s", token_value);
+}
+
+
+void out_string(GenConfig* genConfig, char* str) {
+	// token value contains string constant to be pushed by calling String.new(length)
+	// then String.appendChar(nextChar)
+	int len = strlen(str);
+
+	out_statement(genConfig, "push constant %d", len);
+	out_statement(genConfig, "call String.new 1");
+
+
+	for(int i=0; i<len; i++) {
+		out_statement(genConfig, "push constant %d", str[i]);
+		out_statement(genConfig, "call String.appendChar 2");
+	}
 }
 
 
 void _stringConstant(char* token_value, GenConfig* genConfig) {
-
+	if(top_expected_cmp(genConfig, "stringConstant")) {
+		// token value contains string constant to be pushed by calling String.new(length)
+		// then String.appendChar(nextChar)
+		out_string(genConfig, token_value);
+		pop_expected(genConfig);
+	
+	}
 }
 
 
