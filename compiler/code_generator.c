@@ -153,14 +153,15 @@ void end(char* token, GenConfig* genConfig) {
 		printf("pop_symbol_table for class\n");
 	
 	} else if(strcmp(token, "classVarDec") == 0) {
-		print_symbol_table(genConfig->tableStack->table);
+		// printf("Symbol table for %s post classVarDec\n", context_value(genConfig, "className"));
+		// print_symbol_table(genConfig->tableStack->table);
 
 	} else if(strcmp(token, "subroutineDec") == 0) {
 		// variable type should be argument
-		print_symbol_table(genConfig->tableStack->table);
+		// print_symbol_table(genConfig->tableStack->table);
 	
 		pop_symbol_table(genConfig);
-		printf("pop_symbol_table for subroutineDec\n");
+		// printf("pop_symbol_table for subroutineDec\n");
 
 	} else if(strcmp(token, "subroutineCall") == 0) {
 		// output function call statement
@@ -229,7 +230,7 @@ void expect(char* token, GenConfig* genConfig) {
 
 
 void end_do(char* token, GenConfig* genConfig) {
-	printf("end_do: %s\n", token);
+	// printf("end_do: %s\n", token);
 	
 	if(strcmp(token, "subroutineVarDec") == 0) {
 		// done with subroutine variable declaration
@@ -332,9 +333,9 @@ void end_do(char* token, GenConfig* genConfig) {
 
 
 void _identifier(char* token_value, GenConfig* genConfig) {
-	printf("_identifier token_value=%s\n", token_value);
-	if(is_non_empty(genConfig->expected))
-    	printf("_keyword token=%s;expected=%s\n", token_value, top_expected(genConfig));
+	// printf("_identifier token_value=%s\n", token_value);
+	// if(is_non_empty(genConfig->expected))
+    // 	printf("_keyword token=%s;expected=%s\n", token_value, top_expected(genConfig));
 
 	if(top_expected_cmp(genConfig, "className")) {
 		store_context(genConfig, "className", token_value);
@@ -368,9 +369,8 @@ void _identifier(char* token_value, GenConfig* genConfig) {
 			genConfig->nArg++;
 
 		} else {
-			printf("top_expected_cmp callerClassName matched %s\n", token_value);
+			// printf("top_expected_cmp callerClassName matched %s\n", token_value);
 			store_context(genConfig, "callerClassName", token_value);
-			printf("top_expected_cmp callerClassName matched %s\n", context_value(genConfig, "callerClassName"));
 		}
 
 		pop_expected(genConfig);
@@ -399,9 +399,9 @@ void _identifier(char* token_value, GenConfig* genConfig) {
 
 
 void _keyword(char* token_value, GenConfig* genConfig) {
-	printf("_keyword token_value=%s\n", token_value);
-	if(is_non_empty(genConfig->expected))
-    	printf("_keyword token=%s;expected=%s\n", token_value, top_expected(genConfig));
+	// printf("_keyword token_value=%s\n", token_value);
+	// if(is_non_empty(genConfig->expected))
+    // 	printf("_keyword token=%s;expected=%s\n", token_value, top_expected(genConfig));
 
 	if(top_expected_cmp(genConfig, "varKind")) {
 		if(strcmp(token_value, "var") == 0) {
