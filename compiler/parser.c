@@ -473,8 +473,10 @@ int handle_term(TokenizerConfig* tc, GenConfig* genConfig, GenFuncPtr(genFunc)) 
                 genFunc("termArrEnd", END_DO, genConfig);
             
             } else if( c == '(' || c == '.') {
+                genFunc("delayOp", END_DO, genConfig);
                 if(!handle_subroutine_call(tc, genConfig, genFunc))
                     return false;
+                genFunc("endDelayOp", END_DO, genConfig);
             
             } else {
                 genFunc("termSimpleVarName", EXPECT, genConfig);
