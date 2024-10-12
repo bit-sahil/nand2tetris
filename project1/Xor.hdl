@@ -11,9 +11,11 @@ CHIP Xor {
     OUT out;
 
     PARTS:
-    Not(in=a , out=invA );
-    Not(in=b , out=invB );
-    Nand(a=a , b=invB , out=aNandInvB );
-    Nand(a=invA , b=b , out=bNandInvA );
+    Nand(a=a , b=b , out=aNandb );
+    Nand(a=a , b=aNandb , out=aNandInvB );
+    Nand(a=aNandb , b=b , out=bNandInvA );
+    
+    // (a Nand Not(b)) = (a Nand (a Nand b))
+
     Nand(a=aNandInvB , b=bNandInvA , out=out );
 }
