@@ -1,0 +1,39 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/2/FullAdder.hdl
+/**
+ * Computes the sum of three bits.
+ *
+ *
+ * Optimized to use 9 nand gates instead of earlier 13 (or 15, with 6 nand gates in half-adder)
+ */
+CHIP FullAdder {
+    IN a, b, c;  // 1-bit inputs
+    OUT sum,     // Right bit of a + b + c
+        carry;   // Left bit of a + b + c
+
+    PARTS:
+    //open HalfAdder(a=a , b=b , sum=sumHA , carry=carryHA );
+    Nand(a=a , b=b , out=aNandb ); // %%%
+    Nand(a=a , b=aNandb , out=aNandInvB );
+    Nand(a=aNandb , b=b , out=bNandInvA );
+    Nand(a=aNandInvB , b=bNandInvA , out=sumHA );  // xor
+    // Not(in=aNandb, out=carryHA); // not aNandb %%
+
+    //open HalfAdder(a=c , b=sumHA , sum=sum , carry=sumHAandC );
+    Nand(a=c , b=sumHA , out=cNandsumHA );  // ***
+    Nand(a=c , b=cNandsumHA , out=cNandInvSumHA );
+    Nand(a=cNandsumHA , b=sumHA , out=cNandInvC );
+    Nand(a=cNandInvSumHA , b=cNandInvC , out=sum );  // xor
+    // Not(in=cNandsumHA, out=sumHAandC); // not cNandsumHA **
+
+    //open Or(a=carryHA , b=sumHAandC , out=carry );
+    // Nand(a=carryHA, b=carryHA, out=invCarryHA);  // not carryHA %
+    // Nand(a=sumHAandC, b=sumHAandC, out=invSumHAandC);  // not sumHAandC *
+    
+    // Nand(a=invCarryHA , b=invSumHAandC , out=carry );
+    // invCarryHA = (not carryHA) = (not (not aNandb)) = aNandb
+    // invSumHAandC = (not sumHAandC) = (not (not cNandsumHA)) = cNandsumHA
+    Nand(a=aNandb , b=cNandsumHA , out=carry );
+}

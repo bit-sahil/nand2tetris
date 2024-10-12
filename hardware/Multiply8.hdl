@@ -1,0 +1,40 @@
+/**
+ * 16-bit multiplier: Multiplies two 8-bit unsigned binary values (stored in 16 bit registers)
+ * and stores it's value in out
+ *
+ * The most significant carry bit is ignored, if any
+ */
+
+CHIP Multiply8 {
+    IN a[16], b[16];
+    OUT out[16];
+
+    PARTS:
+    Bitshift(in=a, dir=false, out=a1);
+    Bitshift(in=a1, dir=false, out=a2);
+    Bitshift(in=a2, dir=false, out=a3);
+    Bitshift(in=a3, dir=false, out=a4);
+    Bitshift(in=a4, dir=false, out=a5);
+    Bitshift(in=a5, dir=false, out=a6);
+    Bitshift(in=a6, dir=false, out=a7);
+
+    Mux16(a=false , b=a , sel=b[0] , out=m0 );
+    Mux16(a=false , b=a1 , sel=b[1] , out=m1 );
+    Mux16(a=false , b=a2 , sel=b[2] , out=m2 );
+    Mux16(a=false , b=a3 , sel=b[3] , out=m3 );
+    Mux16(a=false , b=a4 , sel=b[4] , out=m4 );
+    Mux16(a=false , b=a5 , sel=b[5] , out=m5 );
+    Mux16(a=false , b=a6 , sel=b[6] , out=m6 );
+    Mux16(a=false , b=a7 , sel=b[7] , out=m7 );
+
+    Add16(a=m0 , b=m1 , out=m01 );
+    Add16(a=m2 , b=m3 , out=m23 );
+    Add16(a=m4 , b=m5 , out=m45 );
+    Add16(a=m6 , b=m7 , out=m67 );
+
+    Add16(a=m01 , b=m23 , out=m0123 );
+    Add16(a=m45 , b=m67 , out=m4567 );
+
+    Add16(a=m0123, b=m4567, out=out);
+
+}
