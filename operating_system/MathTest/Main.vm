@@ -1,0 +1,162 @@
+function Main.main 1
+	push constant 8000
+	pop local 0  // r
+	push local 0  // r
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 2
+	push constant 3
+	call Math.multiply 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 1
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // r
+	push constant 0
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 30
+	neg
+	call Math.multiply 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 2
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // r
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 100
+	call Math.multiply 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 3
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 1
+	push local 0  // r
+	push constant 2
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	call Math.multiply 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 4
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // r
+	push constant 3
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 0
+	call Math.multiply 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 5
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 9
+	push constant 3
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 6
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 18000
+	neg
+	push constant 6
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 7
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32766
+	push constant 32767
+	neg
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 8
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 9
+	call Math.sqrt 1
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 9
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32767
+	call Math.sqrt 1
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 10
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 345
+	push constant 123
+	call Math.min 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 11
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 123
+	push constant 345
+	neg
+	call Math.max 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 12
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 27
+	call Math.abs 1
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 13
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32767
+	neg
+	call Math.abs 1
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 0
+	return

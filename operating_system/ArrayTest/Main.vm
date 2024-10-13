@@ -1,0 +1,131 @@
+function Main.main 4
+	push constant 8000
+	pop local 0  // r
+	push constant 3
+	call Array.new 1
+	pop local 1  // a
+	push local 1  // a
+	push constant 2
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 222
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // a
+	push constant 2
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 3
+	call Array.new 1
+	pop local 2  // b
+	push local 2  // b
+	push constant 1
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // a
+	push constant 2
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 100
+	sub
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 1
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 2  // b
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 500
+	call Array.new 1
+	pop local 3  // c
+	push local 3  // c
+	push constant 499
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // a
+	push constant 2
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push local 2  // b
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	sub
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 2
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 3  // c
+	push constant 499
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	call Array.dispose 1
+	pop temp 0
+	push local 2  // b
+	call Array.dispose 1
+	pop temp 0
+	push constant 3
+	call Array.new 1
+	pop local 2  // b
+	push local 2  // b
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 3  // c
+	push constant 499
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 90
+	sub
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 3
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 2  // b
+	push constant 0
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 3  // c
+	call Array.dispose 1
+	pop temp 0
+	push local 2  // b
+	call Array.dispose 1
+	pop temp 0
+	push constant 0
+	return
