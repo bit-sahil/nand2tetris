@@ -1,0 +1,160 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+/**
+ *  A library of commonly used mathematical functions.
+ *  All functions runs in O(n), where n is the number of bits used
+ *  for representing a two's complement integer value (16 in the Hack computer). 
+ *  Note: Jack compilers implement multiplication and division
+ *  using calls to OS functions in this class.
+ */
+class Math {
+    static int n;             // Number of bits used for representing a two's complement integer
+    static Array powersOfTwo; // Stores 2^0, 2^1, 2^2,..., 2^(n-1)
+    static int qy2;
+
+    // Initializes the Math library.
+    function void init() {
+        var int i, pow;
+
+        let n = 16;
+        let powersOfTwo = Memory.alloc(16);
+        let i = 0;
+        let pow = 1;
+
+        while(i<16) {
+            let powersOfTwo[i] = pow;
+            let i = i+1;
+            let pow = pow+pow;
+        }
+
+        return;
+    }
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*'
+     *  in an expression, it handles it by invoking this method. 
+     *  Thus, in Jack, x * y and Math.multiply(x,y) return the same value. */
+    function int multiply(int x, int y) {
+        var int result, i;
+        var int runningX;
+
+        let i = 0;
+        let result = 0;
+        let runningX = x;
+
+        while(i<16) {
+            if(~((powersOfTwo[i] & y) = 0)) {
+                let result = result + runningX;
+            }
+            let i = i+1;
+            let runningX = runningX + runningX;
+        }
+
+        return result;
+    }
+
+    function int divide_qy2(int x, int y) {
+        var int q, double_y;
+
+        if(y<0) {
+            // overflow
+            return 0;
+        }
+
+        if(y>x) {
+            return 0;
+        }
+
+        let double_y = y+y;
+        let q = Math.divide_qy2(x, double_y);
+
+        if((x-qy2) < y) {
+            return q+q;
+        } else {
+            let qy2 = qy2 + y;
+            return 1+q+q;
+        }
+    }
+
+    /** Returns the integer part of x / y.
+     *  When a Jack compiler detects the division operator '/'
+     *  an an expression, it handles it by invoking this method.
+     *  Thus, x/y and Math.divide(x,y) return the same value. */
+    function int divide(int x, int y) {
+        var boolean sign;
+        let sign = false;
+
+        if(x<0) {
+            let sign = ~sign;
+            let x = -x;
+        }
+        if(y<0) {
+            let sign = ~sign;
+            let y = -y;
+        }
+
+        let qy2 = 0;
+
+        if(sign) {
+            return -Math.divide_qy2(x, y);
+        } else {
+            return Math.divide_qy2(x, y);
+        }
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+        var int i, y, guess, guess_sq;
+
+        let y = 0;
+        let i = 7;
+
+        while(i > -1) {
+            let guess = y + powersOfTwo[i];
+            let guess_sq = guess*guess;
+
+            if(guess_sq = x) {
+                return guess;
+            }
+
+            if(guess_sq > 0) {
+                if( guess_sq < x) {
+                    let y = guess;
+                }
+            }
+            
+            let i = i-1;
+        }
+
+        return y;
+    }
+
+    /** Returns the greater value. */
+    function int max(int a, int b) {
+        if(a>b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
+    /** Returns the smaller value. */
+    function int min(int a, int b) {
+        if(a<b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+        if(x>0) {
+            return x;
+        } else {
+            return -x;
+        }
+    }
+}
