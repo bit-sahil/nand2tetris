@@ -1,0 +1,100 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+    static Array MEM, freeList;
+
+    /** Initializes the class. */
+    function void init() {
+        let MEM = 0;
+        let freeList = 2048;
+        let freeList[0] = null;  // explicitly point to null
+        let freeList[1] = 14334; // initial size = heap size - 2
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        return MEM[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        let MEM[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function Array alloc(int size) {
+        var Array prevNode, currNode, ramBlock;
+
+        let prevNode = null;
+        let currNode = freeList;
+
+        while(~(currNode=null)) {
+            // available space >= size+2
+            if(currNode[1] > (size + 1)) {
+                // set values for new currNode
+                let currNode[size+2] = currNode[0];             // next pointer
+                let currNode[size+3] = currNode[1] - (size+2);  // size
+                
+                if( prevNode=null ) {
+                    // freeList got updated
+                    let freeList = currNode + (size+2);
+                } else {
+                    let prevNode[0] = currNode + (size+2);
+                }
+
+                // take out a chunk of size+2 from currNode for user
+                let ramBlock = currNode+2;
+                let ramBlock[-1] = size;
+                let ramBlock[-2] = null;  // explicitly point to null
+                return ramBlock;
+            }
+
+            // available space might just be size or size+1
+            // todo: in case of size+1, there'd be a memory leak of a byte which should probably be handled
+            // as sizefree linked-list
+            if(currNode[1] > (size - 1)) {
+                if( prevNode=null ) {
+                    // freeList points to yet next node (pointed by currNode)
+                    let freeList = currNode[0];
+                } else {
+                    let prevNode[0] = currNode[0];
+                }
+
+                // take out a chunk of size+2 from currNode for user
+                let ramBlock = currNode+2;
+                let ramBlock[-1] = size;
+                let ramBlock[-2] = null;  // explicitly point to null
+                return ramBlock;
+            }
+
+            // we're here means available ram not found
+            // update for next iteration in loop
+            let prevNode = currNode;
+            let currNode = currNode[0];
+        }
+        
+        // being here means space not found
+        // raise error without crashing system
+        return Sys.error(6);
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        // o[-1] already contains size
+        let o[-2] = freeList;
+        let freeList = o - 2;
+        return;
+    }
+
+}

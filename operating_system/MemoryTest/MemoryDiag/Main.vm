@@ -1,0 +1,467 @@
+function Main.main 5
+	push constant 17000
+	pop local 4  // out
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 10
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 1
+	add
+	push constant 333
+	call Memory.poke 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 11
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 1
+	add
+	call Memory.peek 1
+	pop local 0  // temp
+	push local 4  // out
+	push constant 2
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // temp
+	push constant 1
+	add
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 12
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 20
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 20
+	call Memory.alloc 1
+	pop local 1  // a
+	push local 4  // out
+	push constant 3
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // a
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 21
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	push constant 20
+	call Main.checkRange 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 22
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 30
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 3
+	call Memory.alloc 1
+	pop local 2  // b
+	push local 4  // out
+	push constant 4
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 2  // b
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 31
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 2  // b
+	push constant 3
+	call Main.checkRange 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 2  // b
+	push constant 3
+	push local 1  // a
+	push constant 3
+	call Main.checkOverlap 4
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 33
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 40
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 500
+	call Memory.alloc 1
+	pop local 3  // c
+	push local 4  // out
+	push constant 5
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 3  // c
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 41
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 3  // c
+	push constant 500
+	call Main.checkRange 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 42
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 3  // c
+	push constant 500
+	push local 1  // a
+	push constant 3
+	call Main.checkOverlap 4
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 43
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 3  // c
+	push constant 500
+	push local 2  // b
+	push constant 3
+	call Main.checkOverlap 4
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 44
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 50
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	call Memory.deAlloc 1
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 51
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 2  // b
+	call Memory.deAlloc 1
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 52
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 60
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 3
+	call Memory.alloc 1
+	pop local 2  // b
+	push local 4  // out
+	push constant 6
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 2  // b
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 61
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 2  // b
+	push constant 3
+	call Main.checkRange 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 62
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 2  // b
+	push constant 3
+	push local 3  // c
+	push constant 500
+	call Main.checkOverlap 4
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 63
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 70
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 3  // c
+	call Memory.deAlloc 1
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 71
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 2  // b
+	call Memory.deAlloc 1
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 72
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 70
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 8000
+	call Memory.alloc 1
+	pop local 1  // a
+	push local 4  // out
+	push constant 7
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // a
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 71
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	push constant 8000
+	call Main.checkRange 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 72
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	call Memory.deAlloc 1
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 73
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 7000
+	call Memory.alloc 1
+	pop local 1  // a
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 74
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	push constant 7000
+	call Main.checkRange 2
+	pop temp 0
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 75
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 1  // a
+	call Memory.deAlloc 1
+	pop temp 0
+	push local 4  // out
+	push constant 8
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // a
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 4  // out
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 100
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 0
+	return
+function Main.checkRange 1
+	push argument 0  // a
+	push argument 1  // a_len
+	add
+	push constant 1
+	sub
+	pop local 0  // a_high
+	push argument 0  // a
+	push constant 2048
+	lt
+	push local 0  // a_high
+	push constant 16383
+	gt
+	or
+	not
+	if-goto ELSE0
+	call Sys.halt 0
+	pop temp 0
+	goto ELSE_END0
+label ELSE0
+label ELSE_END0
+	push constant 0
+	return
+function Main.checkOverlap 2
+	push argument 0  // a
+	push argument 1  // a_len
+	add
+	push constant 1
+	sub
+	pop local 0  // a_high
+	push argument 2  // b
+	push argument 3  // b_len
+	add
+	push constant 1
+	sub
+	pop local 1  // b_high
+	push argument 0  // a
+	push local 1  // b_high
+	gt
+	push local 0  // a_high
+	push argument 2  // b
+	lt
+	or
+	not
+	not
+	if-goto ELSE1
+	call Sys.halt 0
+	pop temp 0
+	goto ELSE_END1
+label ELSE1
+label ELSE_END1
+	push constant 0
+	return
