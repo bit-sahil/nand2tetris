@@ -1,0 +1,283 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+    static boolean color;
+    static int SCREEN, ROWS, COLUMNS, BYTE_SIZE;
+    static int BYTES_IN_ROW;
+
+    /** Initializes the Screen. */
+    function void init() {
+        let SCREEN = 16384;
+        let ROWS = 512;
+        let COLUMNS = 256;
+        let BYTE_SIZE = 16;
+        let BYTES_IN_ROW = ROWS/BYTE_SIZE;
+
+        do Bitmask.init();
+
+        // do Screen.clearScreen();
+        let color = true;  // start drawing in black
+
+        return;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+        let color = false;
+        do Screen.drawRectangle(0, 0, ROWS-1, COLUMNS-1);
+        return;
+    }
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+        let color = b;
+        return;
+    }
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        var int w;
+        var int value, mask;
+
+        let w = SCREEN + (y*BYTES_IN_ROW) + (x/BYTE_SIZE);
+        let mask = Bitmask.getMask(x);
+        if(color) {
+            let value = Memory.peek(w) | mask;
+        } else {
+            let value = Memory.peek(w) & ~mask;
+        }
+
+        do Memory.poke(w, value);
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        var int x, y, a, b, diff;
+        var int dx, dy;
+        var boolean case_type;
+        var int w, mask, value;
+
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+
+        if(dy=0) {
+            // horizontal line
+
+            if(dx<0) {
+                // start always from lower x
+                let dx = -dx;
+                let x1 = x2;
+            }
+            let dx = dx+1;
+
+            let w = SCREEN + (y1*BYTES_IN_ROW) + (x1/16);
+            let a = Bitmask.modulo(x1, 16);
+            let b = 16 - a;
+            if((a>0)) {
+                // remaining b bits to be made 1
+                if(dx>b) {
+                    // make all remaining pixels 1 (or 0)
+                    if(color) {
+                        let value = Memory.peek(w) | (~( Bitmask.idxMask(a) - 1) );
+                    } else {
+                        let value = Memory.peek(w) & ( Bitmask.idxMask(a) - 1);
+                    }
+                    do Memory.poke(w,  value);
+                    let dx = dx - b;
+                    let w = w+1;
+                
+                } else {
+                    // only first dx out of b pixels to be affected
+                    // affect all b pixels first
+                    // then negatively affect b-dx pixels
+                    if(color) {
+                        let value = Memory.peek(w) | (~( Bitmask.idxMask(a) - 1) );
+                        let value = value & ( Bitmask.idxMask(16-(b-dx)) - 1);
+                    } else {
+                        let value = Memory.peek(w) & ( Bitmask.idxMask(a) - 1);
+                        let value = value | (~( Bitmask.idxMask(16-(b-dx)) - 1) );
+                    }
+                    do Memory.poke(w,  value);
+                    return;
+                }
+            }
+
+            if(color) {
+                let value = -1;
+            } else {
+                let value = 0;
+            }
+            while(dx > 15) {
+                do Memory.poke(w, value );
+                let dx = dx - 16;
+                let w = w+1;
+            }
+
+            if(dx>0) {
+                if(color) {
+                    let value = Memory.peek(w) | ( Bitmask.idxMask(dx) - 1);
+                } else {
+                    let value = Memory.peek(w) & (~( Bitmask.idxMask(dx) - 1));
+                }
+                do Memory.poke(w, value );
+            }
+
+            return;
+        }
+
+        if(dx=0) {
+            // vertical line
+            if(dy<0) {
+                // start always from lower y
+                let dy = -dy;
+                let y1 = y2;
+            }
+            let dy = dy+1;
+
+            let w = SCREEN + (y1*BYTES_IN_ROW) + (x1/16);
+            let mask = Bitmask.getMask(x1);
+            while(dy>0) {
+                if(color) {
+                    let value = Memory.peek(w) | mask;
+                } else {
+                    let value = Memory.peek(w) & ~mask;
+                }
+                do Memory.poke(w, value);
+                let dy = dy - 1;
+                let w = w+BYTES_IN_ROW;
+            }
+
+            return;
+        }
+
+        let a = 0;
+        let b = 0;
+
+        if((dx > 0) & (dy > 0)) {
+            // normal case
+            let case_type = true;
+            let x = x1;
+            let y = y1;
+        }
+        if((dx<0) & (dy<0)) {
+            // normal case, but opposite
+            // draw line in reverse
+            let case_type = true;
+            let x = x2;
+            let y = y2;
+            let dx = -dx;
+            let dy = -dy;
+        }
+
+
+        if (case_type) {
+            // normal case
+
+            let diff = 0;  // b*dx - a*dy > 0 means x correction
+
+            // dx>0 and dy>0
+            while( (a<dx) & (b<dy)) {
+                do Screen.drawPixel(x+a, y+b);
+
+                if((b<dy) & (diff < 0)) {
+                    // y correction -- move in y direction
+                    let b = b + 1;
+                    let diff = diff + dx;
+                } else {
+                    let a = a + 1;
+                    let diff = diff - dy;
+                }
+            }
+
+            do Screen.drawPixel(x+a, y+b);
+
+        } else {
+
+            if(dx<0) {
+                let x = x2;
+                let y = y2;
+                let dx = -dx;
+            } else {
+                let x = x1;
+                let y = y1;
+                let dy = -dy;
+            }
+            // dy is +ve now
+
+            let diff = 0; // a*dy - b*dx > 0 means x correction
+
+            // dx>0 and dy<0
+            while( (a<dx) & (b<dy)) {
+                do Screen.drawPixel(x+a, y-b);
+
+                if((b<dy) & (diff < 0)) {
+                    // x correction -- move in x direction
+                    let a = a + 1;
+                    let diff = diff + dy;
+                } else {
+                    // y correction -- move in y direction
+                    let b = b + 1;
+                    let diff = diff - dx;
+                }
+            }
+
+            do Screen.drawPixel(x+a, y-b);
+        }
+
+        return;
+    }
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     *  and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int y, dy;
+        var int b;
+
+        let b = 0;
+
+        if(y1 > y2) {
+            let y = y2;
+            let dy = y1 - y2;
+        } else {
+            let y = y1;
+            let dy = y2 - y1;
+        }
+
+        while(b < dy) {
+            do Screen.drawLine(x1, y+b, x2, y+b);
+            let b = b+1;
+        }
+        // last remaining line
+        do Screen.drawLine(x1, y+b, x2, y+b);
+
+        return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+        var int a, b;
+
+        let b = r;
+
+        while(b>0) {
+            let a = Math.sqrt((r*r) - (b*b));
+            do Screen.drawLine(x-a, y+b, x+a, y+b);
+            do Screen.drawLine(x-a, y-b, x+a, y-b);
+            let b = b - 1;
+        }
+        // base line
+        do Screen.drawLine(x-r, y, x+r, y);
+
+        return;
+    }
+}

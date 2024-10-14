@@ -1,0 +1,37 @@
+
+
+class Bitmask {
+	static Array bitmap;
+
+	function void init() {
+		// allocate memory and initialize bitmap
+		var int i;
+		var int curr_mask;
+
+		let bitmap = Memory.alloc(16);
+		let i = 0;
+		let curr_mask = 1;
+
+		while(i<16) {
+			let bitmap[i] = curr_mask;
+			let i = i+1;
+			let curr_mask = curr_mask + curr_mask;
+		}
+		return;
+	}
+
+	function int idxMask(int k) {
+		return bitmap[k];
+	}
+
+	function int getMask(int x) {
+        return Bitmask.idxMask(Bitmask.modulo(x, 16));
+	}
+
+	function int modulo(int x, int p) {
+		var int div;
+
+		let div = x / p;
+		return x - (p * div);
+	}
+}
