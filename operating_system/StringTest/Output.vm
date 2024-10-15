@@ -1,0 +1,1772 @@
+function Output.init 0
+	push constant 16384
+	pop static 1  // SCREEN
+	call Output.initMap 0
+	pop temp 0
+	push constant 0
+	push constant 0
+	call Output.moveCursor 2
+	pop temp 0
+	push constant 0
+	return
+function Output.initMap 1
+	push constant 127
+	call Array.new 1
+	pop static 0  // charMaps
+	push constant 0
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 32
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 33
+	push constant 12
+	push constant 30
+	push constant 30
+	push constant 30
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 34
+	push constant 54
+	push constant 54
+	push constant 20
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 35
+	push constant 0
+	push constant 18
+	push constant 18
+	push constant 63
+	push constant 18
+	push constant 18
+	push constant 63
+	push constant 18
+	push constant 18
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 36
+	push constant 12
+	push constant 30
+	push constant 51
+	push constant 3
+	push constant 30
+	push constant 48
+	push constant 51
+	push constant 30
+	push constant 12
+	push constant 12
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 37
+	push constant 0
+	push constant 0
+	push constant 35
+	push constant 51
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 51
+	push constant 49
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 38
+	push constant 12
+	push constant 30
+	push constant 30
+	push constant 12
+	push constant 54
+	push constant 27
+	push constant 27
+	push constant 27
+	push constant 54
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 39
+	push constant 12
+	push constant 12
+	push constant 6
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 40
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 12
+	push constant 24
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 41
+	push constant 6
+	push constant 12
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 42
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 51
+	push constant 30
+	push constant 63
+	push constant 30
+	push constant 51
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 43
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 63
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 44
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 6
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 45
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 63
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 46
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 47
+	push constant 0
+	push constant 0
+	push constant 32
+	push constant 48
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 3
+	push constant 1
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 48
+	push constant 12
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 49
+	push constant 12
+	push constant 14
+	push constant 15
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 50
+	push constant 30
+	push constant 51
+	push constant 48
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 3
+	push constant 51
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 51
+	push constant 30
+	push constant 51
+	push constant 48
+	push constant 48
+	push constant 28
+	push constant 48
+	push constant 48
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 52
+	push constant 16
+	push constant 24
+	push constant 28
+	push constant 26
+	push constant 25
+	push constant 63
+	push constant 24
+	push constant 24
+	push constant 60
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 53
+	push constant 63
+	push constant 3
+	push constant 3
+	push constant 31
+	push constant 48
+	push constant 48
+	push constant 48
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 54
+	push constant 28
+	push constant 6
+	push constant 3
+	push constant 3
+	push constant 31
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 55
+	push constant 63
+	push constant 49
+	push constant 48
+	push constant 48
+	push constant 24
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 56
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 57
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 62
+	push constant 48
+	push constant 48
+	push constant 24
+	push constant 14
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 58
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 59
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 6
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 60
+	push constant 0
+	push constant 0
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 3
+	push constant 6
+	push constant 12
+	push constant 24
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 61
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 63
+	push constant 0
+	push constant 0
+	push constant 63
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 62
+	push constant 0
+	push constant 0
+	push constant 3
+	push constant 6
+	push constant 12
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 3
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 64
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 59
+	push constant 59
+	push constant 59
+	push constant 27
+	push constant 3
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 63
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 24
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 65
+	push constant 28
+	push constant 62
+	push constant 99
+	push constant 99
+	push constant 127
+	push constant 127
+	push constant 99
+	push constant 99
+	push constant 99
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 66
+	push constant 31
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 31
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 31
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 67
+	push constant 28
+	push constant 54
+	push constant 35
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 35
+	push constant 54
+	push constant 28
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 68
+	push constant 15
+	push constant 27
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 27
+	push constant 15
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 69
+	push constant 63
+	push constant 51
+	push constant 35
+	push constant 11
+	push constant 15
+	push constant 11
+	push constant 35
+	push constant 51
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 70
+	push constant 63
+	push constant 51
+	push constant 35
+	push constant 11
+	push constant 15
+	push constant 11
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 71
+	push constant 28
+	push constant 54
+	push constant 35
+	push constant 3
+	push constant 59
+	push constant 51
+	push constant 51
+	push constant 54
+	push constant 44
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 72
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 63
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 73
+	push constant 30
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 74
+	push constant 60
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 27
+	push constant 27
+	push constant 14
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 75
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 27
+	push constant 15
+	push constant 27
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 76
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 35
+	push constant 51
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 77
+	push constant 33
+	push constant 51
+	push constant 63
+	push constant 63
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 78
+	push constant 51
+	push constant 51
+	push constant 55
+	push constant 55
+	push constant 63
+	push constant 59
+	push constant 59
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 79
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 80
+	push constant 31
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 31
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 81
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 63
+	push constant 59
+	push constant 30
+	push constant 48
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 82
+	push constant 31
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 31
+	push constant 27
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 83
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 6
+	push constant 28
+	push constant 48
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 84
+	push constant 63
+	push constant 63
+	push constant 45
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 85
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 86
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 30
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 87
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 63
+	push constant 63
+	push constant 63
+	push constant 18
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 88
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 30
+	push constant 12
+	push constant 30
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 89
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 90
+	push constant 63
+	push constant 51
+	push constant 49
+	push constant 24
+	push constant 12
+	push constant 6
+	push constant 35
+	push constant 51
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 91
+	push constant 30
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 92
+	push constant 0
+	push constant 0
+	push constant 1
+	push constant 3
+	push constant 6
+	push constant 12
+	push constant 24
+	push constant 48
+	push constant 32
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 93
+	push constant 30
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 24
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 94
+	push constant 8
+	push constant 28
+	push constant 54
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 95
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 63
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 96
+	push constant 6
+	push constant 12
+	push constant 24
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 97
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 14
+	push constant 24
+	push constant 30
+	push constant 27
+	push constant 27
+	push constant 54
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 98
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 15
+	push constant 27
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 99
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 3
+	push constant 3
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 100
+	push constant 48
+	push constant 48
+	push constant 48
+	push constant 60
+	push constant 54
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 101
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 63
+	push constant 3
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 102
+	push constant 28
+	push constant 54
+	push constant 38
+	push constant 6
+	push constant 15
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 15
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 103
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 62
+	push constant 48
+	push constant 51
+	push constant 30
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 104
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 27
+	push constant 55
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 105
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 14
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 106
+	push constant 48
+	push constant 48
+	push constant 0
+	push constant 56
+	push constant 48
+	push constant 48
+	push constant 48
+	push constant 48
+	push constant 51
+	push constant 30
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 107
+	push constant 3
+	push constant 3
+	push constant 3
+	push constant 51
+	push constant 27
+	push constant 15
+	push constant 15
+	push constant 27
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 108
+	push constant 14
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 109
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 29
+	push constant 63
+	push constant 43
+	push constant 43
+	push constant 43
+	push constant 43
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 110
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 29
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 111
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 112
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 31
+	push constant 3
+	push constant 3
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 113
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 62
+	push constant 48
+	push constant 48
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 114
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 29
+	push constant 55
+	push constant 51
+	push constant 3
+	push constant 3
+	push constant 7
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 115
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 30
+	push constant 51
+	push constant 6
+	push constant 24
+	push constant 51
+	push constant 30
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 116
+	push constant 4
+	push constant 6
+	push constant 6
+	push constant 15
+	push constant 6
+	push constant 6
+	push constant 6
+	push constant 54
+	push constant 28
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 117
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 27
+	push constant 27
+	push constant 27
+	push constant 27
+	push constant 27
+	push constant 54
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 118
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 30
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 119
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 63
+	push constant 63
+	push constant 18
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 120
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 51
+	push constant 30
+	push constant 12
+	push constant 12
+	push constant 30
+	push constant 51
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 121
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 51
+	push constant 51
+	push constant 51
+	push constant 62
+	push constant 48
+	push constant 24
+	push constant 15
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 122
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 63
+	push constant 27
+	push constant 12
+	push constant 6
+	push constant 51
+	push constant 63
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 123
+	push constant 56
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 7
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 56
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 124
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 125
+	push constant 7
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 56
+	push constant 12
+	push constant 12
+	push constant 12
+	push constant 7
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 126
+	push constant 38
+	push constant 45
+	push constant 25
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	push constant 0
+	call Output.create 12
+	pop temp 0
+	push constant 0
+	return
+function Output.create 1
+	push constant 11
+	call Array.new 1
+	pop local 0  // map
+	push static 0  // charMaps
+	push argument 0  // index
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // map
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 1  // a
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 1
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 2  // b
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 2
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 3  // c
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 3
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 4  // d
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 4
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 5  // e
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 5
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 6  // f
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 6
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 7  // g
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 7
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 8  // h
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 8
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 9  // i
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 9
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 10  // j
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // map
+	push constant 10
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 11  // k
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 0
+	return
+function Output.getMap 0
+	push argument 0  // c
+	push constant 32
+	lt
+	push argument 0  // c
+	push constant 126
+	gt
+	or
+	not
+	if-goto ELSE0
+	push constant 0
+	pop argument 0  // c
+	goto ELSE_END0
+label ELSE0
+label ELSE_END0
+	push static 0  // charMaps
+	push argument 0  // c
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	return
+function Output.moveCursor 2
+	push argument 0  // i
+	pop static 2  // cursor_i
+	push argument 1  // j
+	pop static 3  // cursor_j
+	push static 2  // cursor_i
+	push constant 11
+	call Math.multiply 2
+	pop local 1  // y
+	push static 3  // cursor_j
+	push constant 8
+	call Math.multiply 2
+	pop local 0  // x
+	push constant 0  // false
+	call Screen.setColor 1
+	pop temp 0
+	push local 0  // x
+	push local 1  // y
+	push local 0  // x
+	push constant 7
+	add
+	push local 1  // y
+	push constant 10
+	add
+	call Screen.drawRectangle 4
+	pop temp 0
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 0
+	push constant 0
+	return
+function Output.printChar 4
+	push argument 0  // c
+	push constant 128
+	eq
+	not
+	if-goto ELSE1
+	call Output.println 0
+	return
+	goto ELSE_END1
+label ELSE1
+label ELSE_END1
+	push argument 0  // c
+	push constant 129
+	eq
+	not
+	if-goto ELSE2
+	call Output.backSpace 0
+	return
+	goto ELSE_END2
+label ELSE2
+label ELSE_END2
+	push argument 0  // c
+	call Output.getMap 1
+	pop local 0  // map
+	push constant 0
+	pop local 1  // i
+	push static 3  // cursor_j
+	push constant 2
+	call Math.divide 2
+	pop local 2  // col
+	push constant 0  // true
+	not  // true
+	call Screen.setColor 1
+	pop temp 0
+	push static 1  // SCREEN
+	push constant 11
+	push static 2  // cursor_i
+	call Math.multiply 2
+	push constant 32
+	call Math.multiply 2
+	add
+	push local 2  // col
+	add
+	pop local 3  // begin_addr
+	push static 3  // cursor_j
+	push constant 2
+	push local 2  // col
+	call Math.multiply 2
+	sub
+	push constant 1
+	eq
+	not
+	if-goto ELSE3
+label LOOP4
+	push local 1  // i
+	push constant 10
+	lt
+	not
+	if-goto ENDLOOP4
+	push local 0  // map
+	push local 1  // i
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 0
+	gt
+	not
+	if-goto ELSE5
+	push local 3  // begin_addr
+	push local 3  // begin_addr
+	call Memory.peek 1
+	push local 0  // map
+	push local 1  // i
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 256
+	call Math.multiply 2
+	or
+	call Memory.peek 1
+	pop temp 0
+	goto ELSE_END5
+label ELSE5
+label ELSE_END5
+	push local 1  // i
+	push constant 1
+	add
+	pop local 1  // i
+	push local 3  // begin_addr
+	push constant 32
+	add
+	pop local 3  // begin_addr
+	goto LOOP4
+label ENDLOOP4
+	goto ELSE_END3
+label ELSE3
+label LOOP6
+	push local 1  // i
+	push constant 10
+	lt
+	not
+	if-goto ENDLOOP6
+	push local 0  // map
+	push local 1  // i
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push constant 0
+	gt
+	not
+	if-goto ELSE7
+	push local 3  // begin_addr
+	push local 3  // begin_addr
+	call Memory.peek 1
+	push local 0  // map
+	push local 1  // i
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	or
+	call Memory.peek 1
+	pop temp 0
+	goto ELSE_END7
+label ELSE7
+label ELSE_END7
+	push local 1  // i
+	push constant 1
+	add
+	pop local 1  // i
+	push local 3  // begin_addr
+	push constant 32
+	add
+	pop local 3  // begin_addr
+	goto LOOP6
+label ENDLOOP6
+label ELSE_END3
+	push static 3  // cursor_j
+	push constant 63
+	lt
+	not
+	if-goto ELSE8
+	push static 2  // cursor_i
+	push static 3  // cursor_j
+	push constant 1
+	add
+	call Output.moveCursor 2
+	pop temp 0
+	goto ELSE_END8
+label ELSE8
+	push static 2  // cursor_i
+	push constant 22
+	lt
+	not
+	if-goto ELSE9
+	push static 2  // cursor_i
+	push constant 1
+	add
+	push constant 0
+	call Output.moveCursor 2
+	pop temp 0
+	goto ELSE_END9
+label ELSE9
+label ELSE_END9
+	push constant 0
+	push constant 0
+	call Output.moveCursor 2
+	pop temp 0
+label ELSE_END8
+	push constant 0
+	return
+function Output.printString 2
+	push constant 0
+	pop local 0  // i
+	push argument 0  // s
+	call String.length 1
+	pop local 1  // len
+label LOOP10
+	push local 0  // i
+	push local 1  // len
+	lt
+	not
+	if-goto ENDLOOP10
+	push argument 0  // s
+	push local 0  // i
+	call String.charAt 2
+	call String.charAt 2
+	pop temp 0
+	push local 0  // i
+	push constant 1
+	add
+	pop local 0  // i
+	goto LOOP10
+label ENDLOOP10
+	push constant 0
+	return
+function Output.printInt 1
+	push constant 6
+	call String.new 1
+	pop local 0  // s
+	push local 0  // s
+	push argument 0  // i
+	call String.setInt 2
+	pop temp 0
+	push local 0  // s
+	call Output.printString 1
+	return
+function Output.println 0
+	push static 2  // cursor_i
+	push constant 22
+	lt
+	not
+	if-goto ELSE11
+	push static 2  // cursor_i
+	push constant 1
+	add
+	push constant 0
+	call Output.moveCursor 2
+	return
+	goto ELSE_END11
+label ELSE11
+label ELSE_END11
+	push constant 0
+	push constant 0
+	call Output.moveCursor 2
+	return
+function Output.backSpace 0
+	push static 3  // cursor_j
+	push constant 0
+	gt
+	not
+	if-goto ELSE12
+	push static 2  // cursor_i
+	push static 3  // cursor_j
+	push constant 1
+	sub
+	call Output.moveCursor 2
+	return
+	goto ELSE_END12
+label ELSE12
+	push static 2  // cursor_i
+	push constant 0
+	gt
+	not
+	if-goto ELSE13
+	push static 2  // cursor_i
+	push constant 1
+	sub
+	push constant 63
+	call Output.moveCursor 2
+	return
+	goto ELSE_END13
+label ELSE13
+label ELSE_END13
+label ELSE_END12
+	push constant 0
+	return
