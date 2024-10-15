@@ -1,5 +1,16 @@
 function Array.new 0
 	push argument 0  // size
+	push constant 1
+	lt
+	not
+	if-goto ELSE0
+	push constant 2
+	call Sys.error 1
+	return
+	goto ELSE_END0
+label ELSE0
+label ELSE_END0
+	push argument 0  // size
 	call Memory.alloc 1
 	return
 function Array.dispose 0

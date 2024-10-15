@@ -24,32 +24,43 @@ label ENDLOOP0
 	push constant 0
 	return
 function Sys.wait 1
-label LOOP1
 	push argument 0  // duration
-	push constant 0
-	gt
+	push constant 1
+	lt
 	not
-	if-goto ENDLOOP1
-	push constant 500
-	pop local 0  // delay
+	if-goto ELSE1
+	push constant 1
+	call Sys.error 1
+	return
+	goto ELSE_END1
+label ELSE1
+label ELSE_END1
 label LOOP2
-	push local 0  // delay
+	push argument 0  // duration
 	push constant 0
 	gt
 	not
 	if-goto ENDLOOP2
+	push constant 500
+	pop local 0  // delay
+label LOOP3
+	push local 0  // delay
+	push constant 0
+	gt
+	not
+	if-goto ENDLOOP3
 	push local 0  // delay
 	push constant 1
 	sub
 	pop local 0  // delay
-	goto LOOP2
-label ENDLOOP2
+	goto LOOP3
+label ENDLOOP3
 	push argument 0  // duration
 	push constant 1
 	sub
 	pop argument 0  // duration
-	goto LOOP1
-label ENDLOOP1
+	goto LOOP2
+label ENDLOOP2
 	push constant 0
 	return
 function Sys.error 0

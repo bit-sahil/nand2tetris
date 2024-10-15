@@ -1484,6 +1484,21 @@ label ELSE_END0
 	return
 function Output.moveCursor 2
 	push argument 0  // i
+	push constant 22
+	gt
+	push argument 1  // j
+	push constant 63
+	gt
+	or
+	not
+	if-goto ELSE1
+	push constant 20
+	call Sys.error 1
+	return
+	goto ELSE_END1
+label ELSE1
+label ELSE_END1
+	push argument 0  // i
 	pop static 2  // cursor_i
 	push argument 1  // j
 	pop static 3  // cursor_j
@@ -1519,22 +1534,22 @@ function Output.printChar 4
 	push constant 128
 	eq
 	not
-	if-goto ELSE1
-	call Output.println 0
-	return
-	goto ELSE_END1
-label ELSE1
-label ELSE_END1
-	push argument 0  // c
-	push constant 129
-	eq
-	not
 	if-goto ELSE2
-	call Output.backSpace 0
+	call Output.println 0
 	return
 	goto ELSE_END2
 label ELSE2
 label ELSE_END2
+	push argument 0  // c
+	push constant 129
+	eq
+	not
+	if-goto ELSE3
+	call Output.backSpace 0
+	return
+	goto ELSE_END3
+label ELSE3
+label ELSE_END3
 	push argument 0  // c
 	call Output.getMap 1
 	pop local 0  // map
@@ -1566,13 +1581,13 @@ label ELSE_END2
 	push constant 1
 	eq
 	not
-	if-goto ELSE3
-label LOOP4
+	if-goto ELSE4
+label LOOP5
 	push local 1  // i
 	push constant 10
 	lt
 	not
-	if-goto ENDLOOP4
+	if-goto ENDLOOP5
 	push local 0  // map
 	push local 1  // i
 	add  // termArrEnd
@@ -1581,7 +1596,7 @@ label LOOP4
 	push constant 0
 	gt
 	not
-	if-goto ELSE5
+	if-goto ELSE6
 	push local 3  // begin_addr
 	push local 3  // begin_addr
 	call Memory.peek 1
@@ -1595,9 +1610,9 @@ label LOOP4
 	or
 	call Memory.peek 1
 	pop temp 0
-	goto ELSE_END5
-label ELSE5
-label ELSE_END5
+	goto ELSE_END6
+label ELSE6
+label ELSE_END6
 	push local 1  // i
 	push constant 1
 	add
@@ -1606,16 +1621,16 @@ label ELSE_END5
 	push constant 32
 	add
 	pop local 3  // begin_addr
-	goto LOOP4
-label ENDLOOP4
-	goto ELSE_END3
-label ELSE3
-label LOOP6
+	goto LOOP5
+label ENDLOOP5
+	goto ELSE_END4
+label ELSE4
+label LOOP7
 	push local 1  // i
 	push constant 10
 	lt
 	not
-	if-goto ENDLOOP6
+	if-goto ENDLOOP7
 	push local 0  // map
 	push local 1  // i
 	add  // termArrEnd
@@ -1624,7 +1639,7 @@ label LOOP6
 	push constant 0
 	gt
 	not
-	if-goto ELSE7
+	if-goto ELSE8
 	push local 3  // begin_addr
 	push local 3  // begin_addr
 	call Memory.peek 1
@@ -1636,9 +1651,9 @@ label LOOP6
 	or
 	call Memory.peek 1
 	pop temp 0
-	goto ELSE_END7
-label ELSE7
-label ELSE_END7
+	goto ELSE_END8
+label ELSE8
+label ELSE_END8
 	push local 1  // i
 	push constant 1
 	add
@@ -1647,41 +1662,41 @@ label ELSE_END7
 	push constant 32
 	add
 	pop local 3  // begin_addr
-	goto LOOP6
-label ENDLOOP6
-label ELSE_END3
+	goto LOOP7
+label ENDLOOP7
+label ELSE_END4
 	push static 3  // cursor_j
 	push constant 63
 	lt
 	not
-	if-goto ELSE8
+	if-goto ELSE9
 	push static 2  // cursor_i
 	push static 3  // cursor_j
 	push constant 1
 	add
 	call Output.moveCursor 2
 	pop temp 0
-	goto ELSE_END8
-label ELSE8
+	goto ELSE_END9
+label ELSE9
 	push static 2  // cursor_i
 	push constant 22
 	lt
 	not
-	if-goto ELSE9
+	if-goto ELSE10
 	push static 2  // cursor_i
 	push constant 1
 	add
 	push constant 0
 	call Output.moveCursor 2
 	pop temp 0
-	goto ELSE_END9
-label ELSE9
-label ELSE_END9
+	goto ELSE_END10
+label ELSE10
+label ELSE_END10
 	push constant 0
 	push constant 0
 	call Output.moveCursor 2
 	pop temp 0
-label ELSE_END8
+label ELSE_END9
 	push constant 0
 	return
 function Output.printString 2
@@ -1690,12 +1705,12 @@ function Output.printString 2
 	push argument 0  // s
 	call String.length 1
 	pop local 1  // len
-label LOOP10
+label LOOP11
 	push local 0  // i
 	push local 1  // len
 	lt
 	not
-	if-goto ENDLOOP10
+	if-goto ENDLOOP11
 	push argument 0  // s
 	push local 0  // i
 	call String.charAt 2
@@ -1705,8 +1720,8 @@ label LOOP10
 	push constant 1
 	add
 	pop local 0  // i
-	goto LOOP10
-label ENDLOOP10
+	goto LOOP11
+label ENDLOOP11
 	push constant 0
 	return
 function Output.printInt 1
@@ -1725,16 +1740,16 @@ function Output.println 0
 	push constant 22
 	lt
 	not
-	if-goto ELSE11
+	if-goto ELSE12
 	push static 2  // cursor_i
 	push constant 1
 	add
 	push constant 0
 	call Output.moveCursor 2
 	return
-	goto ELSE_END11
-label ELSE11
-label ELSE_END11
+	goto ELSE_END12
+label ELSE12
+label ELSE_END12
 	push constant 0
 	push constant 0
 	call Output.moveCursor 2
@@ -1744,29 +1759,29 @@ function Output.backSpace 0
 	push constant 0
 	gt
 	not
-	if-goto ELSE12
+	if-goto ELSE13
 	push static 2  // cursor_i
 	push static 3  // cursor_j
 	push constant 1
 	sub
 	call Output.moveCursor 2
 	return
-	goto ELSE_END12
-label ELSE12
+	goto ELSE_END13
+label ELSE13
 	push static 2  // cursor_i
 	push constant 0
 	gt
 	not
-	if-goto ELSE13
+	if-goto ELSE14
 	push static 2  // cursor_i
 	push constant 1
 	sub
 	push constant 63
 	call Output.moveCursor 2
 	return
-	goto ELSE_END13
-label ELSE13
+	goto ELSE_END14
+label ELSE14
+label ELSE_END14
 label ELSE_END13
-label ELSE_END12
 	push constant 0
 	return

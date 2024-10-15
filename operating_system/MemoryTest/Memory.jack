@@ -35,6 +35,11 @@ class Memory {
     function Array alloc(int size) {
         var Array prevNode, currNode, ramBlock;
 
+        if(size<1) {
+            // Allocated memory size must be positive
+            return Sys.error(5);
+        }
+
         let prevNode = null;
         let currNode = freeList;
 
@@ -85,7 +90,7 @@ class Memory {
         
         // being here means space not found
         // raise error without crashing system
-        return Sys.error(6);
+        return Sys.error(6);  // Heap overflow
     }
 
     /** De-allocates the given object (cast as an array) by making

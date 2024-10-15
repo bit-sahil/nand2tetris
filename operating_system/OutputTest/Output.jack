@@ -186,6 +186,11 @@ class Output {
     function void moveCursor(int i, int j) {
         var int x, y;
 
+        if( (i>22) | (j>63) ) {
+            // Illegal cursor location
+            return Sys.error(20);
+        }
+
         let cursor_i = i;
         let cursor_j = j;
 

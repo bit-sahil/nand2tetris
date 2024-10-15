@@ -3,6 +3,17 @@ function String.new 0
 	call Memory.alloc 1
 	pop pointer 0  // this
 	push argument 0  // maxLength
+	push constant 0
+	lt
+	not
+	if-goto ELSE0
+	push constant 14
+	call Sys.error 1
+	return
+	goto ELSE_END0
+label ELSE0
+label ELSE_END0
+	push argument 0  // maxLength
 	pop this 0  // maxLen
 	push constant 0
 	pop this 1  // len
@@ -10,13 +21,13 @@ function String.new 0
 	push constant 0
 	gt
 	not
-	if-goto ELSE0
+	if-goto ELSE1
 	push argument 0  // maxLength
 	call Memory.alloc 1
 	pop this 2  // arr
-	goto ELSE_END0
-label ELSE0
-label ELSE_END0
+	goto ELSE_END1
+label ELSE1
+label ELSE_END1
 	push pointer 0  // this
 	return
 function String.dispose 0
@@ -26,13 +37,13 @@ function String.dispose 0
 	push constant 0
 	gt
 	not
-	if-goto ELSE1
+	if-goto ELSE2
 	push this 2  // arr
 	call Memory.deAlloc 1
 	pop temp 0
-	goto ELSE_END1
-label ELSE1
-label ELSE_END1
+	goto ELSE_END2
+label ELSE2
+label ELSE_END2
 	push pointer 0  // this
 	call Memory.deAlloc 1
 	pop temp 0
@@ -46,6 +57,19 @@ function String.length 0
 function String.charAt 0
 	push argument 0  // arg 0 is set to this by caller
 	pop pointer 0  // this
+	push constant 1
+	push argument 1  // j
+	add
+	push this 1  // len
+	gt
+	not
+	if-goto ELSE3
+	push constant 15
+	call Sys.error 1
+	return
+	goto ELSE_END3
+label ELSE3
+label ELSE_END3
 	push this 2  // arr
 	push argument 1  // j
 	add  // termArrEnd
@@ -55,6 +79,19 @@ function String.charAt 0
 function String.setCharAt 0
 	push argument 0  // arg 0 is set to this by caller
 	pop pointer 0  // this
+	push constant 1
+	push argument 1  // j
+	add
+	push this 0  // maxLen
+	gt
+	not
+	if-goto ELSE4
+	push constant 16
+	call Sys.error 1
+	return
+	goto ELSE_END4
+label ELSE4
+label ELSE_END4
 	push this 2  // arr
 	push argument 1  // j
 	add  // letArrayEnd
@@ -68,6 +105,19 @@ function String.setCharAt 0
 function String.appendChar 0
 	push argument 0  // arg 0 is set to this by caller
 	pop pointer 0  // this
+	push constant 1
+	push this 1  // len
+	add
+	push this 0  // maxLen
+	gt
+	not
+	if-goto ELSE5
+	push constant 17
+	call Sys.error 1
+	return
+	goto ELSE_END5
+label ELSE5
+label ELSE_END5
 	push this 2  // arr
 	push this 1  // len
 	add  // letArrayEnd
@@ -85,6 +135,17 @@ function String.appendChar 0
 function String.eraseLastChar 0
 	push argument 0  // arg 0 is set to this by caller
 	pop pointer 0  // this
+	push this 1  // len
+	push constant 0
+	eq
+	not
+	if-goto ELSE6
+	push constant 18
+	call Sys.error 1
+	return
+	goto ELSE_END6
+label ELSE6
+label ELSE_END6
 	push this 1  // len
 	push constant 1
 	sub
@@ -114,7 +175,7 @@ function String.intValue 4
 	push constant 45
 	eq
 	not
-	if-goto ELSE2
+	if-goto ELSE7
 	push constant 0  // true
 	not  // true
 	pop local 3  // neg
@@ -122,15 +183,15 @@ function String.intValue 4
 	push constant 1
 	add
 	pop local 0  // i
-	goto ELSE_END2
-label ELSE2
-label ELSE_END2
-label LOOP3
+	goto ELSE_END7
+label ELSE7
+label ELSE_END7
+label LOOP8
 	push local 0  // i
 	push this 1  // len
 	lt
 	not
-	if-goto ENDLOOP3
+	if-goto ENDLOOP8
 	push pointer 0  // this
 	push local 0  // i
 	call String.charAt 2
@@ -138,7 +199,7 @@ label LOOP3
 	push constant 0  // true
 	not  // true
 	not
-	if-goto ELSE4
+	if-goto ELSE9
 	push local 1  // val
 	push constant 10
 	call Math.multiply 2
@@ -151,25 +212,36 @@ label LOOP3
 	push constant 1
 	add
 	pop local 0  // i
-	goto ELSE_END4
-label ELSE4
-label ELSE_END4
-	goto LOOP3
-label ENDLOOP3
+	goto ELSE_END9
+label ELSE9
+label ELSE_END9
+	goto LOOP8
+label ENDLOOP8
 	push local 3  // neg
 	not
-	if-goto ELSE5
+	if-goto ELSE10
 	push local 1  // val
 	neg
 	return
-	goto ELSE_END5
-label ELSE5
-label ELSE_END5
+	goto ELSE_END10
+label ELSE10
+label ELSE_END10
 	push local 1  // val
 	return
 function String.setInt 5
 	push argument 0  // arg 0 is set to this by caller
 	pop pointer 0  // this
+	push this 0  // maxLen
+	push constant 6
+	lt
+	not
+	if-goto ELSE11
+	push constant 19
+	call Sys.error 1
+	return
+	goto ELSE_END11
+label ELSE11
+label ELSE_END11
 	push constant 0
 	pop local 3  // j
 	push constant 0  // false
@@ -178,7 +250,7 @@ function String.setInt 5
 	push constant 0
 	lt
 	not
-	if-goto ELSE6
+	if-goto ELSE12
 	push constant 0  // true
 	not  // true
 	pop local 4  // neg
@@ -194,17 +266,17 @@ function String.setInt 5
 	push constant 1
 	add
 	pop local 3  // j
-	goto ELSE_END6
-label ELSE6
-label ELSE_END6
+	goto ELSE_END12
+label ELSE12
+label ELSE_END12
 	push constant 5
 	pop local 2  // i
-label LOOP7
+label LOOP13
 	push argument 1  // val
 	push constant 0
 	gt
 	not
-	if-goto ENDLOOP7
+	if-goto ENDLOOP13
 	push argument 1  // val
 	push constant 10
 	call Math.divide 2
@@ -228,28 +300,28 @@ label LOOP7
 	push constant 1
 	sub
 	pop local 2  // i
-	goto LOOP7
-label ENDLOOP7
+	goto LOOP13
+label ENDLOOP13
 	push local 2  // i
 	push constant 0
 	eq
 	push local 4  // neg
 	and
 	not
-	if-goto ELSE8
+	if-goto ELSE14
 	push constant 6
 	pop this 1  // len
 	push constant 0
 	return
-	goto ELSE_END8
-label ELSE8
-label ELSE_END8
-label LOOP9
+	goto ELSE_END14
+label ELSE14
+label ELSE_END14
+label LOOP15
 	push local 2  // i
 	push constant 5
 	lt
 	not
-	if-goto ENDLOOP9
+	if-goto ENDLOOP15
 	push local 2  // i
 	push constant 1
 	add
@@ -270,8 +342,8 @@ label LOOP9
 	push constant 1
 	add
 	pop local 3  // j
-	goto LOOP9
-label ENDLOOP9
+	goto LOOP15
+label ENDLOOP15
 	push local 3  // j
 	pop this 1  // len
 	push constant 0

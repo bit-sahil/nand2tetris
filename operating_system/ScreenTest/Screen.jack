@@ -4,8 +4,8 @@
 // File name: projects/12/Screen.jack
 /**
  * A library of functions for displaying graphics on the screen.
- * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
- * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * The Hack physical screen consists of 512 rows (x-axis) (indexed 0..511, top to bottom)
+ * of 256 pixels each (y-axis) (indexed 0..255, left to right). The top left pixel on 
  * the screen is indexed (0,0).
  */
 class Screen {
@@ -48,6 +48,11 @@ class Screen {
         var int w;
         var int value, mask;
 
+        if((x<0) | (y<0) | (x>511) | (y>255)) {
+            // Illegal pixel coordinates
+            return Sys.error(7);
+        }
+
         let w = SCREEN + (y*BYTES_IN_ROW) + (x/BYTE_SIZE);
         let mask = Bitmask.getMask(x);
         if(color) {
@@ -60,104 +65,135 @@ class Screen {
         return;
     }
 
+    function void drawHorizontalLine(int x1, int y1, int x2, int y2) {
+        var int dx;
+        var int a, b;
+        var int w, value;
+
+        let dx = x2 - x1;
+        if(dx<0) {
+            // start always from lower x
+            let dx = -dx;
+            let x1 = x2;
+        }
+        let dx = dx+1;
+
+        let w = SCREEN + (y1*BYTES_IN_ROW) + (x1/16);
+        
+        // handling first word on screen partially
+        let a = Bitmask.modulo(x1, 16);
+        let b = 16 - a;
+        if((a>0)) {
+            // remaining b bits to be made 1
+
+            if(dx>b) {
+                // make all remaining pixels 1 (or 0)
+                if(color) {
+                    let value = Memory.peek(w) | (~( Bitmask.idxMask(a) - 1) );
+                } else {
+                    let value = Memory.peek(w) & ( Bitmask.idxMask(a) - 1);
+                }
+                do Memory.poke(w,  value);
+                let dx = dx - b;
+                let w = w+1;
+            
+            } else {
+                // only first dx out of b pixels to be affected
+                // affect all b pixels first
+                // then negatively affect b-dx pixels
+                if(color) {
+                    let value = Memory.peek(w) | (~( Bitmask.idxMask(a) - 1) );
+                    let value = value & ( Bitmask.idxMask(16-(b-dx)) - 1);
+                } else {
+                    let value = Memory.peek(w) & ( Bitmask.idxMask(a) - 1);
+                    let value = value | (~( Bitmask.idxMask(16-(b-dx)) - 1) );
+                }
+                do Memory.poke(w,  value);
+                return;
+            }
+        }
+
+        // handling intermediate words to be fully pixeled
+        if(color) {
+            let value = -1;
+        } else {
+            let value = 0;
+        }
+        while(dx > 15) {
+            do Memory.poke(w, value );
+            let dx = dx - 16;
+            let w = w+1;
+        }
+
+        // handling last word partially
+        if(dx>0) {
+            if(color) {
+                let value = Memory.peek(w) | ( Bitmask.idxMask(dx) - 1);
+            } else {
+                let value = Memory.peek(w) & (~( Bitmask.idxMask(dx) - 1));
+            }
+            do Memory.poke(w, value );
+        }
+
+        return;
+    }
+
+    function void drawVerticalLine(int x1, int y1, int x2, int y2) {
+        var int dy;
+        var int w, value, mask;
+
+        let dy = y2 - y1;
+        if(dy<0) {
+            // start always from lower y
+            let dy = -dy;
+            let y1 = y2;
+        }
+        let dy = dy+1;
+
+        let w = SCREEN + (y1*BYTES_IN_ROW) + (x1/16);
+
+        let mask = Bitmask.getMask(x1);
+        while(dy>0) {
+            if(color) {
+                let value = Memory.peek(w) | mask;
+            } else {
+                let value = Memory.peek(w) & ~mask;
+            }
+            do Memory.poke(w, value);
+
+            let dy = dy - 1;
+            let w = w+BYTES_IN_ROW;
+        }
+
+        return;
+    }
+
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
         var int x, y, a, b, diff;
         var int dx, dy;
         var boolean case_type;
-        var int w, mask, value;
+
+        if((x1<0) | (y1<0) | (x1>511) | (y1>255)) {
+            // Illegal line coordinates
+            return Sys.error(8);
+        }
+        if((x2<0) | (y2<0) | (x2>511) | (y2>255)) {
+            // Illegal line coordinates
+            return Sys.error(8);
+        }
 
         let dx = x2 - x1;
         let dy = y2 - y1;
 
         if(dy=0) {
             // horizontal line
-
-            if(dx<0) {
-                // start always from lower x
-                let dx = -dx;
-                let x1 = x2;
-            }
-            let dx = dx+1;
-
-            let w = SCREEN + (y1*BYTES_IN_ROW) + (x1/16);
-            let a = Bitmask.modulo(x1, 16);
-            let b = 16 - a;
-            if((a>0)) {
-                // remaining b bits to be made 1
-                if(dx>b) {
-                    // make all remaining pixels 1 (or 0)
-                    if(color) {
-                        let value = Memory.peek(w) | (~( Bitmask.idxMask(a) - 1) );
-                    } else {
-                        let value = Memory.peek(w) & ( Bitmask.idxMask(a) - 1);
-                    }
-                    do Memory.poke(w,  value);
-                    let dx = dx - b;
-                    let w = w+1;
-                
-                } else {
-                    // only first dx out of b pixels to be affected
-                    // affect all b pixels first
-                    // then negatively affect b-dx pixels
-                    if(color) {
-                        let value = Memory.peek(w) | (~( Bitmask.idxMask(a) - 1) );
-                        let value = value & ( Bitmask.idxMask(16-(b-dx)) - 1);
-                    } else {
-                        let value = Memory.peek(w) & ( Bitmask.idxMask(a) - 1);
-                        let value = value | (~( Bitmask.idxMask(16-(b-dx)) - 1) );
-                    }
-                    do Memory.poke(w,  value);
-                    return;
-                }
-            }
-
-            if(color) {
-                let value = -1;
-            } else {
-                let value = 0;
-            }
-            while(dx > 15) {
-                do Memory.poke(w, value );
-                let dx = dx - 16;
-                let w = w+1;
-            }
-
-            if(dx>0) {
-                if(color) {
-                    let value = Memory.peek(w) | ( Bitmask.idxMask(dx) - 1);
-                } else {
-                    let value = Memory.peek(w) & (~( Bitmask.idxMask(dx) - 1));
-                }
-                do Memory.poke(w, value );
-            }
-
-            return;
+            return Screen.drawHorizontalLine(x1, y1, x2, y2);
         }
 
         if(dx=0) {
             // vertical line
-            if(dy<0) {
-                // start always from lower y
-                let dy = -dy;
-                let y1 = y2;
-            }
-            let dy = dy+1;
-
-            let w = SCREEN + (y1*BYTES_IN_ROW) + (x1/16);
-            let mask = Bitmask.getMask(x1);
-            while(dy>0) {
-                if(color) {
-                    let value = Memory.peek(w) | mask;
-                } else {
-                    let value = Memory.peek(w) & ~mask;
-                }
-                do Memory.poke(w, value);
-                let dy = dy - 1;
-                let w = w+BYTES_IN_ROW;
-            }
-
-            return;
+            return Screen.drawVerticalLine(x1, y1, x2, y2);
         }
 
         let a = 0;
@@ -243,6 +279,15 @@ class Screen {
         var int y, dy;
         var int b;
 
+        if((x1<0) | (y1<0) | (x1>511) | (y1>255)) {
+            // Illegal rectangle coordinates
+            return Sys.error(9);
+        }
+        if((x2<0) | (y2<0) | (x2>511) | (y2>255)) {
+            // Illegal rectangle coordinates
+            return Sys.error(9);
+        }
+
         let b = 0;
 
         if(y1 > y2) {
@@ -266,6 +311,15 @@ class Screen {
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
         var int a, b;
+
+        if(r>181) {
+            // Illegal radius
+            return Sys.error(13);
+        }
+        if((x<0) | (y<0) | (x>511) | (y>255)) {
+            // Illegal center coordinates
+            return Sys.error(12);
+        }
 
         let b = r;
 

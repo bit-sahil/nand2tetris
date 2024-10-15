@@ -39,6 +39,29 @@ function Screen.setColor 0
 	push constant 0
 	return
 function Screen.drawPixel 3
+	push argument 0  // x
+	push constant 0
+	lt
+	push argument 1  // y
+	push constant 0
+	lt
+	or
+	push argument 0  // x
+	push constant 511
+	gt
+	or
+	push argument 1  // y
+	push constant 255
+	gt
+	or
+	not
+	if-goto ELSE0
+	push constant 7
+	call Sys.error 1
+	return
+	goto ELSE_END0
+label ELSE0
+label ELSE_END0
 	push static 1  // SCREEN
 	push argument 1  // y
 	push static 5  // BYTES_IN_ROW
@@ -54,58 +77,49 @@ function Screen.drawPixel 3
 	pop local 2  // mask
 	push static 0  // color
 	not
-	if-goto ELSE0
+	if-goto ELSE1
 	push local 0  // w
 	call Memory.peek 1
 	push local 2  // mask
 	or
 	pop local 1  // value
-	goto ELSE_END0
-label ELSE0
+	goto ELSE_END1
+label ELSE1
 	push local 0  // w
 	call Memory.peek 1
 	push local 2  // mask
 	not
 	and
 	pop local 1  // value
-label ELSE_END0
+label ELSE_END1
 	push local 0  // w
 	push local 1  // value
 	call Memory.poke 2
 	pop temp 0
 	push constant 0
 	return
-function Screen.drawLine 11
+function Screen.drawHorizontalLine 5
 	push argument 2  // x2
 	push argument 0  // x1
 	sub
-	pop local 5  // dx
-	push argument 3  // y2
-	push argument 1  // y1
-	sub
-	pop local 6  // dy
-	push local 6  // dy
-	push constant 0
-	eq
-	not
-	if-goto ELSE1
-	push local 5  // dx
+	pop local 0  // dx
+	push local 0  // dx
 	push constant 0
 	lt
 	not
 	if-goto ELSE2
-	push local 5  // dx
+	push local 0  // dx
 	neg
-	pop local 5  // dx
+	pop local 0  // dx
 	push argument 2  // x2
 	pop argument 0  // x1
 	goto ELSE_END2
 label ELSE2
 label ELSE_END2
-	push local 5  // dx
+	push local 0  // dx
 	push constant 1
 	add
-	pop local 5  // dx
+	pop local 0  // dx
 	push static 1  // SCREEN
 	push argument 1  // y1
 	push static 5  // BYTES_IN_ROW
@@ -115,99 +129,99 @@ label ELSE_END2
 	push constant 16
 	call Math.divide 2
 	add
-	pop local 8  // w
+	pop local 3  // w
 	push argument 0  // x1
 	push constant 16
 	call Bitmask.modulo 2
-	pop local 2  // a
+	pop local 1  // a
 	push constant 16
-	push local 2  // a
+	push local 1  // a
 	sub
-	pop local 3  // b
-	push local 2  // a
+	pop local 2  // b
+	push local 1  // a
 	push constant 0
 	gt
 	not
 	if-goto ELSE3
-	push local 5  // dx
-	push local 3  // b
+	push local 0  // dx
+	push local 2  // b
 	gt
 	not
 	if-goto ELSE4
 	push static 0  // color
 	not
 	if-goto ELSE5
-	push local 8  // w
+	push local 3  // w
 	call Memory.peek 1
-	push local 2  // a
+	push local 1  // a
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	not
 	or
-	pop local 10  // value
+	pop local 4  // value
 	goto ELSE_END5
 label ELSE5
-	push local 8  // w
+	push local 3  // w
 	call Memory.peek 1
-	push local 2  // a
+	push local 1  // a
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	and
-	pop local 10  // value
+	pop local 4  // value
 label ELSE_END5
-	push local 8  // w
-	push local 10  // value
+	push local 3  // w
+	push local 4  // value
 	call Memory.poke 2
 	pop temp 0
-	push local 5  // dx
-	push local 3  // b
+	push local 0  // dx
+	push local 2  // b
 	sub
-	pop local 5  // dx
-	push local 8  // w
+	pop local 0  // dx
+	push local 3  // w
 	push constant 1
 	add
-	pop local 8  // w
+	pop local 3  // w
 	goto ELSE_END4
 label ELSE4
 	push static 0  // color
 	not
 	if-goto ELSE6
-	push local 8  // w
+	push local 3  // w
 	call Memory.peek 1
-	push local 2  // a
+	push local 1  // a
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	not
 	or
-	pop local 10  // value
-	push local 10  // value
+	pop local 4  // value
+	push local 4  // value
 	push constant 16
-	push local 3  // b
-	push local 5  // dx
+	push local 2  // b
+	push local 0  // dx
 	sub
 	sub
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	and
-	pop local 10  // value
+	pop local 4  // value
 	goto ELSE_END6
 label ELSE6
-	push local 8  // w
+	push local 3  // w
 	call Memory.peek 1
-	push local 2  // a
+	push local 1  // a
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	and
-	pop local 10  // value
-	push local 10  // value
+	pop local 4  // value
+	push local 4  // value
 	push constant 16
-	push local 3  // b
-	push local 5  // dx
+	push local 2  // b
+	push local 0  // dx
 	sub
 	sub
 	call Bitmask.idxMask 1
@@ -215,10 +229,10 @@ label ELSE6
 	sub
 	not
 	or
-	pop local 10  // value
+	pop local 4  // value
 label ELSE_END6
-	push local 8  // w
-	push local 10  // value
+	push local 3  // w
+	push local 4  // value
 	call Memory.poke 2
 	pop temp 0
 	push constant 0
@@ -232,33 +246,33 @@ label ELSE_END3
 	if-goto ELSE7
 	push constant 1
 	neg
-	pop local 10  // value
+	pop local 4  // value
 	goto ELSE_END7
 label ELSE7
 	push constant 0
-	pop local 10  // value
+	pop local 4  // value
 label ELSE_END7
 label LOOP8
-	push local 5  // dx
+	push local 0  // dx
 	push constant 15
 	gt
 	not
 	if-goto ENDLOOP8
-	push local 8  // w
-	push local 10  // value
+	push local 3  // w
+	push local 4  // value
 	call Memory.poke 2
 	pop temp 0
-	push local 5  // dx
+	push local 0  // dx
 	push constant 16
 	sub
-	pop local 5  // dx
-	push local 8  // w
+	pop local 0  // dx
+	push local 3  // w
 	push constant 1
 	add
-	pop local 8  // w
+	pop local 3  // w
 	goto LOOP8
 label ENDLOOP8
-	push local 5  // dx
+	push local 0  // dx
 	push constant 0
 	gt
 	not
@@ -266,28 +280,28 @@ label ENDLOOP8
 	push static 0  // color
 	not
 	if-goto ELSE10
-	push local 8  // w
+	push local 3  // w
 	call Memory.peek 1
-	push local 5  // dx
+	push local 0  // dx
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	or
-	pop local 10  // value
+	pop local 4  // value
 	goto ELSE_END10
 label ELSE10
-	push local 8  // w
+	push local 3  // w
 	call Memory.peek 1
-	push local 5  // dx
+	push local 0  // dx
 	call Bitmask.idxMask 1
 	push constant 1
 	sub
 	not
 	and
-	pop local 10  // value
+	pop local 4  // value
 label ELSE_END10
-	push local 8  // w
-	push local 10  // value
+	push local 3  // w
+	push local 4  // value
 	call Memory.poke 2
 	pop temp 0
 	goto ELSE_END9
@@ -295,31 +309,28 @@ label ELSE9
 label ELSE_END9
 	push constant 0
 	return
-	goto ELSE_END1
-label ELSE1
-label ELSE_END1
-	push local 5  // dx
-	push constant 0
-	eq
-	not
-	if-goto ELSE11
-	push local 6  // dy
+function Screen.drawVerticalLine 4
+	push argument 3  // y2
+	push argument 1  // y1
+	sub
+	pop local 0  // dy
+	push local 0  // dy
 	push constant 0
 	lt
 	not
-	if-goto ELSE12
-	push local 6  // dy
+	if-goto ELSE11
+	push local 0  // dy
 	neg
-	pop local 6  // dy
+	pop local 0  // dy
 	push argument 3  // y2
 	pop argument 1  // y1
-	goto ELSE_END12
-label ELSE12
-label ELSE_END12
-	push local 6  // dy
+	goto ELSE_END11
+label ELSE11
+label ELSE_END11
+	push local 0  // dy
 	push constant 1
 	add
-	pop local 6  // dy
+	pop local 0  // dy
 	push static 1  // SCREEN
 	push argument 1  // y1
 	push static 5  // BYTES_IN_ROW
@@ -329,52 +340,132 @@ label ELSE_END12
 	push constant 16
 	call Math.divide 2
 	add
-	pop local 8  // w
+	pop local 1  // w
 	push argument 0  // x1
 	call Bitmask.getMask 1
-	pop local 9  // mask
-label LOOP13
-	push local 6  // dy
+	pop local 3  // mask
+label LOOP12
+	push local 0  // dy
 	push constant 0
 	gt
 	not
-	if-goto ENDLOOP13
+	if-goto ENDLOOP12
 	push static 0  // color
 	not
-	if-goto ELSE14
-	push local 8  // w
+	if-goto ELSE13
+	push local 1  // w
 	call Memory.peek 1
-	push local 9  // mask
+	push local 3  // mask
 	or
-	pop local 10  // value
-	goto ELSE_END14
-label ELSE14
-	push local 8  // w
+	pop local 2  // value
+	goto ELSE_END13
+label ELSE13
+	push local 1  // w
 	call Memory.peek 1
-	push local 9  // mask
+	push local 3  // mask
 	not
 	and
-	pop local 10  // value
-label ELSE_END14
-	push local 8  // w
-	push local 10  // value
+	pop local 2  // value
+label ELSE_END13
+	push local 1  // w
+	push local 2  // value
 	call Memory.poke 2
 	pop temp 0
-	push local 6  // dy
+	push local 0  // dy
 	push constant 1
 	sub
-	pop local 6  // dy
-	push local 8  // w
+	pop local 0  // dy
+	push local 1  // w
 	push static 5  // BYTES_IN_ROW
 	add
-	pop local 8  // w
-	goto LOOP13
-label ENDLOOP13
+	pop local 1  // w
+	goto LOOP12
+label ENDLOOP12
 	push constant 0
 	return
-	goto ELSE_END11
-label ELSE11
-label ELSE_END11
+function Screen.drawLine 8
+	push argument 0  // x1
+	push constant 0
+	lt
+	push argument 1  // y1
+	push constant 0
+	lt
+	or
+	push argument 0  // x1
+	push constant 511
+	gt
+	or
+	push argument 1  // y1
+	push constant 255
+	gt
+	or
+	not
+	if-goto ELSE14
+	push constant 8
+	call Sys.error 1
+	return
+	goto ELSE_END14
+label ELSE14
+label ELSE_END14
+	push argument 2  // x2
+	push constant 0
+	lt
+	push argument 3  // y2
+	push constant 0
+	lt
+	or
+	push argument 2  // x2
+	push constant 511
+	gt
+	or
+	push argument 3  // y2
+	push constant 255
+	gt
+	or
+	not
+	if-goto ELSE15
+	push constant 8
+	call Sys.error 1
+	return
+	goto ELSE_END15
+label ELSE15
+label ELSE_END15
+	push argument 2  // x2
+	push argument 0  // x1
+	sub
+	pop local 5  // dx
+	push argument 3  // y2
+	push argument 1  // y1
+	sub
+	pop local 6  // dy
+	push local 6  // dy
+	push constant 0
+	eq
+	not
+	if-goto ELSE16
+	push argument 0  // x1
+	push argument 1  // y1
+	push argument 2  // x2
+	push argument 3  // y2
+	call Screen.drawHorizontalLine 4
+	return
+	goto ELSE_END16
+label ELSE16
+label ELSE_END16
+	push local 5  // dx
+	push constant 0
+	eq
+	not
+	if-goto ELSE17
+	push argument 0  // x1
+	push argument 1  // y1
+	push argument 2  // x2
+	push argument 3  // y2
+	call Screen.drawVerticalLine 4
+	return
+	goto ELSE_END17
+label ELSE17
+label ELSE_END17
 	push constant 0
 	pop local 2  // a
 	push constant 0
@@ -387,7 +478,7 @@ label ELSE_END11
 	gt
 	and
 	not
-	if-goto ELSE15
+	if-goto ELSE18
 	push constant 0  // true
 	not  // true
 	pop local 7  // case_type
@@ -395,102 +486,21 @@ label ELSE_END11
 	pop local 0  // x
 	push argument 1  // y1
 	pop local 1  // y
-	goto ELSE_END15
-label ELSE15
-label ELSE_END15
+	goto ELSE_END18
+label ELSE18
+label ELSE_END18
 	push local 5  // dx
 	push constant 0
 	lt
 	push local 6  // dy
-	push constant 0
-	lt
-	and
-	not
-	if-goto ELSE16
-	push constant 0  // true
-	not  // true
-	pop local 7  // case_type
-	push argument 2  // x2
-	pop local 0  // x
-	push argument 3  // y2
-	pop local 1  // y
-	push local 5  // dx
-	neg
-	pop local 5  // dx
-	push local 6  // dy
-	neg
-	pop local 6  // dy
-	goto ELSE_END16
-label ELSE16
-label ELSE_END16
-	push local 7  // case_type
-	not
-	if-goto ELSE17
-	push constant 0
-	pop local 4  // diff
-label LOOP18
-	push local 2  // a
-	push local 5  // dx
-	lt
-	push local 3  // b
-	push local 6  // dy
-	lt
-	and
-	not
-	if-goto ENDLOOP18
-	push local 0  // x
-	push local 2  // a
-	add
-	push local 1  // y
-	push local 3  // b
-	add
-	call Screen.drawPixel 2
-	pop temp 0
-	push local 3  // b
-	push local 6  // dy
-	lt
-	push local 4  // diff
 	push constant 0
 	lt
 	and
 	not
 	if-goto ELSE19
-	push local 3  // b
-	push constant 1
-	add
-	pop local 3  // b
-	push local 4  // diff
-	push local 5  // dx
-	add
-	pop local 4  // diff
-	goto ELSE_END19
-label ELSE19
-	push local 2  // a
-	push constant 1
-	add
-	pop local 2  // a
-	push local 4  // diff
-	push local 6  // dy
-	sub
-	pop local 4  // diff
-label ELSE_END19
-	goto LOOP18
-label ENDLOOP18
-	push local 0  // x
-	push local 2  // a
-	add
-	push local 1  // y
-	push local 3  // b
-	add
-	call Screen.drawPixel 2
-	pop temp 0
-	goto ELSE_END17
-label ELSE17
-	push local 5  // dx
-	push constant 0
-	lt
-	not
-	if-goto ELSE20
+	push constant 0  // true
+	not  // true
+	pop local 7  // case_type
 	push argument 2  // x2
 	pop local 0  // x
 	push argument 3  // y2
@@ -498,16 +508,15 @@ label ELSE17
 	push local 5  // dx
 	neg
 	pop local 5  // dx
-	goto ELSE_END20
-label ELSE20
-	push argument 0  // x1
-	pop local 0  // x
-	push argument 1  // y1
-	pop local 1  // y
 	push local 6  // dy
 	neg
 	pop local 6  // dy
-label ELSE_END20
+	goto ELSE_END19
+label ELSE19
+label ELSE_END19
+	push local 7  // case_type
+	not
+	if-goto ELSE20
 	push constant 0
 	pop local 4  // diff
 label LOOP21
@@ -525,7 +534,7 @@ label LOOP21
 	add
 	push local 1  // y
 	push local 3  // b
-	sub
+	add
 	call Screen.drawPixel 2
 	pop temp 0
 	push local 3  // b
@@ -537,22 +546,22 @@ label LOOP21
 	and
 	not
 	if-goto ELSE22
-	push local 2  // a
-	push constant 1
-	add
-	pop local 2  // a
-	push local 4  // diff
-	push local 6  // dy
-	add
-	pop local 4  // diff
-	goto ELSE_END22
-label ELSE22
 	push local 3  // b
 	push constant 1
 	add
 	pop local 3  // b
 	push local 4  // diff
 	push local 5  // dx
+	add
+	pop local 4  // diff
+	goto ELSE_END22
+label ELSE22
+	push local 2  // a
+	push constant 1
+	add
+	pop local 2  // a
+	push local 4  // diff
+	push local 6  // dy
 	sub
 	pop local 4  // diff
 label ELSE_END22
@@ -563,41 +572,169 @@ label ENDLOOP21
 	add
 	push local 1  // y
 	push local 3  // b
+	add
+	call Screen.drawPixel 2
+	pop temp 0
+	goto ELSE_END20
+label ELSE20
+	push local 5  // dx
+	push constant 0
+	lt
+	not
+	if-goto ELSE23
+	push argument 2  // x2
+	pop local 0  // x
+	push argument 3  // y2
+	pop local 1  // y
+	push local 5  // dx
+	neg
+	pop local 5  // dx
+	goto ELSE_END23
+label ELSE23
+	push argument 0  // x1
+	pop local 0  // x
+	push argument 1  // y1
+	pop local 1  // y
+	push local 6  // dy
+	neg
+	pop local 6  // dy
+label ELSE_END23
+	push constant 0
+	pop local 4  // diff
+label LOOP24
+	push local 2  // a
+	push local 5  // dx
+	lt
+	push local 3  // b
+	push local 6  // dy
+	lt
+	and
+	not
+	if-goto ENDLOOP24
+	push local 0  // x
+	push local 2  // a
+	add
+	push local 1  // y
+	push local 3  // b
 	sub
 	call Screen.drawPixel 2
 	pop temp 0
-label ELSE_END17
+	push local 3  // b
+	push local 6  // dy
+	lt
+	push local 4  // diff
+	push constant 0
+	lt
+	and
+	not
+	if-goto ELSE25
+	push local 2  // a
+	push constant 1
+	add
+	pop local 2  // a
+	push local 4  // diff
+	push local 6  // dy
+	add
+	pop local 4  // diff
+	goto ELSE_END25
+label ELSE25
+	push local 3  // b
+	push constant 1
+	add
+	pop local 3  // b
+	push local 4  // diff
+	push local 5  // dx
+	sub
+	pop local 4  // diff
+label ELSE_END25
+	goto LOOP24
+label ENDLOOP24
+	push local 0  // x
+	push local 2  // a
+	add
+	push local 1  // y
+	push local 3  // b
+	sub
+	call Screen.drawPixel 2
+	pop temp 0
+label ELSE_END20
 	push constant 0
 	return
 function Screen.drawRectangle 3
+	push argument 0  // x1
+	push constant 0
+	lt
+	push argument 1  // y1
+	push constant 0
+	lt
+	or
+	push argument 0  // x1
+	push constant 511
+	gt
+	or
+	push argument 1  // y1
+	push constant 255
+	gt
+	or
+	not
+	if-goto ELSE26
+	push constant 9
+	call Sys.error 1
+	return
+	goto ELSE_END26
+label ELSE26
+label ELSE_END26
+	push argument 2  // x2
+	push constant 0
+	lt
+	push argument 3  // y2
+	push constant 0
+	lt
+	or
+	push argument 2  // x2
+	push constant 511
+	gt
+	or
+	push argument 3  // y2
+	push constant 255
+	gt
+	or
+	not
+	if-goto ELSE27
+	push constant 9
+	call Sys.error 1
+	return
+	goto ELSE_END27
+label ELSE27
+label ELSE_END27
 	push constant 0
 	pop local 2  // b
 	push argument 1  // y1
 	push argument 3  // y2
 	gt
 	not
-	if-goto ELSE23
+	if-goto ELSE28
 	push argument 3  // y2
 	pop local 0  // y
 	push argument 1  // y1
 	push argument 3  // y2
 	sub
 	pop local 1  // dy
-	goto ELSE_END23
-label ELSE23
+	goto ELSE_END28
+label ELSE28
 	push argument 1  // y1
 	pop local 0  // y
 	push argument 3  // y2
 	push argument 1  // y1
 	sub
 	pop local 1  // dy
-label ELSE_END23
-label LOOP24
+label ELSE_END28
+label LOOP29
 	push local 2  // b
 	push local 1  // dy
 	lt
 	not
-	if-goto ENDLOOP24
+	if-goto ENDLOOP29
 	push argument 0  // x1
 	push local 0  // y
 	push local 2  // b
@@ -612,8 +749,8 @@ label LOOP24
 	push constant 1
 	add
 	pop local 2  // b
-	goto LOOP24
-label ENDLOOP24
+	goto LOOP29
+label ENDLOOP29
 	push argument 0  // x1
 	push local 0  // y
 	push local 2  // b
@@ -628,13 +765,47 @@ label ENDLOOP24
 	return
 function Screen.drawCircle 2
 	push argument 2  // r
+	push constant 181
+	gt
+	not
+	if-goto ELSE30
+	push constant 13
+	call Sys.error 1
+	return
+	goto ELSE_END30
+label ELSE30
+label ELSE_END30
+	push argument 0  // x
+	push constant 0
+	lt
+	push argument 1  // y
+	push constant 0
+	lt
+	or
+	push argument 0  // x
+	push constant 511
+	gt
+	or
+	push argument 1  // y
+	push constant 255
+	gt
+	or
+	not
+	if-goto ELSE31
+	push constant 12
+	call Sys.error 1
+	return
+	goto ELSE_END31
+label ELSE31
+label ELSE_END31
+	push argument 2  // r
 	pop local 1  // b
-label LOOP25
+label LOOP32
 	push local 1  // b
 	push constant 0
 	gt
 	not
-	if-goto ENDLOOP25
+	if-goto ENDLOOP32
 	push argument 2  // r
 	push argument 2  // r
 	call Math.multiply 2
@@ -676,8 +847,8 @@ label LOOP25
 	push constant 1
 	sub
 	pop local 1  // b
-	goto LOOP25
-label ENDLOOP25
+	goto LOOP32
+label ENDLOOP32
 	push argument 0  // x
 	push argument 2  // r
 	sub

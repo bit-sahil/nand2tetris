@@ -86,6 +86,20 @@ class Math {
             let y = -y;
         }
 
+        if(y>x) {
+            // both x and y are positive now
+            // optimizing for case when y > x
+            return 0;
+        }
+        if(x=y) {
+            // optimizing for case when x and y are equal magnitude
+            if(sign) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
         let qy2 = 0;  // required only for recursive procedure
 
         if(sign) {
@@ -162,6 +176,16 @@ class Math {
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
         var int i, y, guess, guess_sq;
+
+        if(x<0) {
+            // Cannot compute square root of a negative number
+            return Sys.error(4);
+        }
+
+        if((x=0) | (x=1)) {
+            // optimizing for base case
+            return x;
+        }
 
         let y = 0;
         let i = 7;
