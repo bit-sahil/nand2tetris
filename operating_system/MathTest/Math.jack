@@ -55,6 +55,87 @@ class Math {
         return result;
     }
 
+    /** Returns the integer part of x / y.
+     *  When a Jack compiler detects the division operator '/'
+     *  an an expression, it handles it by invoking this method.
+     *  Thus, x/y and Math.divide(x,y) return the same value. */
+    function int divide(int x, int y) {
+        var boolean sign;
+
+        if(x=0) {
+            // division by 0
+            return Sys.error(3);
+        }
+
+        if(y=1) {
+            // optimize for x/1
+            return x;
+        }
+        if(y=-1) {
+            // optimize for x/(-1)
+            return -x;
+        }
+        
+        let sign = false;
+        if(x<0) {
+            let sign = ~sign;
+            let x = -x;
+        }
+        if(y<0) {
+            let sign = ~sign;
+            let y = -y;
+        }
+
+        let qy2 = 0;  // required only for recursive procedure
+
+        if(sign) {
+            return -Math.divide_seq(x, y);
+        } else {
+            return Math.divide_seq(x, y);
+        }
+    }
+
+    function int divide_seq(int x, int y) {
+        // in recursive function, we're relying on function stack to keep value for us
+        // same can be done with a memory, which would consume less space than
+        // what would be required on stack for calling function recursively
+        // and should be more efficient as well as succint (and easy to understand)
+
+        var Array mem;
+        var int i, y_pow, dividend;
+
+        let x = x+1;
+
+        let mem = Array.new(16);
+        let y_pow = y;
+        let mem[0] = y_pow;
+        let i = 1;
+
+        while((i<16) & (x>y_pow)) {
+            let y_pow = y_pow + y_pow;
+            let mem[i] = y_pow;
+            let i = i + 1;
+        }
+
+        let dividend = 0;
+        while(i>0) {
+            let i = i - 1;
+
+            let dividend = dividend+dividend;
+            if(x>mem[i]) {  
+                // should be (x=mem[i]) | (x>mem[i]) instead,
+                // but we've put x = x + 1 for same effect
+
+                let dividend = dividend + 1;
+                let x = x - mem[i];
+            }
+        }
+
+        do mem.dispose();
+
+        return dividend;
+    }
+
     function int divide_qy2(int x, int y) {
         var int q, double_y;
 
@@ -75,32 +156,6 @@ class Math {
         } else {
             let qy2 = qy2 + y;
             return 1+q+q;
-        }
-    }
-
-    /** Returns the integer part of x / y.
-     *  When a Jack compiler detects the division operator '/'
-     *  an an expression, it handles it by invoking this method.
-     *  Thus, x/y and Math.divide(x,y) return the same value. */
-    function int divide(int x, int y) {
-        var boolean sign;
-        let sign = false;
-
-        if(x<0) {
-            let sign = ~sign;
-            let x = -x;
-        }
-        if(y<0) {
-            let sign = ~sign;
-            let y = -y;
-        }
-
-        let qy2 = 0;
-
-        if(sign) {
-            return -Math.divide_qy2(x, y);
-        } else {
-            return Math.divide_qy2(x, y);
         }
     }
 
