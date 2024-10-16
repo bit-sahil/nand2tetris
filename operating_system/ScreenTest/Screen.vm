@@ -13,6 +13,8 @@ function Screen.init 0
 	pop static 5  // BYTES_IN_ROW
 	call Bitmask.init 0
 	pop temp 0
+	call Screen.clearScreen 0
+	pop temp 0
 	push constant 0  // true
 	not  // true
 	pop static 0  // color
@@ -31,6 +33,9 @@ function Screen.clearScreen 0
 	sub
 	call Screen.drawRectangle 4
 	pop temp 0
+	push constant 0  // true
+	not  // true
+	pop static 0  // color
 	push constant 0
 	return
 function Screen.setColor 0

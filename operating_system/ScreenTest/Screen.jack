@@ -23,7 +23,7 @@ class Screen {
 
         do Bitmask.init();
 
-        // do Screen.clearScreen();
+        do Screen.clearScreen();
         let color = true;  // start drawing in black
 
         return;
@@ -33,6 +33,7 @@ class Screen {
     function void clearScreen() {
         let color = false;
         do Screen.drawRectangle(0, 0, ROWS-1, COLUMNS-1);
+        let color = true;
         return;
     }
 
