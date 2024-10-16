@@ -1484,8 +1484,16 @@ label ELSE_END0
 	return
 function Output.moveCursor 2
 	push argument 0  // i
+	push constant 0
+	lt
+	push argument 1  // j
+	push constant 0
+	lt
+	or
+	push argument 0  // i
 	push constant 22
 	gt
+	or
 	push argument 1  // j
 	push constant 63
 	gt
