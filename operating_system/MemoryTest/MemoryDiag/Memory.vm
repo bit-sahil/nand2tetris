@@ -237,6 +237,10 @@ label ENDLOOP1
 	return
 function Memory.deAlloc 0
 	push argument 0  // o
+	call Memory.dealloc_sorted 1
+	return
+function Memory.dealloc_simple 0
+	push argument 0  // o
 	push constant 2
 	neg
 	add  // letArrayEnd
@@ -249,5 +253,335 @@ function Memory.deAlloc 0
 	push constant 2
 	sub
 	pop static 1  // freeList
+	push constant 0
+	return
+function Memory.dealloc_sorted 3
+	push static 1  // freeList
+	push constant 0  // null
+	eq
+	not
+	if-goto ELSE6
+	push argument 0  // o
+	push constant 2
+	neg
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 0  // null
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push argument 0  // o
+	push constant 2
+	sub
+	pop static 1  // freeList
+	push constant 0
+	return
+	goto ELSE_END6
+label ELSE6
+label ELSE_END6
+	push constant 17010
+	push argument 0  // o
+	call Memory.poke 2
+	pop temp 0
+	push constant 17011
+	push static 1  // freeList
+	call Memory.poke 2
+	pop temp 0
+	push constant 17016
+	push argument 0  // o
+	push constant 1
+	neg
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	call Memory.poke 2
+	pop temp 0
+	push constant 0  // null
+	pop local 0  // currNode
+	push static 1  // freeList
+	pop local 1  // nextNode
+	push local 1  // nextNode
+	push constant 0  // null
+	eq
+	not
+	pop local 2  // loopCondition
+label LOOP7
+	push local 2  // loopCondition
+	not
+	if-goto ENDLOOP7
+	push local 1  // nextNode
+	push argument 0  // o
+	lt
+	not
+	if-goto ELSE8
+	push local 1  // nextNode
+	pop local 0  // currNode
+	push local 0  // currNode
+	push constant 0
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	pop local 1  // nextNode
+	push local 1  // nextNode
+	push constant 0  // null
+	eq
+	not
+	pop local 2  // loopCondition
+	goto ELSE_END8
+label ELSE8
+	push constant 0  // false
+	pop local 2  // loopCondition
+label ELSE_END8
+	goto LOOP7
+label ENDLOOP7
+	push constant 17012
+	push constant 0
+	call Memory.poke 2
+	pop temp 0
+	push constant 17013
+	push constant 0
+	call Memory.poke 2
+	pop temp 0
+	push constant 17014
+	push constant 0
+	call Memory.poke 2
+	pop temp 0
+	push constant 17015
+	push constant 0
+	call Memory.poke 2
+	pop temp 0
+	push constant 17017
+	push constant 0
+	call Memory.poke 2
+	pop temp 0
+	push local 1  // nextNode
+	push constant 0  // null
+	eq
+	not
+	not
+	if-goto ELSE9
+	push argument 0  // o
+	push argument 0  // o
+	push constant 1
+	neg
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	add
+	push local 1  // nextNode
+	eq
+	not
+	if-goto ELSE10
+	push constant 17015
+	push local 0  // currNode
+	call Memory.poke 2
+	pop temp 0
+	push constant 17012
+	push local 1  // nextNode
+	call Memory.poke 2
+	pop temp 0
+	push argument 0  // o
+	push constant 2
+	neg
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // nextNode
+	push constant 0
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push argument 0  // o
+	push constant 1
+	neg
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 0  // o
+	push constant 1
+	neg
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push local 1  // nextNode
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	add
+	push constant 2
+	add
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // currNode
+	push constant 0  // null
+	eq
+	not
+	if-goto ELSE11
+	push argument 0  // o
+	push constant 2
+	sub
+	pop static 1  // freeList
+	goto ELSE_END11
+label ELSE11
+	push local 0  // currNode
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 0  // o
+	push constant 2
+	sub
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 17017
+	push local 0  // currNode
+	call Memory.poke 2
+	pop temp 0
+	push local 0  // currNode
+	push local 0  // currNode
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	add
+	push constant 2
+	add
+	push argument 0  // o
+	push constant 2
+	sub
+	eq
+	not
+	if-goto ELSE12
+	push local 0  // currNode
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 0  // o
+	push constant 2
+	neg
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // currNode
+	push constant 1
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // currNode
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push argument 0  // o
+	push constant 1
+	neg
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	add
+	push constant 2
+	add
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	goto ELSE_END12
+label ELSE12
+label ELSE_END12
+label ELSE_END11
+	push constant 0
+	return
+	goto ELSE_END10
+label ELSE10
+label ELSE_END10
+	goto ELSE_END9
+label ELSE9
+label ELSE_END9
+	push constant 17013
+	push local 0  // currNode
+	call Memory.poke 2
+	pop temp 0
+	push constant 17014
+	push local 0  // currNode
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	call Memory.poke 2
+	pop temp 0
+	push local 0  // currNode
+	push local 0  // currNode
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	add
+	push constant 2
+	add
+	push argument 0  // o
+	eq
+	not
+	if-goto ELSE13
+	push local 0  // currNode
+	push constant 1
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 0  // currNode
+	push constant 1
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	push argument 0  // o
+	push constant 1
+	neg
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	add
+	push constant 2
+	add
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push constant 0
+	return
+	goto ELSE_END13
+label ELSE13
+label ELSE_END13
+	push argument 0  // o
+	push constant 2
+	neg
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push local 1  // nextNode
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // currNode
+	push constant 0  // null
+	eq
+	not
+	if-goto ELSE14
+	push argument 0  // o
+	push constant 2
+	sub
+	pop static 1  // freeList
+	goto ELSE_END14
+label ELSE14
+	push local 0  // currNode
+	push constant 0
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push argument 0  // o
+	push constant 2
+	sub
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+label ELSE_END14
 	push constant 0
 	return

@@ -1,253 +1,465 @@
 function Memory.init 0
-	push constant 0
-	pop static 0  // MEM
-	push constant 2048
-	pop static 1  // freeList
-	push static 1  // freeList
-	push constant 0
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push constant 0  // null
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push static 1  // freeList
-	push constant 1
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push constant 14334
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push constant 0
-	return
+    push constant 0
+    pop static 0
+    push constant 2048
+    pop static 1
+    push constant 0
+    push static 1
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 1
+    push static 1
+    add
+    push constant 14334
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
 function Memory.peek 0
-	push static 0  // MEM
-	push argument 0  // address
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	return
+    push argument 0
+    push static 0
+    add
+    pop pointer 1
+    push that 0
+    return
 function Memory.poke 0
-	push static 0  // MEM
-	push argument 0  // address
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push argument 1  // value
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push constant 0
-	return
+    push argument 0
+    push static 0
+    add
+    push argument 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
 function Memory.alloc 3
-	push argument 0  // size
-	push constant 1
-	lt
-	not
-	if-goto ELSE0
-	push constant 5
-	call Sys.error 1
-	return
-	goto ELSE_END0
-label ELSE0
-label ELSE_END0
-	push constant 0  // null
-	pop local 0  // prevNode
-	push static 1  // freeList
-	pop local 1  // currNode
-label LOOP1
-	push local 1  // currNode
-	push constant 0  // null
-	eq
-	not
-	not
-	if-goto ENDLOOP1
-	push local 1  // currNode
-	push constant 1
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	push argument 0  // size
-	push constant 1
-	add
-	gt
-	not
-	if-goto ELSE2
-	push local 1  // currNode
-	push argument 0  // size
-	push constant 2
-	add
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push local 1  // currNode
-	push constant 0
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push local 1  // currNode
-	push argument 0  // size
-	push constant 3
-	add
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push local 1  // currNode
-	push constant 1
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	push argument 0  // size
-	push constant 2
-	add
-	sub
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push local 0  // prevNode
-	push constant 0  // null
-	eq
-	not
-	if-goto ELSE3
-	push local 1  // currNode
-	push argument 0  // size
-	push constant 2
-	add
-	add
-	pop static 1  // freeList
-	goto ELSE_END3
-label ELSE3
-	push local 0  // prevNode
-	push constant 0
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push local 1  // currNode
-	push argument 0  // size
-	push constant 2
-	add
-	add
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-label ELSE_END3
-	push local 1  // currNode
-	push constant 2
-	add
-	pop local 2  // ramBlock
-	push local 2  // ramBlock
-	push constant 1
-	neg
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push argument 0  // size
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push local 2  // ramBlock
-	push constant 2
-	neg
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push constant 0  // null
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push local 2  // ramBlock
-	return
-	goto ELSE_END2
-label ELSE2
-label ELSE_END2
-	push local 1  // currNode
-	push constant 1
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	push argument 0  // size
-	push constant 1
-	sub
-	gt
-	not
-	if-goto ELSE4
-	push local 0  // prevNode
-	push constant 0  // null
-	eq
-	not
-	if-goto ELSE5
-	push local 1  // currNode
-	push constant 0
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	pop static 1  // freeList
-	goto ELSE_END5
-label ELSE5
-	push local 0  // prevNode
-	push constant 0
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push local 1  // currNode
-	push constant 0
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-label ELSE_END5
-	push local 1  // currNode
-	push constant 2
-	add
-	pop local 2  // ramBlock
-	push local 2  // ramBlock
-	push constant 1
-	neg
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push argument 0  // size
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push local 2  // ramBlock
-	push constant 2
-	neg
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push constant 0  // null
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push local 2  // ramBlock
-	return
-	goto ELSE_END4
-label ELSE4
-label ELSE_END4
-	push local 1  // currNode
-	pop local 0  // prevNode
-	push local 1  // currNode
-	push constant 0
-	add  // termArrEnd
-	pop pointer 1  // that = &arr + arrIdx
-	push that 0  // push arr[arrIdx] on stack
-	pop local 1  // currNode
-	goto LOOP1
-label ENDLOOP1
-	push constant 6
-	call Sys.error 1
-	return
+    push argument 0
+    push constant 1
+    lt
+    not
+    if-goto Memory_1
+    push constant 5
+    call Sys.error 1
+    return
+    goto Memory_0
+label Memory_1
+label Memory_0
+    push constant 0
+    pop local 0
+    push static 1
+    pop local 1
+label Memory_2
+    push local 1
+    push constant 0
+    eq
+    not
+    not
+    if-goto Memory_3
+    push constant 1
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    push argument 0
+    push constant 1
+    add
+    gt
+    not
+    if-goto Memory_5
+    push argument 0
+    push constant 2
+    add
+    push local 1
+    add
+    push constant 0
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push argument 0
+    push constant 3
+    add
+    push local 1
+    add
+    push constant 1
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    push argument 0
+    push constant 2
+    add
+    sub
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 0
+    eq
+    not
+    if-goto Memory_7
+    push local 1
+    push argument 0
+    push constant 2
+    add
+    add
+    pop static 1
+    goto Memory_6
+label Memory_7
+    push constant 0
+    push local 0
+    add
+    push local 1
+    push argument 0
+    push constant 2
+    add
+    add
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+label Memory_6
+    push local 1
+    push constant 2
+    add
+    pop local 2
+    push constant 1
+    neg
+    push local 2
+    add
+    push argument 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 2
+    neg
+    push local 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 2
+    return
+    goto Memory_4
+label Memory_5
+label Memory_4
+    push constant 1
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    push argument 0
+    push constant 1
+    sub
+    gt
+    not
+    if-goto Memory_9
+    push local 0
+    push constant 0
+    eq
+    not
+    if-goto Memory_11
+    push constant 0
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    pop static 1
+    goto Memory_10
+label Memory_11
+    push constant 0
+    push local 0
+    add
+    push constant 0
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+label Memory_10
+    push local 1
+    push constant 2
+    add
+    pop local 2
+    push constant 1
+    neg
+    push local 2
+    add
+    push argument 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 2
+    neg
+    push local 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 2
+    return
+    goto Memory_8
+label Memory_9
+label Memory_8
+    push local 1
+    pop local 0
+    push constant 0
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    pop local 1
+    goto Memory_2
+label Memory_3
+    push constant 6
+    call Sys.error 1
+    return
 function Memory.deAlloc 0
-	push argument 0  // o
-	push constant 2
-	neg
-	add  // letArrayEnd
-	pop temp 0  // arr = arr + i
-	push static 1  // freeList
-	push temp 0
-	pop pointer 1  // that = &arr + i
-	pop that 0  // *(arr+i) = exp_value
-	push argument 0  // o
-	push constant 2
-	sub
-	pop static 1  // freeList
-	push constant 0
-	return
+    push argument 0
+    call Memory.dealloc_simple 1
+    return
+function Memory.dealloc_simple 0
+    push constant 2
+    neg
+    push argument 0
+    add
+    push static 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push argument 0
+    push constant 2
+    sub
+    pop static 1
+    push constant 0
+    return
+function Memory.dealloc_sorted 2
+    push static 1
+    push constant 0
+    eq
+    not
+    if-goto Memory_13
+    push constant 2
+    neg
+    push argument 0
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push argument 0
+    push constant 2
+    sub
+    pop static 1
+    push constant 0
+    return
+    goto Memory_12
+label Memory_13
+label Memory_12
+    push constant 0
+    pop local 0
+    push static 1
+    pop local 1
+label Memory_14
+    push local 1
+    push constant 0
+    eq
+    not
+    not
+    if-goto Memory_15
+    push local 1
+    push argument 0
+    lt
+    not
+    if-goto Memory_17
+    push local 1
+    pop local 0
+    push constant 0
+    push local 0
+    add
+    pop pointer 1
+    push that 0
+    pop local 1
+    goto Memory_16
+label Memory_17
+label Memory_16
+    goto Memory_14
+label Memory_15
+    push local 1
+    push constant 0
+    eq
+    not
+    not
+    if-goto Memory_19
+    push argument 0
+    push constant 1
+    neg
+    push argument 0
+    add
+    pop pointer 1
+    push that 0
+    add
+    push local 1
+    eq
+    not
+    if-goto Memory_21
+    push constant 2
+    neg
+    push argument 0
+    add
+    push constant 0
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 1
+    neg
+    push argument 0
+    add
+    push constant 1
+    neg
+    push argument 0
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    push local 1
+    add
+    pop pointer 1
+    push that 0
+    add
+    push constant 2
+    add
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 0
+    eq
+    not
+    if-goto Memory_23
+    push argument 0
+    push constant 2
+    sub
+    pop static 1
+    goto Memory_22
+label Memory_23
+    push constant 0
+    push local 0
+    add
+    push argument 0
+    push constant 2
+    sub
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+label Memory_22
+    push constant 0
+    return
+    goto Memory_20
+label Memory_21
+label Memory_20
+    goto Memory_18
+label Memory_19
+label Memory_18
+    push local 0
+    push constant 1
+    push local 0
+    add
+    pop pointer 1
+    push that 0
+    add
+    push constant 2
+    add
+    push argument 0
+    eq
+    not
+    if-goto Memory_25
+    push constant 1
+    push local 0
+    add
+    push constant 1
+    push local 0
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    neg
+    push argument 0
+    add
+    pop pointer 1
+    push that 0
+    add
+    push constant 2
+    add
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    return
+    goto Memory_24
+label Memory_25
+label Memory_24
+    push constant 2
+    neg
+    push argument 0
+    add
+    push local 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 0
+    eq
+    not
+    if-goto Memory_27
+    push argument 0
+    push constant 2
+    sub
+    pop static 1
+    goto Memory_26
+label Memory_27
+    push constant 0
+    push local 0
+    add
+    push argument 0
+    push constant 2
+    sub
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+label Memory_26
+    push constant 0
+    return

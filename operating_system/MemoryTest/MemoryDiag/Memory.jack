@@ -96,9 +96,111 @@ class Memory {
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations. */
     function void deAlloc(Array o) {
+        return Memory.dealloc_sorted(o);
+    }
+
+    function void dealloc_simple(Array o) {
         // o[-1] already contains size
         let o[-2] = freeList;
         let freeList = o - 2;
+        return;
+    }
+
+    function void dealloc_sorted(Array o) {
+        // we keep freeList in sorted order for easier defragmentation
+        // also defragment this list at the same time
+        
+        var Array currNode, nextNode;
+        var boolean loopCondition;
+
+        if(freeList = null) {
+            let o[-2] = null;
+            let freeList = o - 2;
+            return;
+        }
+
+        do Memory.poke(17010, o);  //debug
+        do Memory.poke(17011, freeList);  //debug
+        do Memory.poke(17016, o[-1]);  //debug
+
+        let currNode = null;
+        let nextNode = freeList;
+        let loopCondition = ~(nextNode=null);
+
+        while(loopCondition) {    
+            if(nextNode < o) {
+                let currNode = nextNode;
+                let nextNode = currNode[0];
+                let loopCondition = ~(nextNode=null);
+            } else {
+                let loopCondition = false;
+            }
+        }
+
+        // this is where o is to be fit
+        do Memory.poke(17012, 0);  //debug
+        do Memory.poke(17013, 0);  //debug
+        do Memory.poke(17014, 0);  //debug
+        do Memory.poke(17015, 0);  //debug
+        do Memory.poke(17017, 0);  //debug
+
+        if( ~(nextNode=null) ) {
+            // check if nextNode fits in at end of o
+            if( (o + o[-1]) = nextNode) {
+                do Memory.poke(17015, currNode);  //debug
+                do Memory.poke(17012, nextNode);  //debug
+                // next segment is just after o
+                // update size and replace next of currNode
+                
+                let o[-2] = nextNode[0];
+                let o[-1] = o[-1] + nextNode[1] + 2;
+
+                if( currNode=null ) {
+                    // o fits at beginning of freeList
+                    let freeList = o - 2;
+                } else {
+                    // update next of currNode
+                    let currNode[0] = o - 2;
+
+                    do Memory.poke(17017, currNode);  //debug
+                    // also check if o fits in at end of current node
+                    if( (currNode + currNode[1] + 2) = (o-2)) {
+                        // o matches segment just after currNode
+                        let currNode[0] = o[-2];
+                        let currNode[1] = currNode[1] + o[-1] + 2;
+                    }
+                }
+                
+                return;
+            }
+        }
+    
+        do Memory.poke(17013, currNode);  //debug
+        do Memory.poke(17014, currNode[1]);  //debug
+
+        // check if o fits in at end of current node
+        if( (currNode + currNode[1] + 2) = o) {
+            // o matches segment just after currNode
+            let currNode[1] = currNode[1] + o[-1] + 2;
+
+            // no other changes in freeList
+            return;
+        }
+
+        // o is neither end of currNode nor just before nextNode
+        // put o between currNode and nextNode
+
+        // o[-1] already contains size
+        let o[-2] = nextNode;
+
+        if( currNode=null ) {
+            // o fits at beginning of freeList
+            let freeList = o - 2;
+        } else {
+            // update next of currNode
+            let currNode[0] = o - 2;
+        }
+
         return;
     }
 
