@@ -158,5 +158,53 @@ function Main.main 1
 	push temp 0
 	pop pointer 1  // that = &arr + i
 	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 15
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32767
+	push constant 2
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 16
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32767
+	neg
+	push constant 2
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 17
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32767
+	neg
+	push constant 1
+	sub
+	push constant 4
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
+	push local 0  // r
+	push constant 18
+	add  // letArrayEnd
+	pop temp 0  // arr = arr + i
+	push constant 32767
+	neg
+	push constant 1
+	sub
+	push constant 4
+	neg
+	call Math.divide 2
+	push temp 0
+	pop pointer 1  // that = &arr + i
+	pop that 0  // *(arr+i) = exp_value
 	push constant 0
 	return

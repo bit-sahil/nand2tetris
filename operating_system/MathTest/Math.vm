@@ -136,116 +136,195 @@ label ELSE_END6
 	goto ELSE_END7
 label ELSE7
 label ELSE_END7
+	push argument 0  // x
+	push constant 32767
+	neg
+	push constant 1
+	sub
+	eq
+	not
+	if-goto ELSE8
+	push argument 1  // y
+	push constant 32767
+	neg
+	push constant 1
+	sub
+	eq
+	not
+	if-goto ELSE9
+	push constant 1
+	return
+	goto ELSE_END9
+label ELSE9
+label ELSE_END9
+	push argument 1  // y
+	push constant 0
+	gt
+	not
+	if-goto ELSE10
+	push argument 0  // x
+	push argument 1  // y
+	add
+	pop argument 0  // x
+	push argument 0  // x
+	push argument 1  // y
+	call Math.divide 2
+	push constant 1
+	sub
+	return
+	goto ELSE_END10
+label ELSE10
+	push argument 0  // x
+	push argument 1  // y
+	sub
+	pop argument 0  // x
+	push argument 0  // x
+	push argument 1  // y
+	call Math.divide 2
+	push constant 1
+	add
+	return
+label ELSE_END10
+	goto ELSE_END8
+label ELSE8
+	push argument 1  // y
+	push constant 32767
+	neg
+	push constant 1
+	sub
+	eq
+	not
+	if-goto ELSE11
+	push constant 0
+	return
+	goto ELSE_END11
+label ELSE11
+label ELSE_END11
+label ELSE_END8
 	push constant 0  // false
 	pop local 0  // sign
 	push argument 0  // x
 	push constant 0
 	lt
 	not
-	if-goto ELSE8
+	if-goto ELSE12
 	push local 0  // sign
 	not
 	pop local 0  // sign
 	push argument 0  // x
 	neg
 	pop argument 0  // x
-	goto ELSE_END8
-label ELSE8
-label ELSE_END8
+	goto ELSE_END12
+label ELSE12
+label ELSE_END12
 	push argument 1  // y
 	push constant 0
 	lt
 	not
-	if-goto ELSE9
+	if-goto ELSE13
 	push local 0  // sign
 	not
 	pop local 0  // sign
 	push argument 1  // y
 	neg
 	pop argument 1  // y
-	goto ELSE_END9
-label ELSE9
-label ELSE_END9
+	goto ELSE_END13
+label ELSE13
+label ELSE_END13
 	push argument 1  // y
 	push argument 0  // x
 	gt
 	not
-	if-goto ELSE10
+	if-goto ELSE14
 	push constant 0
 	return
-	goto ELSE_END10
-label ELSE10
-label ELSE_END10
+	goto ELSE_END14
+label ELSE14
+label ELSE_END14
 	push argument 0  // x
 	push argument 1  // y
 	eq
 	not
-	if-goto ELSE11
+	if-goto ELSE15
 	push local 0  // sign
 	not
-	if-goto ELSE12
+	if-goto ELSE16
 	push constant 1
 	neg
 	return
-	goto ELSE_END12
-label ELSE12
+	goto ELSE_END16
+label ELSE16
 	push constant 1
 	return
-label ELSE_END12
-	goto ELSE_END11
-label ELSE11
-label ELSE_END11
+label ELSE_END16
+	goto ELSE_END15
+label ELSE15
+label ELSE_END15
 	push constant 0
 	pop static 2  // qy2
 	push local 0  // sign
 	not
-	if-goto ELSE13
+	if-goto ELSE17
 	push argument 0  // x
 	push argument 1  // y
 	call Math.divide_seq 2
 	neg
 	return
-	goto ELSE_END13
-label ELSE13
+	goto ELSE_END17
+label ELSE17
 	push argument 0  // x
 	push argument 1  // y
 	call Math.divide_seq 2
 	return
-label ELSE_END13
-function Math.divide_seq 4
-	push argument 0  // x
-	push constant 1
-	add
-	pop argument 0  // x
+label ELSE_END17
+function Math.divide_seq 5
 	push constant 16
 	call Array.new 1
 	pop local 0  // mem
 	push argument 1  // y
 	pop local 2  // y_pow
 	push local 0  // mem
-	push constant 0
+	push constant 1
 	add  // letArrayEnd
 	pop temp 0  // arr = arr + i
 	push local 2  // y_pow
 	push temp 0
 	pop pointer 1  // that = &arr + i
 	pop that 0  // *(arr+i) = exp_value
-	push constant 1
+	push constant 2
 	pop local 1  // i
-label LOOP14
+	push constant 0  // true
+	not  // true
+	pop local 4  // loopCond
+label LOOP18
 	push local 1  // i
 	push constant 16
 	lt
+	push local 4  // loopCond
+	and
 	push argument 0  // x
 	push local 2  // y_pow
 	gt
+	push argument 0  // x
+	push local 2  // y_pow
+	eq
+	or
 	and
 	not
-	if-goto ENDLOOP14
+	if-goto ENDLOOP18
 	push local 2  // y_pow
 	push local 2  // y_pow
 	add
 	pop local 2  // y_pow
+	push local 2  // y_pow
+	push constant 0
+	lt
+	not
+	if-goto ELSE19
+	push constant 0  // false
+	pop local 4  // loopCond
+	goto ELSE_END19
+label ELSE19
 	push local 0  // mem
 	push local 1  // i
 	add  // letArrayEnd
@@ -258,16 +337,17 @@ label LOOP14
 	push constant 1
 	add
 	pop local 1  // i
-	goto LOOP14
-label ENDLOOP14
+label ELSE_END19
+	goto LOOP18
+label ENDLOOP18
 	push constant 0
 	pop local 3  // dividend
-label LOOP15
+label LOOP20
 	push local 1  // i
-	push constant 0
+	push constant 1
 	gt
 	not
-	if-goto ENDLOOP15
+	if-goto ENDLOOP20
 	push local 1  // i
 	push constant 1
 	sub
@@ -283,8 +363,16 @@ label LOOP15
 	pop pointer 1  // that = &arr + arrIdx
 	push that 0  // push arr[arrIdx] on stack
 	gt
+	push argument 0  // x
+	push local 0  // mem
+	push local 1  // i
+	add  // termArrEnd
+	pop pointer 1  // that = &arr + arrIdx
+	push that 0  // push arr[arrIdx] on stack
+	eq
+	or
 	not
-	if-goto ELSE16
+	if-goto ELSE21
 	push local 3  // dividend
 	push constant 1
 	add
@@ -297,11 +385,11 @@ label LOOP15
 	push that 0  // push arr[arrIdx] on stack
 	sub
 	pop argument 0  // x
-	goto ELSE_END16
-label ELSE16
-label ELSE_END16
-	goto LOOP15
-label ENDLOOP15
+	goto ELSE_END21
+label ELSE21
+label ELSE_END21
+	goto LOOP20
+label ENDLOOP20
 	push local 0  // mem
 	call Array.dispose 1
 	pop temp 0
@@ -312,22 +400,22 @@ function Math.divide_qy2 2
 	push constant 0
 	lt
 	not
-	if-goto ELSE17
+	if-goto ELSE22
 	push constant 0
 	return
-	goto ELSE_END17
-label ELSE17
-label ELSE_END17
+	goto ELSE_END22
+label ELSE22
+label ELSE_END22
 	push argument 1  // y
 	push argument 0  // x
 	gt
 	not
-	if-goto ELSE18
+	if-goto ELSE23
 	push constant 0
 	return
-	goto ELSE_END18
-label ELSE18
-label ELSE_END18
+	goto ELSE_END23
+label ELSE23
+label ELSE_END23
 	push argument 1  // y
 	push argument 1  // y
 	add
@@ -342,13 +430,13 @@ label ELSE_END18
 	push argument 1  // y
 	lt
 	not
-	if-goto ELSE19
+	if-goto ELSE24
 	push local 0  // q
 	push local 0  // q
 	add
 	return
-	goto ELSE_END19
-label ELSE19
+	goto ELSE_END24
+label ELSE24
 	push static 2  // qy2
 	push argument 1  // y
 	add
@@ -359,19 +447,19 @@ label ELSE19
 	push local 0  // q
 	add
 	return
-label ELSE_END19
+label ELSE_END24
 function Math.sqrt 4
 	push argument 0  // x
 	push constant 0
 	lt
 	not
-	if-goto ELSE20
+	if-goto ELSE25
 	push constant 4
 	call Sys.error 1
 	return
-	goto ELSE_END20
-label ELSE20
-label ELSE_END20
+	goto ELSE_END25
+label ELSE25
+label ELSE_END25
 	push argument 0  // x
 	push constant 0
 	eq
@@ -380,23 +468,23 @@ label ELSE_END20
 	eq
 	or
 	not
-	if-goto ELSE21
+	if-goto ELSE26
 	push argument 0  // x
 	return
-	goto ELSE_END21
-label ELSE21
-label ELSE_END21
+	goto ELSE_END26
+label ELSE26
+label ELSE_END26
 	push constant 0
 	pop local 1  // y
 	push constant 7
 	pop local 0  // i
-label LOOP22
+label LOOP27
 	push local 0  // i
 	push constant 1
 	neg
 	gt
 	not
-	if-goto ENDLOOP22
+	if-goto ENDLOOP27
 	push local 1  // y
 	push static 1  // powersOfTwo
 	push local 0  // i
@@ -413,36 +501,36 @@ label LOOP22
 	push argument 0  // x
 	eq
 	not
-	if-goto ELSE23
+	if-goto ELSE28
 	push local 2  // guess
 	return
-	goto ELSE_END23
-label ELSE23
-label ELSE_END23
+	goto ELSE_END28
+label ELSE28
+label ELSE_END28
 	push local 3  // guess_sq
 	push constant 0
 	gt
 	not
-	if-goto ELSE24
+	if-goto ELSE29
 	push local 3  // guess_sq
 	push argument 0  // x
 	lt
 	not
-	if-goto ELSE25
+	if-goto ELSE30
 	push local 2  // guess
 	pop local 1  // y
-	goto ELSE_END25
-label ELSE25
-label ELSE_END25
-	goto ELSE_END24
-label ELSE24
-label ELSE_END24
+	goto ELSE_END30
+label ELSE30
+label ELSE_END30
+	goto ELSE_END29
+label ELSE29
+label ELSE_END29
 	push local 0  // i
 	push constant 1
 	sub
 	pop local 0  // i
-	goto LOOP22
-label ENDLOOP22
+	goto LOOP27
+label ENDLOOP27
 	push local 1  // y
 	return
 function Math.max 0
@@ -450,38 +538,38 @@ function Math.max 0
 	push argument 1  // b
 	gt
 	not
-	if-goto ELSE26
+	if-goto ELSE31
 	push argument 0  // a
 	return
-	goto ELSE_END26
-label ELSE26
+	goto ELSE_END31
+label ELSE31
 	push argument 1  // b
 	return
-label ELSE_END26
+label ELSE_END31
 function Math.min 0
 	push argument 0  // a
 	push argument 1  // b
 	lt
 	not
-	if-goto ELSE27
+	if-goto ELSE32
 	push argument 0  // a
 	return
-	goto ELSE_END27
-label ELSE27
+	goto ELSE_END32
+label ELSE32
 	push argument 1  // b
 	return
-label ELSE_END27
+label ELSE_END32
 function Math.abs 0
 	push argument 0  // x
 	push constant 0
 	gt
 	not
-	if-goto ELSE28
+	if-goto ELSE33
 	push argument 0  // x
 	return
-	goto ELSE_END28
-label ELSE28
+	goto ELSE_END33
+label ELSE33
 	push argument 0  // x
 	neg
 	return
-label ELSE_END28
+label ELSE_END33

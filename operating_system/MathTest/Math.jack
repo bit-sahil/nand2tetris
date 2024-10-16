@@ -84,6 +84,23 @@ class Math {
             // optimize for x/(-1)
             return -x;
         }
+
+        if(x=(-32767-1)) {
+            if(y=(-32767-1)) {
+                return 1;
+            }
+            if(y>0) {
+                let x = x+y;
+                return (x/y) - 1;
+            } else {
+                let x = x-y;
+                return (x/y) + 1;
+            }
+        } else {
+            if(y=(-32767-1)) {
+                return 0;
+            }
+        }
         
         let sign = false;
         if(x<0) {
@@ -126,29 +143,31 @@ class Math {
 
         var Array mem;
         var int i, y_pow, dividend;
-
-        let x = x+1;
+        var boolean loopCond;
 
         let mem = Array.new(16);
         let y_pow = y;
-        let mem[0] = y_pow;
-        let i = 1;
+        let mem[1] = y_pow;
+        let i = 2;
 
-        while((i<16) & (x>y_pow)) {
+        let loopCond = true;
+        while( ((i<16) & (loopCond)) & ((x>y_pow)|(x=y_pow)) ) {
             let y_pow = y_pow + y_pow;
-            let mem[i] = y_pow;
-            let i = i + 1;
+
+            if(y_pow<0) {
+                let loopCond = false;
+            } else {
+                let mem[i] = y_pow;
+                let i = i + 1;
+            }
         }
 
         let dividend = 0;
-        while(i>0) {
+        while(i>1) {
             let i = i - 1;
 
             let dividend = dividend+dividend;
-            if(x>mem[i]) {  
-                // should be (x=mem[i]) | (x>mem[i]) instead,
-                // but we've put x = x + 1 for same effect
-
+            if( (x>mem[i])|(x=mem[i]) ) {  
                 let dividend = dividend + 1;
                 let x = x - mem[i];
             }
