@@ -1,0 +1,22 @@
+
+
+// positive low D latch
+// st=0 -> keep previous value
+// st=1 -> update stored value to value in d
+CHIP DLatch {
+    IN d, st;
+    OUT out;
+
+    PARTS:
+    // Simple version using Mux
+    //Mux(a=latchOut , b=d, sel=st , out=muxOut );
+    //Not(in=muxOut , out=muxOutInv );
+    //SRLatch(a=muxOut , b=muxOutInv , out=latchOut, out=out );
+
+
+    // Optimized version using Nand Gates
+    Not(in=d , out=invD );
+    Nand(a=st , b=invD , out=sInput );
+    Nand(a=d , b=st , out=rInput );
+    SRLatch(a=sInput , b=rInput , out=out);
+}

@@ -1,0 +1,26 @@
+
+
+// positive low D flip flop
+//The DFF (data flip-flop) component store and output one bit. The output does not update immediately when input changes. //Changes happen in phases, timed by the cl (clock) signal flipping between 0 and 1:
+//
+//cl=0
+//The input flags st and d can change in this stage.
+//
+//cl=1
+//If st=1 when cl changes to 1, the current value of d is stored. The stored value is not yet output.
+//
+//cl=0
+//When cl changes to 0 again, the previously stored value is output.
+
+CHIP DFlipFlop {
+    IN d, st;
+    OUT out;
+    CLOCKED cl;
+
+    PARTS:
+    And(a=st , b=cl , out=stMaster );
+    Not(in=cl , out=clOff );
+
+    DLatch(d=d, st=stMaster, out=mOut );
+    DLatch(d=mOut, st=clOff, out=out );
+}

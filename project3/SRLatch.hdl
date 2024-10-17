@@ -1,0 +1,15 @@
+
+
+// positive low SR latch
+// s=0 -> sets Q to 1
+// r=0 -> sets Q to 0
+// s=1, r=1 -> previous Q
+// s=0, r=0 -> not defined
+CHIP SRLatch {
+    IN s, r;
+    OUT Q, notQ;
+
+    PARTS:
+    Nand(a=s , b=Q , out=notQ );
+    Nand(a=r , b=notQ , out=Q );
+}
